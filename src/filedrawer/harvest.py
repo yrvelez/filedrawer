@@ -429,6 +429,7 @@ def build_record(repo: Repo, rid: str, *, llm=None, use_llm: bool | None = None,
                 rec[k] = sj[k]
         d = sj.get("design") or {}
         rec["design"] = {"type": d.get("type", "unknown"), "n_raw": d.get("n_raw"), "n_analysis": d.get("n_analysis"),
+                         "unit_column": d.get("unit_column"), "rows_analysis": d.get("rows_analysis"),
                          "sample_kind": d.get("sample_kind") or "human", "causal": d.get("causal"),
                          "diagram": d.get("diagram"), "diagram_text": d.get("diagram_text"), "features": d.get("features")}
         rec["population"] = sj.get("population") or rec["population"]
