@@ -59,10 +59,19 @@ a{color:var(--accent-2);text-decoration:none}a:hover{text-decoration:underline}
 .mast figcaption #mhcapL{white-space:nowrap}
 .mast figcaption #mhcapR{font-family:var(--display);font-size:13.5px;line-height:1.35;color:var(--ink-2);text-align:right;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media(max-width:640px){#mhfig .note,#mhfig .notes{display:none}.mast figcaption #mhcapR{font-size:12.5px}}
-@media (prefers-reduced-motion: reduce){#mhfig .draw{animation:none;stroke-dashoffset:0}#mhfig .fadein{animation:none;opacity:1}}
+@media(max-width:859px),(hover:none){#mhfig,#mhfig *{pointer-events:none}}
+@media(max-width:859px){.mast > div:first-child{text-align:center}.mast h1 .wm-line{justify-content:center}.mast .tag{margin-left:auto;margin-right:auto}
+  .mast{align-items:center}.mast > *{grid-area:1/1}.mast > div:first-child{position:relative;z-index:1}.mast figure{opacity:.2}.mast figcaption{display:none}}
+@media (prefers-reduced-motion: reduce),(max-width:859px),(hover:none){#mhfig .draw{animation:none;stroke-dashoffset:0}#mhfig .fadein{animation:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.navwrap.more .navmore{animation:none}}
 nav.top{display:flex;gap:4px;align-items:flex-end;padding:14px 0 0 2px;border-bottom:1px solid var(--ink-3);font-family:var(--sans);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
-  overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+  overflow-x:auto;overflow-y:hidden;overscroll-behavior:none;scrollbar-width:none;white-space:nowrap}
 nav.top::-webkit-scrollbar{display:none}
+.navwrap{position:relative}
+.navmore{display:none;position:absolute;right:0;top:14px;bottom:1px;width:44px;padding:0 4px 0 0;border:0;background:linear-gradient(to right,transparent,var(--bg) 55%);color:var(--red);font:400 24px/1 var(--sans);text-align:right;cursor:pointer}
+.navwrap.more .navmore{display:block;animation:navpeek 1.1s ease-in-out .9s 3}
+@keyframes navpeek{0%,100%{transform:translateX(0)}35%{transform:translateX(6px)}65%{transform:translateX(-2px)}}
+@media(max-width:859px){nav.top a.on{padding-top:7px}}
 nav.top a{flex:0 0 auto;color:var(--ink-2);padding:7px 14px 6px;margin-bottom:-1px;background:var(--chip);border:1px solid var(--rule);border-bottom-color:var(--ink-3);border-radius:7px 7px 0 0;transition:background .15s,color .15s}
 nav.top a:hover{text-decoration:none;color:var(--ink);background:var(--panel)}
 nav.top a.on{color:var(--ink);background:var(--bg);border-color:var(--ink-3);border-bottom-color:var(--bg);padding-top:10px;font-weight:600;box-shadow:inset 0 2px 0 var(--accent)}
@@ -323,10 +332,10 @@ footer a{color:var(--ink-2)}
   </div>
   <figure>
     <svg id="mhfig" role="img" aria-label="A line drawing of an open card-catalog drawer; each card is a filed study"></svg>
-    <figcaption><span id="mhcapL">Fig. 1 · the drawer, open</span><span id="mhcapR">Each card is a filed study. Hover to read, click to open.</span></figcaption>
+    <figcaption><span id="mhcapL">Fig. 1 · the drawer, open</span><span id="mhcapR">Each card is a filed study.</span></figcaption>
   </figure>
 </header>
-<nav class="top" id="nav">
+<div class="navwrap" id="navwrap"><nav class="top" id="nav">
   <a href="#/" data-route="home">Latest</a>
   <a href="#/browse" data-route="browse">Browse the database</a>
   <a href="#/results" data-route="results">Results</a>
@@ -334,7 +343,7 @@ footer a{color:var(--ink-2)}
   <a href="#/topics" data-route="topics">Topics</a>
   <a href="#/submit" data-route="submit">Submit</a>
   <a href="#/about" data-route="about">About &amp; API</a>
-</nav>
+</nav><button class="navmore" id="navmore" type="button" aria-label="More sections" tabindex="-1">›</button></div>
 <main id="main" aria-live="polite"></main>
 <footer>Everything is files in git. Reports are AI-generated; provenance is shown per paper. <a href="index.json">index.json</a> · <a href="https://github.com/yrvelez/filedrawer">Source</a></footer>
 </div>
@@ -694,7 +703,10 @@ function sidebar(){
   return a;
 }
 function layout(mainNode,asideNode,cls){var c=el('div','cols'+(cls?' '+cls:'')); c.appendChild(mainNode); c.appendChild(asideNode||sidebar()); return c}
-function setNav(route){Array.prototype.forEach.call(document.querySelectorAll('nav.top a'),function(a){a.classList.toggle('on',a.dataset.route===route)})}
+function setNav(route){Array.prototype.forEach.call(document.querySelectorAll('nav.top a'),function(a){a.classList.toggle('on',a.dataset.route===route)});
+  var n=document.getElementById('nav'), on=n&&n.querySelector('a.on'); if(on&&n.scrollWidth>n.clientWidth){var l=on.offsetLeft-n.offsetLeft, r=l+on.offsetWidth; if(l<n.scrollLeft||r>n.scrollLeft+n.clientWidth)n.scrollLeft=Math.max(0,l-24)} navFade()}
+function navFade(){ /* the arrow at the right edge shows while more tabs sit off-screen (phones) */
+  var n=document.getElementById('nav'), w=document.getElementById('navwrap'); if(n&&w)w.classList.toggle('more',n.scrollLeft+n.clientWidth<n.scrollWidth-4)}
 function sorted(list){return list.slice().sort(function(a,b){return (dateOf(b)||'').localeCompare(dateOf(a)||'')||a.slug.localeCompare(b.slug)})}
 
 /* ---------- views ---------- */
@@ -789,7 +801,7 @@ function designSentence(s,rec){
 function tiles(s,rec){
   var g=el('div','tiles'); var d=(rec&&rec.design)||{}; var h=s.hypotheses||{};
   function tile(big,label,small){var t=el('div','tile'); t.appendChild(el('b',null,big)); t.appendChild(el('span',null,label)); if(small)t.appendChild(el('small',null,small)); g.appendChild(t)}
-  if(s.n!=null)tile(Number(s.n).toLocaleString(),'analysed',d.n_raw&&d.n_raw!==s.n?'of '+Number(d.n_raw).toLocaleString()+' collected':null);
+  if(s.n!=null)tile(Number(s.n).toLocaleString(),d.unit_column?'respondents analysed':'analysed',[d.n_raw&&d.n_raw!==s.n?'of '+Number(d.n_raw).toLocaleString()+' collected':null,d.unit_column&&d.rows_analysis?Number(d.rows_analysis).toLocaleString()+' rows':null].filter(Boolean).join(' · ')||null);
   if(d.features&&d.features.length)tile(String(d.features.length),'features',d.features.filter(function(f){return f.randomized!==false}).length+' randomized'); else if(d.arms&&d.arms.length)tile(String(d.arms.length),'arms',null);
   if(h.registered)tile(h.supported+' / '+h.registered,'registered tests supported',(h.exploratory?h.exploratory+' exploratory':null));
   if(s.review_claims&&s.review_claims.total)tile((s.review_claims.supported||0)+' / '+s.review_claims.total,'claims supported',(s.review_claims.on_revised_text?'after the agent\'s corrections':'before corrections')+(s.review_claims.open_analytical?' · '+s.review_claims.open_analytical+' issue'+(s.review_claims.open_analytical>1?'s':'')+' open':'')); else if(s.reviewer_pass)tile('referee','pass, no claim checks',null);
@@ -997,7 +1009,7 @@ function viewAbout(){
 
 /* ---------- masthead: an engraved drawer whose cards are the latest filed studies ---------- */
 var MH=(function(){
-  var NS='http://www.w3.org/2000/svg', svg=null, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS='http://www.w3.org/2000/svg', svg=null, reduce=matchMedia('(prefers-reduced-motion: reduce),(max-width:859px),(hover:none)').matches; /* phones get the drawer drawn once, open, with no animation loop */
   var KX=-0.36, KY=0.52; function P(x,y,z){return [x+z*KX,-y+z*KY]}
   function pts(a){return a.map(function(p){return P(p[0],p[1],p[2]).map(function(v){return v.toFixed(2)}).join(',')}).join(' ')}
   function mk(tag,attrs,parent){var e=document.createElementNS(NS,tag); for(var k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e}
@@ -1007,7 +1019,7 @@ var MH=(function(){
   var W=300,H=118,D=205,T=9, OX0=-W/2+T,OX1=W/2-T,OY0=-H/2+T,OY1=H/2-T, FX0=-W/2+3,FX1=W/2-3,FY0=-H/2+3,FY1=H/2-3,FT=7;
   var DX0=OX0+3,DX1=OX1-3,DD=D-26,WH=64,Y0=OY0+3,CH=88,CW=(DX1-DX0)-26,TABW=66,TABH=15,OPEN=175;
   var cards=[], label={top:'UNPUBLISHED',range:''}, notes={newest:'',count:'',open:''};
-  var HINT='Each card is a filed study. Hover to read, click to open.', defs,gS,gD,gN, o=0, lift=[], hover=-1, t0=0, animating=false, notesShown=false;
+  var HINT='Each card is a filed study.', defs,gS,gD,gN, o=0, lift=[], hover=-1, t0=0, animating=false, notesShown=false;
   function hatch(id,gap,angle,w,color){var pt=mk('pattern',{id:id,width:gap,height:gap,patternUnits:'userSpaceOnUse',patternTransform:'rotate('+angle+')'},defs); mk('line',{x1:0,y1:0,x2:0,y2:gap,style:'stroke:'+color+';stroke-width:'+w},pt)}
   function drawStatic(){
     gS.textContent=''; var fy=-H/2;
@@ -1092,7 +1104,7 @@ var MH=(function(){
     var c=[P(-W/2,H/2,-D/2),P(W/2,H/2,-D/2),P(W/2,-H/2,D/2),P(-W/2,-H/2,D/2+OPEN),P(W/2+30,-H/2,-D/2)], xs=c.map(function(q){return q[0]}), ys=c.map(function(q){return q[1]});
     function view(){ var narrow=(svg.parentNode.clientWidth||600)<520, ml=narrow?14:112, mr=narrow?14:168, mt=narrow?12:40;
       var x0=Math.min.apply(null,xs)-ml, x1=Math.max.apply(null,xs)+mr, y0=Math.min.apply(null,ys)-mt, y1=Math.max.apply(null,ys)+(narrow?12:34);
-      svg.setAttribute('viewBox',x0+' '+y0+' '+(x1-x0)+' '+(y1-y0)); HINT=narrow?'Tap a card to open it.':'Each card is a filed study. Hover to read, click to open.'; if(hover<0)setHover(-1) }
+      svg.setAttribute('viewBox',x0+' '+y0+' '+(x1-x0)+' '+(y1-y0)); if(hover<0)setHover(-1) }
     view(); addEventListener('resize',view);
     drawStatic(); o=reduce?OPEN:0; drawDrawer();
   }
@@ -1142,6 +1154,8 @@ window.addEventListener('hashchange',function(){
   lastPaper=m?m[1]:null; route();
 });
 MH.init();
+(function(){var n=document.getElementById('nav'); if(n){n.addEventListener('scroll',navFade,{passive:true}); addEventListener('resize',navFade); navFade();
+  document.getElementById('navmore').addEventListener('click',function(){n.scrollLeft+=n.clientWidth*.7; navFade()})}})();
 fetch('submit',{method:'OPTIONS'}).then(function(r){SERVER=r.ok||r.status===204}).catch(function(){SERVER=false})
   .then(loadIndex).catch(function(e){$('issue').textContent='Could not load index.json ('+e.message+')'})
   .then(function(){var m=/^#\/paper\/([^#]+)/.exec(location.hash); lastPaper=m?m[1]:null; route()});
