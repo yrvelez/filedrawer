@@ -631,7 +631,8 @@ def render_report(ctx: dict, sections: dict) -> str:
     if meta.get("authors"):
         byline.append(", ".join(meta["authors"]))
     byline.append(prov["created"][:10])
-    byline.append(f"N = {meta['n_analysis']:,} analysed of {meta['n_raw']:,} collected")
+    byline.append(f"N = {meta['n_analysis']:,} respondents analysed of {meta['n_raw']:,} collected ({meta['rows_analysis']:,} rows)"
+                  if meta.get("unit_column") else f"N = {meta['n_analysis']:,} analysed of {meta['n_raw']:,} collected")
     wd = words(pap)
     byline.append(wd["phrase"])
     if wd["sample_kind"] != "human":
@@ -693,7 +694,10 @@ def render_report(ctx: dict, sections: dict) -> str:
                   f" The respondents are LLM-generated (model `{((d.get('synthetic') or {}).get('model')) or 'unstated'}`); see the limitations.")
     L.append(f"A {wd['phrase']} with {arms_txt}; "
              f"{str(pop.get('sample', 'unknown')).replace('_', ' ')}" + (f", {pop['country']}" if pop.get("country") else "") + "." + causal_txt + sample_txt + " "
-             f"{meta['n_raw']:,} responses were collected and {meta['n_analysis']:,} are analysed"
+             + (f"{meta['n_raw']:,} respondents were collected and {meta['n_analysis']:,} are analysed, "
+                f"{meta['rows_analysis']:,} rows in all (several per respondent, keyed by `{meta['unit_column']}`)"
+                if meta.get("unit_column") else
+                f"{meta['n_raw']:,} responses were collected and {meta['n_analysis']:,} are analysed")
              + (f" after the exclusions `{'; '.join(excl)}`" if excl else "") + ". "
              + (f"The plan is pre-registered at {reg_url}. " if reg_url else "The plan was supplied by the authors and is not pre-registered. ")
              + f"Identifier and free-text columns removed before any model saw the data: {', '.join(prov['pii']['dropped']) or 'none'}"
@@ -959,7 +963,10 @@ def build_study_json(ctx: dict) -> dict:
         "created": prov["created"][:10], "synthetic": bool(meta.get("synthetic")),
         "design": {"type": d.get("type", "survey_experiment"), "arms": arms_list,
                    "arm_labels": d.get("arms", {}).get("labels") or {},
-                   "n_raw": meta["n_raw"], "n_analysis": meta["n_analysis"], "outcome_type": d.get("outcome_type", ""),
+                   "n_raw": meta["n_raw"], "n_analysis": meta["n_analysis"],
+                   **({"unit_column": meta["unit_column"], "rows_raw": meta["rows_raw"], "rows_analysis": meta["rows_analysis"]}
+                      if meta.get("unit_column") else {}),
+                   "outcome_type": d.get("outcome_type", ""),
                    "causal": is_causal(pap), "sample_kind": sample_kind(pap), "synthetic": d.get("synthetic") or None,
                    "features": d.get("features") or None,
                    "diagram": "figures/design.svg" if (study / "figures" / "design.svg").exists() else None,

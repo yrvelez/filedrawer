@@ -205,6 +205,17 @@ def run_extensions(ctx: dict) -> list[dict]:
     return rows
 
 
+def respondent_counts(pap: dict, raw, clean) -> dict:
+    """When each respondent contributes several rows (conjoint profiles, panel waves), N is the number of respondents,
+    counted on the column the plan clusters by; the row counts are kept alongside."""
+    hyps = (pap.get("implemented") or pap.get("registered") or {}).get("hypotheses") or []
+    for col in dict.fromkeys(c for c in ((h.get("estimator") or {}).get("cluster") for h in hyps) if c):
+        if col in raw.columns and col in clean.columns and raw[col].nunique() < len(raw):
+            return {"n_raw": int(raw[col].nunique()), "n_analysis": int(clean[col].nunique()), "unit_column": col,
+                    "rows_raw": len(raw), "rows_analysis": len(clean)}
+    return {"n_raw": len(raw), "n_analysis": len(clean)}
+
+
 def run_pipeline(inputs: dict, cfg: dict, flags: dict) -> Path:
     """inputs: csv, qsf (optional), pap, slug, title, authors, out_dir, repo_url, branch."""
     import pandas as pd
@@ -384,7 +395,7 @@ def run_pipeline(inputs: dict, cfg: dict, flags: dict) -> Path:
 
     # ---- provenance + write -------------------------------------------------------
     stage("write")
-    ctx["meta"].update(n_raw=n_raw, n_analysis=n_analysis)
+    ctx["meta"].update(respondent_counts(ctx["pap"], raw_tidy, clean))
     # ---- the design diagram (template; a model draws it only when the plan marks the design non-standard) ----
     try:
         from . import diagram as DIAG
