@@ -116,6 +116,8 @@ def main(argv: list[str] | None = None) -> int:
     d = sub.add_parser("demo", help="generate the synthetic demo and run the pipeline on it")
     _common(d)
 
+    am = sub.add_parser("agents-md", help="(re)write a package's AGENTS.md: how to reanalyze it first, the deposit routine after; no model calls")
+    am.add_argument("study")
     rp = sub.add_parser("reproduce", help="re-run scripts (02-04, or study.json's reproduce.scripts) and verify outputs are byte-identical")
     rp.add_argument("study")
 
@@ -398,6 +400,10 @@ def main(argv: list[str] | None = None) -> int:
             prov_path.write_text(json.dumps(prov, indent=1, ensure_ascii=False), encoding="utf-8")
         n = sum(1 for i in rv["issues"] if i.get("source") == a.source)
         print(f"{n} {a.source} issue(s) added to review.json; answer analytical ones with `filedrawer address {a.study}`.")
+        return 0
+    if a.cmd == "agents-md":
+        from . import agents_md
+        print(f"wrote {agents_md.write(Path(a.study).resolve())}")
         return 0
     if a.cmd == "reproduce":
         from .release import reproduce

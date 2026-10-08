@@ -144,6 +144,8 @@ def finalize_package(ctx: dict, sections: dict, *, package_dir: bool, preexistin
     sj = PKG.build_study_json(ctx)
     (study / "study.json").write_text(json.dumps(sj, indent=1, ensure_ascii=False), encoding="utf-8")
     PKG.write_run_md(study, ctx["meta"])
+    from . import agents_md
+    agents_md.write(study)
     (study / "CITATION.cff").write_text(PKG.citation(ctx["meta"], prov, PKG._doi(ctx))["cff"], encoding="utf-8")
     (study / "report.md").write_text(PKG.render_report(ctx, sections), encoding="utf-8")   # re-render with final file list
     snap = {"tool_version": __version__, "meta": ctx["meta"], "pap_source": ctx.get("pap_source"), "data_columns": ctx.get("data_columns", []),
