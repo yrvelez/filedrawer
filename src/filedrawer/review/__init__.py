@@ -59,14 +59,25 @@ def claims_tally(rv: dict) -> dict:
     supported = sum(1 for c in claims if c.get("verdict") == "supported")
     open_issues = sum(1 for i in rv.get("issues") or []
                       if i.get("kind") == "analytical" and i.get("disposition", "address") in ("address", None) and not i.get("answered_by"))
-    return {"supported": supported, "total": len(claims), "open_analytical": open_issues, "on_revised_text": bool(so)}
+    # claims the first check flagged and the corrected text now supports, matched through the sign-off's `previous` id
+    first = (rv.get("synthesis") or {}).get("claims") or []
+    corrected = 0
+    for c in so.get("claims") or []:
+        ref = str(c.get("previous") or "")
+        n = int(ref[1:]) if ref[:1] == "C" and ref[1:].isdigit() else 0
+        if c.get("verdict") == "supported" and 0 < n <= len(first) and first[n - 1].get("verdict") in ("overstated", "unsupported"):
+            corrected += 1
+    return {"supported": supported, "total": len(claims), "open_analytical": open_issues, "on_revised_text": bool(so), "corrected": corrected}
 
 
 def tally_sentence(t: dict) -> str:
     if not t.get("total"):
         return "no claim checks recorded"
     s = f"{t['supported']} of {t['total']} claim{'s' if t['total'] != 1 else ''} supported by the results"
-    s += " after the agent's corrections" if t.get("on_revised_text") else " before the agent's corrections"
+    if t.get("on_revised_text"):
+        s += " after the agent's corrections" + (f" ({t['corrected']} flagged claim{'s' if t['corrected'] != 1 else ''} corrected)" if t.get("corrected") else "")
+    else:
+        s += " before the agent's corrections"
     if t.get("open_analytical"):
         s += f"; {t['open_analytical']} analytical issue{'s' if t['open_analytical'] != 1 else ''} without a robustness check"
     return s

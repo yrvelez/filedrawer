@@ -16,7 +16,7 @@ from ..agents.base import make_agent, extract_json, results_digest
 
 SYSTEM = """You are the checking agent in an automated review of a short research report on a survey experiment. You receive the report, its result tables, the registration status of its analysis plan, and the issues raised by one or more automated reviewers. You do four things and return ONLY JSON.
 
-1. Pressure-test claims. Find every quantitative or causal claim in the Abstract, Key findings and Results prose (at most 12, the most consequential first). For each, check it against the tables: the number, its sign, its interval, the outcome it is about, and whether the wording (e.g. "improved", "the only arm", "no effect") is justified. Verdicts: "supported", "overstated" (true number, too-strong wording or wrong scope), "unsupported" (number or direction not in the tables).
+1. Pressure-test claims. Find every quantitative or causal claim in the Abstract, Key findings and Results prose (at most 12, the most consequential first). For each, check it against the tables: the number, its sign, its interval, the outcome it is about, and whether the wording (e.g. "improved", "the only arm", "no effect") is justified. Verdicts: "supported", "overstated" (true number, too-strong wording or wrong scope), "unsupported" (number or direction not in the tables). Long tables are cut after their first rows, but each opens with a "Summary over all rows" line (row count, how many have p < 0.05, the smallest p, and the largest change between samples): use it for claims about all rows ("none of the 32", "unchanged"), and never call a claim unsupported or overstated only because its rows are not shown.
 2. Give every reviewer issue a disposition:
    - "address": a different or additional estimate on the same data would answer it (covariates, estimator, weights, sample, a robustness re-fit);
    - "editorial": only prose, labels, tables or missing detail need fixing;
@@ -35,7 +35,7 @@ Return:
 
 SYSTEM_SIGNOFF = """You are the checking agent re-checking a CORRECTED research report on a survey experiment. You receive the revised report, its result tables, and the claims you judged in the previous round (ids C1, C2, ...). Do one thing and return ONLY JSON.
 
-Pressure-test the claims of the revised text. Re-check every previous claim: find its current wording (it may have been reworded or removed) and judge it again against the tables. Then check any new quantitative or causal claim in the Abstract, Key findings and Results prose (at most 12 claims in all, the most consequential first). Verdicts: "supported", "overstated" (true number, too-strong wording or wrong scope), "unsupported" (number or direction not in the tables). A claim that was removed from the text is "supported" with the evidence "removed in revision".
+Pressure-test the claims of the revised text. Re-check every previous claim: find its current wording (it may have been reworded or removed) and judge it again against the tables. Then check any new quantitative or causal claim in the Abstract, Key findings and Results prose (at most 12 claims in all, the most consequential first). Verdicts: "supported", "overstated" (true number, too-strong wording or wrong scope), "unsupported" (number or direction not in the tables). Long tables are cut after their first rows, but each opens with a "Summary over all rows" line (row count, how many have p < 0.05, the smallest p, and the largest change between samples): use it for claims about all rows ("none of the 32", "unchanged"), and never call a claim unsupported or overstated only because its rows are not shown. A claim that was removed from the text is "supported" with the evidence "removed in revision".
 
 Return:
 {"claims": [{"claim": "short quote of the CURRENT wording", "location": "Abstract|Key findings|H1|...", "verdict": "supported|overstated|unsupported", "evidence": "table and row, with the number", "fix": "rewording if not supported, else empty", "previous": "C1 or empty for a new claim", "resolved": true|false}],
@@ -89,7 +89,7 @@ def run(ctx: dict, review: dict, claims_only: bool = False, previous_claims: lis
     if claims_only:
         prev = [{"id": f"C{n}", **{k: c.get(k) for k in ("claim", "location", "verdict", "evidence", "fix")}}
                 for n, c in enumerate(previous_claims or [], 1)]
-        task = (f"{design_line}\n\n## Revised report\n{report[:50000]}\n\n## Result tables\n{results_digest(study, max_rows=14)[:14000]}\n\n"
+        task = (f"{design_line}\n\n## Revised report\n{report[:50000]}\n\n## Result tables\n{results_digest(study, max_rows=40, summaries=True)[:40000]}\n\n"
                 f"## Claims judged in the previous round\n{json.dumps(prev, ensure_ascii=False)[:8000]}")
         agent = make_agent("review_signoff", ctx, SYSTEM_SIGNOFF.replace("report on a survey experiment", f"report on a {w['phrase']}"), None)
         agent.max_turns = 1
@@ -103,7 +103,7 @@ def run(ctx: dict, review: dict, claims_only: bool = False, previous_claims: lis
     issues = [{k: i.get(k) for k in ("id", "source", "severity", "kind", "location", "issue", "fix")} for i in review.get("issues", [])]
     task = (f"## Registration\n{json.dumps(reg, ensure_ascii=False)}\nMultiple-testing correction in the plan: "
             f"{ctx['pap'].get('implemented', {}).get('multiple_testing', 'not stated')}\n\n{design_line}\n\n## Report\n{report[:50000]}\n\n"
-            f"## Result tables\n{results_digest(study, max_rows=14)[:14000]}\n\n## Reviewer issues\n{json.dumps(issues, ensure_ascii=False)[:14000]}")
+            f"## Result tables\n{results_digest(study, max_rows=40, summaries=True)[:40000]}\n\n## Reviewer issues\n{json.dumps(issues, ensure_ascii=False)[:14000]}")
     agent = make_agent("review_orchestrator", ctx, _system(scope).replace("report on a survey experiment", f"report on a {w['phrase']}"), None)
     agent.max_turns = 1
     res = agent.run(task)

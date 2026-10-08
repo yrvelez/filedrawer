@@ -418,7 +418,9 @@ def _review_section(ctx: dict, summary: dict) -> list[str]:
         rows.append((0, f"- **Plan mismatch** · {pr['id']}: {pr['problem']}"))
     rows.sort(key=lambda r: r[0])
     t = claims_tally(rv)
-    parts = [f"{t['supported']} of {t['total']} checked claims supported after the agent's corrections" if t.get("total") and t.get("on_revised_text")
+    parts = [f"{t['supported']} of {t['total']} checked claims supported after the agent's corrections"
+             + (f" ({t['corrected']} flagged claim{'s' if t['corrected'] != 1 else ''} corrected)" if t.get("corrected") else "")
+             if t.get("total") and t.get("on_revised_text")
              else (f"{t['supported']} of {t['total']} checked claims supported before corrections" if t.get("total") else "no claims checked")]
     if pm.get("rows"):
         from .review.plan_match import sentence as plan_sentence
