@@ -80,7 +80,7 @@ def report_payload(ctx: dict) -> dict:
     abstract = str(sec.get("abstract") or sec.get("summary") or "").strip() or \
         next((b for h, b in sections if h.lower().startswith(("abstract", "summary"))), "")
     text = "\n\n".join(f"## {h}\n{b}" for h, b in sections)[:60000]
-    text += "\n\n## Result tables (source of every number above)\n" + results_digest(study, max_rows=12)[:14000]
+    text += "\n\n## Result tables (source of every number above)\n" + results_digest(study, max_rows=40, summaries=True)[:40000]
     return {"paper_title": (ctx.get("meta") or {}).get("title", ""), "abstract": abstract[:3000], "section_text": text}
 
 

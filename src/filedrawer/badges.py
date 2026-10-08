@@ -65,9 +65,10 @@ def badges_for(sj: dict) -> list[dict]:
     passed = prov.get("reviewer_pass") or sj.get("reviewer_pass")
     kind = review_kind(prov.get("review_mode") or sj.get("review_mode"))
     if tally.get("total"):
-        value = f"{kind} · {tally.get('supported', 0)}/{tally['total']} claims supported"
+        fixed = f" · {tally['corrected']} corrected" if tally.get("corrected") else ""
+        value = f"{kind}{fixed} · {tally.get('supported', 0)}/{tally['total']} claims supported"
         if rounds and rounds > 1:
-            value = f"{kind} · round {rounds} · {tally.get('supported', 0)}/{tally['total']} claims supported"
+            value = f"{kind} · round {rounds}{fixed} · {tally.get('supported', 0)}/{tally['total']} claims supported"
         color = "green" if tally.get("supported", 0) == tally["total"] else "amber"
         out.append({"name": "review", "label": "review", "value": value, "color": color, "href": None})
     elif passed:

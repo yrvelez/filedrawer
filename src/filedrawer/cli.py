@@ -175,6 +175,7 @@ def main(argv: list[str] | None = None) -> int:
     ro = sub.add_parser("review-orchestrate", help="re-run the checking agent on an existing review.json (claim checks, dispositions, "
                         "editorial guidance, unresolved questions) and re-render the report; one strong-model call")
     ro.add_argument("study")
+    ro.add_argument("--signoff", action="store_true", help="only re-check the corrected report's claims (the sign-off), not the full checking pass")
     ro.add_argument("--provider", choices=["openrouter", "local", "mock"]); ro.add_argument("--config"); ro.add_argument("--fixtures")
     ri = sub.add_parser("review-import", help="add an external referee report (refine, or a coarse run done separately) to review.json")
     ri.add_argument("study"); ri.add_argument("source", choices=["refine", "coarse", "openreview"])
@@ -364,6 +365,15 @@ def main(argv: list[str] | None = None) -> int:
         study = Path(a.study).resolve()
         ctx = load_context(study, cfg, a.fixtures)
         rv = json.loads((study / "review.json").read_text(encoding="utf-8"))
+        if a.signoff:                               # only re-check the corrected text against the tables
+            from .review import signoff
+            so = signoff(ctx, rv)
+            if not so:
+                print("the sign-off returned nothing usable; review.json unchanged", file=sys.stderr)
+                return 1
+            finalize_package(ctx, ctx["sections"], package_dir=bool(ctx["meta"].get("package_at_root")), accumulate=True)
+            print(json.dumps({"claims": [c.get("verdict") for c in so["claims"]], "decision": so.get("decision")}, indent=1))
+            return 0
         synthesize(ctx, rv)
         if not rv.get("synthesis"):
             print("the checking agent returned nothing usable; review.json left without a synthesis", file=sys.stderr)
