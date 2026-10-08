@@ -437,6 +437,10 @@ def build_record(repo: Repo, rid: str, *, llm=None, use_llm: bool | None = None,
         rec["provenance"] = {"mode": p.get("mode", "unknown"), "reviewer_pass": bool(p.get("reviewer_pass")),
                              "tool_version": p.get("tool_version"), "models": p.get("models", {})}
         rec["links"]["study_json"] = repo.blob_url("study.json")
+        # the data badge follows what the repository actually holds, not what the package folder had when it was built
+        for b in rec.get("badges") or []:
+            if isinstance(b, dict) and b.get("name") == "data" and b.get("value") == "open data" and not inv.get("n_data"):
+                b.update(value="report only", color="slate")
     # 2) package files (also fills gaps for study.json-less packages)
     report = repo.read("report.md")
     pap = repo.read_json("pap.json")
