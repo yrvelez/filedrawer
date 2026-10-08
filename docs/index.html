@@ -61,7 +61,7 @@ a{color:var(--accent-2);text-decoration:none}a:hover{text-decoration:underline}
 @media(max-width:640px){#mhfig .note,#mhfig .notes{display:none}.mast figcaption #mhcapR{font-size:12.5px}}
 @media(max-width:859px),(hover:none){#mhfig,#mhfig *{pointer-events:none}}
 @media(max-width:859px){.mast > div:first-child{text-align:center}.mast h1 .wm-line{justify-content:center}.mast .tag{margin-left:auto;margin-right:auto}
-  .mast{align-items:center}.mast > *{grid-area:1/1}.mast > div:first-child{position:relative;z-index:1}.mast figure{opacity:.42}.mast figure:has(.mhgif){opacity:1}.mast .mhgif{display:block;width:100%;height:auto;opacity:.55;mix-blend-mode:multiply}.mast figcaption{display:none}}
+  .mast figure{display:none}}
 @media (prefers-reduced-motion: reduce),(max-width:859px),(hover:none){#mhfig .draw{animation:none;stroke-dashoffset:0}#mhfig .fadein{animation:none;opacity:1}}
 @media (prefers-reduced-motion: reduce){.navwrap.more .navmore{animation:none}}
 nav.top{display:flex;gap:4px;align-items:flex-end;padding:14px 0 0 2px;border-bottom:1px solid var(--ink-3);font-family:var(--sans);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
@@ -1098,8 +1098,7 @@ var MH=(function(){
   }
   function init(){
     svg=document.getElementById('mhfig'); if(!svg)return;
-    if(matchMedia('(max-width:859px),(hover:none)').matches){ /* phones: a recorded GIF of the drawer opening (plays once), not the live drawing */
-      var im=new Image(); im.src='drawer-open.gif?v=2'; im.alt=''; im.className='mhgif'; im.decoding='async'; svg.parentNode.replaceChild(im,svg); svg=null; return}
+    if(matchMedia('(max-width:859px)').matches){svg=null; return}   /* phones show the wordmark alone; the drawing is never built */
     defs=mk('defs',{}); hatch('mhHatchA',3.2,45,.7,'var(--hatch)'); hatch('mhHatchB',2.1,45,.75,'var(--ink-3)'); hatch('mhHatchC',3.6,-35,.6,'var(--hatch)');
     var m=mk('marker',{id:'mhArr',viewBox:'0 0 8 8',refX:4,refY:4,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs); mk('path',{d:'M0,1 L7,4 L0,7',style:'stroke:var(--ink-3);fill:none;stroke-width:.9'},m);
     gS=mk('g',{}); gD=mk('g',{}); gN=mk('g',{});
