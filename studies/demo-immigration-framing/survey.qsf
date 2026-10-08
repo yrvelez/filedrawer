@@ -1,0 +1,651 @@
+{
+ "SurveyEntry": {
+  "SurveyID": "SV_demo",
+  "SurveyName": "Immigration Framing Experiment (SYNTHETIC DEMO)",
+  "SurveyOwnerId": "UR_demo",
+  "SurveyLanguage": "EN",
+  "SurveyStatus": "Active"
+ },
+ "SurveyElements": [
+  {
+   "SurveyID": "SV_demo",
+   "Element": "BL",
+   "PrimaryAttribute": "Survey Blocks",
+   "Payload": [
+    {
+     "Type": "Default",
+     "Description": "Intro",
+     "ID": "BL_intro",
+     "BlockElements": [
+      {
+       "Type": "Question",
+       "QuestionID": "QID1"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID2"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID3"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID4"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID5"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID6"
+      }
+     ]
+    },
+    {
+     "Type": "Standard",
+     "Description": "Treatment",
+     "ID": "BL_treat",
+     "BlockElements": [
+      {
+       "Type": "Question",
+       "QuestionID": "QID7"
+      }
+     ]
+    },
+    {
+     "Type": "Standard",
+     "Description": "Control",
+     "ID": "BL_control",
+     "BlockElements": [
+      {
+       "Type": "Question",
+       "QuestionID": "QID8"
+      }
+     ]
+    },
+    {
+     "Type": "Standard",
+     "Description": "Outcomes",
+     "ID": "BL_out",
+     "BlockElements": [
+      {
+       "Type": "Question",
+       "QuestionID": "QID9"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID12"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID10"
+      },
+      {
+       "Type": "Question",
+       "QuestionID": "QID11"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "FL",
+   "PrimaryAttribute": "Survey Flow",
+   "Payload": {
+    "Type": "Root",
+    "FlowID": "FL_1",
+    "Flow": [
+     {
+      "Type": "Block",
+      "ID": "BL_intro",
+      "FlowID": "FL_2"
+     },
+     {
+      "Type": "BlockRandomizer",
+      "FlowID": "FL_3",
+      "SubSet": 1,
+      "EvenPresentation": true,
+      "Flow": [
+       {
+        "Type": "Group",
+        "FlowID": "FL_4",
+        "Description": "Treatment group",
+        "Flow": [
+         {
+          "Type": "EmbeddedData",
+          "FlowID": "FL_5",
+          "EmbeddedData": [
+           {
+            "Description": "condition",
+            "Type": "Custom",
+            "Field": "condition",
+            "VariableType": "String",
+            "Value": "treatment"
+           }
+          ]
+         },
+         {
+          "Type": "Block",
+          "ID": "BL_treat",
+          "FlowID": "FL_6"
+         }
+        ]
+       },
+       {
+        "Type": "Group",
+        "FlowID": "FL_7",
+        "Description": "Control group",
+        "Flow": [
+         {
+          "Type": "EmbeddedData",
+          "FlowID": "FL_8",
+          "EmbeddedData": [
+           {
+            "Description": "condition",
+            "Type": "Custom",
+            "Field": "condition",
+            "VariableType": "String",
+            "Value": "control"
+           }
+          ]
+         },
+         {
+          "Type": "Block",
+          "ID": "BL_control",
+          "FlowID": "FL_9"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "Type": "Block",
+      "ID": "BL_out",
+      "FlowID": "FL_10"
+     }
+    ],
+    "Properties": {
+     "Count": 10
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID1",
+   "SecondaryAttribute": "Do you consent to participate in this study?",
+   "Payload": {
+    "QuestionID": "QID1",
+    "DataExportTag": "consent",
+    "QuestionText": "<div>Do you consent to participate in this study?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Yes, I consent"
+     },
+     "2": {
+      "Display": "No, I do not consent"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID2",
+   "SecondaryAttribute": "Generally speaking, do you usually think of yourself as a De",
+   "Payload": {
+    "QuestionID": "QID2",
+    "DataExportTag": "pid3",
+    "QuestionText": "<div>Generally speaking, do you usually think of yourself as a Democrat, a Republican, an Independent, or something else?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Democrat"
+     },
+     "2": {
+      "Display": "Republican"
+     },
+     "3": {
+      "Display": "Independent"
+     },
+     "4": {
+      "Display": "Something else"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID3",
+   "SecondaryAttribute": "In general, how would you describe your political views?",
+   "Payload": {
+    "QuestionID": "QID3",
+    "DataExportTag": "ideo5",
+    "QuestionText": "<div>In general, how would you describe your political views?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Very liberal"
+     },
+     "2": {
+      "Display": "Liberal"
+     },
+     "3": {
+      "Display": "Moderate"
+     },
+     "4": {
+      "Display": "Conservative"
+     },
+     "5": {
+      "Display": "Very conservative"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID4",
+   "SecondaryAttribute": "What is your age?",
+   "Payload": {
+    "QuestionID": "QID4",
+    "DataExportTag": "agecat",
+    "QuestionText": "<div>What is your age?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "18-29"
+     },
+     "2": {
+      "Display": "30-44"
+     },
+     "3": {
+      "Display": "45-64"
+     },
+     "4": {
+      "Display": "65 or older"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID5",
+   "SecondaryAttribute": "How do you describe yourself?",
+   "Payload": {
+    "QuestionID": "QID5",
+    "DataExportTag": "gender",
+    "QuestionText": "<div>How do you describe yourself?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Man"
+     },
+     "2": {
+      "Display": "Woman"
+     },
+     "3": {
+      "Display": "Non-binary or another description"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID6",
+   "SecondaryAttribute": "What is the highest level of education you have completed?",
+   "Payload": {
+    "QuestionID": "QID6",
+    "DataExportTag": "educ",
+    "QuestionText": "<div>What is the highest level of education you have completed?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "High school or less"
+     },
+     "2": {
+      "Display": "Some college"
+     },
+     "3": {
+      "Display": "Bachelor's degree"
+     },
+     "4": {
+      "Display": "Graduate degree"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID7",
+   "SecondaryAttribute": "treat_text",
+   "Payload": {
+    "QuestionID": "QID7",
+    "DataExportTag": "treat_text",
+    "QuestionText": "<p>Please read the following paragraph carefully. Economists at major universities report that immigrants start new businesses at twice the rate of native-born Americans, filling jobs in agriculture, construction, and health care that would otherwise go unfilled, and contributing more in taxes over their lifetimes than they receive in benefits.</p>",
+    "QuestionType": "DB",
+    "Selector": "TB",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Language": []
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID8",
+   "SecondaryAttribute": "control_text",
+   "Payload": {
+    "QuestionID": "QID8",
+    "DataExportTag": "control_text",
+    "QuestionText": "<p>Please read the following paragraph carefully. The U.S. Census Bureau reports that the population of the United States is about 335 million people, spread across 50 states and the District of Columbia. The most populous state is California and the least populous is Wyoming.</p>",
+    "QuestionType": "DB",
+    "Selector": "TB",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Language": []
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID9",
+   "SecondaryAttribute": "Immigration attitudes",
+   "Payload": {
+    "QuestionID": "QID9",
+    "DataExportTag": "imm_att",
+    "QuestionText": "<p>How much do you agree or disagree with the following statements?</p>",
+    "QuestionType": "Matrix",
+    "Selector": "Likert",
+    "SubSelector": "SingleAnswer",
+    "Choices": {
+     "1": {
+      "Display": "Immigrants strengthen the U.S. economy."
+     },
+     "2": {
+      "Display": "Immigration levels should be reduced."
+     },
+     "3": {
+      "Display": "Undocumented immigrants should have a path to citizenship."
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3
+    ],
+    "Answers": {
+     "1": {
+      "Display": "Strongly disagree"
+     },
+     "2": {
+      "Display": "Disagree"
+     },
+     "3": {
+      "Display": "Somewhat disagree"
+     },
+     "4": {
+      "Display": "Neither agree nor disagree"
+     },
+     "5": {
+      "Display": "Somewhat agree"
+     },
+     "6": {
+      "Display": "Agree"
+     },
+     "7": {
+      "Display": "Strongly agree"
+     }
+    },
+    "AnswerOrder": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID12",
+   "SecondaryAttribute": "Overall, do you favor or oppose increasing the number of leg",
+   "Payload": {
+    "QuestionID": "QID12",
+    "DataExportTag": "policy_support",
+    "QuestionText": "<div>Overall, do you favor or oppose increasing the number of legal immigrants admitted to the United States each year?</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Strongly oppose"
+     },
+     "2": {
+      "Display": "Oppose"
+     },
+     "3": {
+      "Display": "Somewhat oppose"
+     },
+     "4": {
+      "Display": "Neither favor nor oppose"
+     },
+     "5": {
+      "Display": "Somewhat favor"
+     },
+     "6": {
+      "Display": "Favor"
+     },
+     "7": {
+      "Display": "Strongly favor"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID10",
+   "SecondaryAttribute": "To check that you are reading carefully, please select 'Some",
+   "Payload": {
+    "QuestionID": "QID10",
+    "DataExportTag": "attn",
+    "QuestionText": "<div>To check that you are reading carefully, please select 'Somewhat agree' below.</div>",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "SubSelector": "TX",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    },
+    "Choices": {
+     "1": {
+      "Display": "Strongly disagree"
+     },
+     "2": {
+      "Display": "Disagree"
+     },
+     "3": {
+      "Display": "Somewhat disagree"
+     },
+     "4": {
+      "Display": "Neither agree nor disagree"
+     },
+     "5": {
+      "Display": "Somewhat agree"
+     },
+     "6": {
+      "Display": "Agree"
+     },
+     "7": {
+      "Display": "Strongly agree"
+     }
+    },
+    "ChoiceOrder": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "RecodeValues": {},
+    "Validation": {
+     "Settings": {
+      "ForceResponse": "OFF"
+     }
+    }
+   }
+  },
+  {
+   "SurveyID": "SV_demo",
+   "Element": "SQ",
+   "PrimaryAttribute": "QID11",
+   "SecondaryAttribute": "open_comment",
+   "Payload": {
+    "QuestionID": "QID11",
+    "DataExportTag": "open_comment",
+    "QuestionText": "Is there anything else you would like to tell us about your views on immigration? (Optional)",
+    "QuestionType": "TE",
+    "Selector": "ML",
+    "Configuration": {
+     "QuestionDescriptionOption": "UseText"
+    }
+   }
+  }
+ ]
+}

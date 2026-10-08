@@ -1,0 +1,3 @@
+{
+ "content": "Here is my review.\n```json\n[{\"section_ref\": \"Design\", \"issue\": \"Attention check wording not reported\", \"detail\": \"The Methods section mentions an attention check but does not quote it.\", \"severity\": \"suggestion\", \"suggestion\": \"Quote the item.\", \"confidence\": 0.7, \"kind\": \"presentational\", \"target\": null}]\n```"
+}

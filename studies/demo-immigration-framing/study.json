@@ -1,0 +1,256 @@
+{
+ "schema_version": 1,
+ "slug": "demo-immigration-framing",
+ "title": "Economic-contribution framing and immigration attitudes (synthetic demo)",
+ "authors": [
+  "filedrawer demo"
+ ],
+ "summary": "In a two-arm online survey experiment with simulated data (N = 387 in the analysis sample), a paragraph describing immigrants' economic contributions raised the pro-immigration attitude index relative to a neutral paragraph (registered H1; see registered_summary for the estimate). The secondary policy-attitude test (H2) is reported as a deviation because the registered age covariate was not collected as a continuous variable. The registered partisan heterogeneity test (S1) shows a larger effect among Democrats than Republicans. Exploratory analyses suggest the effect is not driven by a single item and is robust to excluding attention-check failures. A silicon sample of LLM personas moves in the same direction with a smaller, imprecise estimate; it is not evidence about human respondents.",
+ "created": "2026-10-01",
+ "synthetic": true,
+ "design": {
+  "type": "survey_experiment",
+  "arms": [
+   "treatment",
+   "control"
+  ],
+  "n_raw": 400,
+  "n_analysis": 387,
+  "outcome_type": "likert7",
+  "cluster": null
+ },
+ "population": {
+  "country": "US",
+  "sample": "online_panel"
+ },
+ "constructs": [
+  "immigration_attitudes",
+  "framing_effects",
+  "partisanship"
+ ],
+ "keywords": [
+  "immigration",
+  "framing",
+  "economic contribution",
+  "survey experiment",
+  "partisanship"
+ ],
+ "hypotheses": [
+  {
+   "id": "H1",
+   "text": "Treatment increases pro-immigration attitudes on the primary index.",
+   "outcome": "imm_index",
+   "tag": "registered",
+   "estimate": 0.5829776889417102,
+   "se": 0.13108553867513476,
+   "p": 8.695335358305506e-06,
+   "n": 387,
+   "supported": true
+  },
+  {
+   "id": "H2",
+   "text": "Treatment increases favorable policy attitudes, adjusting for party identification and age.",
+   "outcome": "policy_support",
+   "tag": "deviation",
+   "estimate": 0.9285203421401216,
+   "se": 0.13507306314376613,
+   "p": 6.233516469478605e-12,
+   "n": 387,
+   "supported": true
+  },
+  {
+   "id": "E1",
+   "text": "Item-level treatment effects",
+   "tag": "exploratory",
+   "estimate": null,
+   "se": null,
+   "p": null,
+   "n": null,
+   "supported": null
+  },
+  {
+   "id": "E2",
+   "text": "Robustness to attention-check failures",
+   "tag": "exploratory",
+   "estimate": null,
+   "se": null,
+   "p": null,
+   "n": null,
+   "supported": null
+  },
+  {
+   "id": "E3",
+   "text": "Heterogeneity by ideology",
+   "tag": "exploratory",
+   "estimate": null,
+   "se": null,
+   "p": null,
+   "n": null,
+   "supported": null
+  }
+ ],
+ "release_status": "draft",
+ "license": {
+  "code": "MIT",
+  "content": "CC-BY-4.0"
+ },
+ "provenance": {
+  "mode": "fully_agentic",
+  "human_steps": [],
+  "reviewer_pass": true,
+  "models": {
+   "strong": "z-ai/glm-5.3",
+   "fast": "z-ai/glm-4.5-air"
+  },
+  "provider": "mock",
+  "zero_retention_requested": false,
+  "cost_usd": 0.0,
+  "tokens": {
+   "in": 38828,
+   "out": 1741
+  },
+  "tool_version": "0.1.0",
+  "created": "2026-10-01T03:52:30Z",
+  "pii": {
+   "dropped": [
+    "StartDate",
+    "EndDate",
+    "IPAddress",
+    "RecordedDate",
+    "ResponseId",
+    "RecipientLastName",
+    "RecipientFirstName",
+    "RecipientEmail",
+    "ExternalReference",
+    "LocationLatitude",
+    "LocationLongitude",
+    "open_comment"
+   ],
+   "kept_with_override": [],
+   "allow_pii": false,
+   "flagged": {
+    "StartDate": "known_identifier_column",
+    "EndDate": "known_identifier_column",
+    "IPAddress": "known_identifier_column",
+    "RecordedDate": "known_identifier_column",
+    "ResponseId": "known_identifier_column",
+    "RecipientLastName": "known_identifier_column",
+    "RecipientFirstName": "known_identifier_column",
+    "RecipientEmail": "known_identifier_column",
+    "ExternalReference": "known_identifier_column",
+    "LocationLatitude": "known_identifier_column",
+    "LocationLongitude": "known_identifier_column",
+    "open_comment": "free_text_question"
+   },
+   "scan": "header + first data row only, local regex"
+  },
+  "degraded": [],
+  "inputs": {
+   "raw_csv_sha256": "6cb89a8d826bcd5f682c686fc8fd060d01282d101e9bce98010748d0634bcba9",
+   "pap_sha256": "8a7de959363d26f18609d8737d2983f938ee55fb997828a4bf1d0848cbb39aff",
+   "qsf_sha256": "cbad94643959829f3eacdd056745acfe430fee482df7e306b40c5a560196dff3"
+  },
+  "usage_by_agent": {
+   "papreader": {
+    "calls": 1,
+    "in": 2258,
+    "out": 6,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   },
+   "exploratory": {
+    "calls": 2,
+    "in": 6241,
+    "out": 8,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   },
+   "silicon": {
+    "calls": 60,
+    "in": 24257,
+    "out": 840,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   },
+   "litreview": {
+    "calls": 2,
+    "in": 485,
+    "out": 139,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   },
+   "writer": {
+    "calls": 1,
+    "in": 1240,
+    "out": 604,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   },
+   "reviewer": {
+    "calls": 1,
+    "in": 4347,
+    "out": 144,
+    "cost": 0.0,
+    "models": [
+     "mock"
+    ]
+   }
+  },
+  "stage_seconds": {
+   "ingest": 0.0,
+   "pii": 0.02,
+   "tidy": 0.02,
+   "pap": 0.0,
+   "clean": 0.35,
+   "registered": 1.98,
+   "tag": 0.0,
+   "exploratory": 1.74,
+   "silicon": 1.74,
+   "litreview": 0.02,
+   "write": 0.0,
+   "review": 0.0,
+   "package": 0.0
+  },
+  "total_seconds": 5.9,
+  "log": [
+   "2026-10-01T03:52:30Z stage ingest",
+   "2026-10-01T03:52:30Z stage pii",
+   "2026-10-01T03:52:30Z PII scan (header + first row only): flagged 12 column(s): StartDate [known_identifier_column], EndDate [known_identifier_column], IPAddress [known_identifier_column], RecordedDate [known_identifier_column], ResponseId [known_identifier_column], RecipientLastName [known_identifier_column], RecipientFirstName [known_identifier_column], RecipientEmail [known_identifier_column], ExternalReference [known_identifier_column], LocationLatitude [known_identifier_column], LocationLongitude [known_identifier_column], open_comment [free_text_question]. Action: dropped 12, kept by whitelist 0.",
+   "2026-10-01T03:52:30Z stage tidy",
+   "2026-10-01T03:52:30Z stage pap",
+   "2026-10-01T03:52:30Z stage clean",
+   "2026-10-01T03:52:31Z wrote data/clean.csv: 387 rows, 21 columns",
+   "2026-10-01T03:52:31Z stage registered",
+   "2026-10-01T03:52:33Z H1: imm_index ~ treat | ATE=0.583 (SE 0.131, p=0.0000, N=387)",
+   "2026-10-01T03:52:33Z H2: policy_support ~ treat + C(pid3) + C(agecat) | ATE=0.929 (SE 0.135, p=0.0000, N=387)",
+   "2026-10-01T03:52:33Z S1: interaction treat:C(_mod)[T.Republican] = -0.547 (SE 0.228, p=0.0166)",
+   "2026-10-01T03:52:33Z wrote results/registered_summary.csv (3 rows)",
+   "2026-10-01T03:52:33Z stage tag",
+   "2026-10-01T03:52:33Z stage exploratory",
+   "2026-10-01T03:52:34Z tags: H1=registered, H2=deviation, S1=registered, E1=exploratory, E2=exploratory, E3=exploratory",
+   "2026-10-01T03:52:34Z stage silicon",
+   "2026-10-01T03:52:36Z silicon: 60 personas, 0 parse failures",
+   "2026-10-01T03:52:36Z stage litreview",
+   "2026-10-01T03:52:36Z stage write",
+   "2026-10-01T03:52:36Z stage review",
+   "2026-10-01T03:52:36Z reviewer: 2 issue(s)",
+   "2026-10-01T03:52:36Z stage package"
+  ]
+ },
+ "links": {
+  "folder": "https://github.com/yrvelez/filedrawer/tree/main/studies/demo-immigration-framing",
+  "report": "https://github.com/yrvelez/filedrawer/blob/main/studies/demo-immigration-framing/report.md",
+  "data": "https://github.com/yrvelez/filedrawer/tree/main/studies/demo-immigration-framing/data"
+ },
+ "related": []
+}

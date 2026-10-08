@@ -1,0 +1,153 @@
+{
+ "mode": "fully_agentic",
+ "human_steps": [],
+ "reviewer_pass": true,
+ "models": {
+  "strong": "z-ai/glm-5.3",
+  "fast": "z-ai/glm-4.5-air"
+ },
+ "provider": "mock",
+ "zero_retention_requested": false,
+ "cost_usd": 0.0,
+ "tokens": {
+  "in": 38828,
+  "out": 1741
+ },
+ "tool_version": "0.1.0",
+ "created": "2026-10-01T03:52:30Z",
+ "pii": {
+  "dropped": [
+   "StartDate",
+   "EndDate",
+   "IPAddress",
+   "RecordedDate",
+   "ResponseId",
+   "RecipientLastName",
+   "RecipientFirstName",
+   "RecipientEmail",
+   "ExternalReference",
+   "LocationLatitude",
+   "LocationLongitude",
+   "open_comment"
+  ],
+  "kept_with_override": [],
+  "allow_pii": false,
+  "flagged": {
+   "StartDate": "known_identifier_column",
+   "EndDate": "known_identifier_column",
+   "IPAddress": "known_identifier_column",
+   "RecordedDate": "known_identifier_column",
+   "ResponseId": "known_identifier_column",
+   "RecipientLastName": "known_identifier_column",
+   "RecipientFirstName": "known_identifier_column",
+   "RecipientEmail": "known_identifier_column",
+   "ExternalReference": "known_identifier_column",
+   "LocationLatitude": "known_identifier_column",
+   "LocationLongitude": "known_identifier_column",
+   "open_comment": "free_text_question"
+  },
+  "scan": "header + first data row only, local regex"
+ },
+ "degraded": [],
+ "inputs": {
+  "raw_csv_sha256": "6cb89a8d826bcd5f682c686fc8fd060d01282d101e9bce98010748d0634bcba9",
+  "pap_sha256": "8a7de959363d26f18609d8737d2983f938ee55fb997828a4bf1d0848cbb39aff",
+  "qsf_sha256": "cbad94643959829f3eacdd056745acfe430fee482df7e306b40c5a560196dff3"
+ },
+ "usage_by_agent": {
+  "papreader": {
+   "calls": 1,
+   "in": 2258,
+   "out": 6,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  },
+  "exploratory": {
+   "calls": 2,
+   "in": 6241,
+   "out": 8,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  },
+  "silicon": {
+   "calls": 60,
+   "in": 24257,
+   "out": 840,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  },
+  "litreview": {
+   "calls": 2,
+   "in": 485,
+   "out": 139,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  },
+  "writer": {
+   "calls": 1,
+   "in": 1240,
+   "out": 604,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  },
+  "reviewer": {
+   "calls": 1,
+   "in": 4347,
+   "out": 144,
+   "cost": 0.0,
+   "models": [
+    "mock"
+   ]
+  }
+ },
+ "stage_seconds": {
+  "ingest": 0.0,
+  "pii": 0.02,
+  "tidy": 0.02,
+  "pap": 0.0,
+  "clean": 0.35,
+  "registered": 1.98,
+  "tag": 0.0,
+  "exploratory": 1.74,
+  "silicon": 1.74,
+  "litreview": 0.02,
+  "write": 0.0,
+  "review": 0.0,
+  "package": 0.0
+ },
+ "total_seconds": 5.9,
+ "log": [
+  "2026-10-01T03:52:30Z stage ingest",
+  "2026-10-01T03:52:30Z stage pii",
+  "2026-10-01T03:52:30Z PII scan (header + first row only): flagged 12 column(s): StartDate [known_identifier_column], EndDate [known_identifier_column], IPAddress [known_identifier_column], RecordedDate [known_identifier_column], ResponseId [known_identifier_column], RecipientLastName [known_identifier_column], RecipientFirstName [known_identifier_column], RecipientEmail [known_identifier_column], ExternalReference [known_identifier_column], LocationLatitude [known_identifier_column], LocationLongitude [known_identifier_column], open_comment [free_text_question]. Action: dropped 12, kept by whitelist 0.",
+  "2026-10-01T03:52:30Z stage tidy",
+  "2026-10-01T03:52:30Z stage pap",
+  "2026-10-01T03:52:30Z stage clean",
+  "2026-10-01T03:52:31Z wrote data/clean.csv: 387 rows, 21 columns",
+  "2026-10-01T03:52:31Z stage registered",
+  "2026-10-01T03:52:33Z H1: imm_index ~ treat | ATE=0.583 (SE 0.131, p=0.0000, N=387)",
+  "2026-10-01T03:52:33Z H2: policy_support ~ treat + C(pid3) + C(agecat) | ATE=0.929 (SE 0.135, p=0.0000, N=387)",
+  "2026-10-01T03:52:33Z S1: interaction treat:C(_mod)[T.Republican] = -0.547 (SE 0.228, p=0.0166)",
+  "2026-10-01T03:52:33Z wrote results/registered_summary.csv (3 rows)",
+  "2026-10-01T03:52:33Z stage tag",
+  "2026-10-01T03:52:33Z stage exploratory",
+  "2026-10-01T03:52:34Z tags: H1=registered, H2=deviation, S1=registered, E1=exploratory, E2=exploratory, E3=exploratory",
+  "2026-10-01T03:52:34Z stage silicon",
+  "2026-10-01T03:52:36Z silicon: 60 personas, 0 parse failures",
+  "2026-10-01T03:52:36Z stage litreview",
+  "2026-10-01T03:52:36Z stage write",
+  "2026-10-01T03:52:36Z stage review",
+  "2026-10-01T03:52:36Z reviewer: 2 issue(s)",
+  "2026-10-01T03:52:36Z stage package"
+ ]
+}

@@ -1,0 +1,432 @@
+{
+ "content": "",
+ "tool_calls": [
+  {
+   "name": "record_result",
+   "args": {
+    "key": "proposal",
+    "final": true,
+    "value": {
+     "id": "alternative",
+     "kind": "alternative",
+     "title": "Is it the economic frame or any positive story?",
+     "rationale": "The demo study found a positive effect of the economic-contribution paragraph on the immigration index; this alternative extension probes it.",
+     "contribution": "Separates explanations the source design cannot.",
+     "limitations": [
+      "Self-reported attitudes; single exposure."
+     ],
+     "design": {
+      "title": "Is it the economic frame or any positive story?",
+      "overview": "A 3-arm follow-up to the demo framing study.",
+      "hypothesis": "A positive personal story raises support as much as the economic-contribution paragraph.",
+      "primaryOutcome": "Support for increasing legal immigration (7-point scale, QID12).",
+      "comparison": "Mean support in each arm compared with the neutral arm.",
+      "population": "US adults on an online panel.",
+      "conditions": [
+       {
+        "id": "neutral",
+        "title": "Neutral paragraph",
+        "description": "The U.S. Census Bureau reports how the population changed over the past decade.",
+        "nodeId": "arm_neutral"
+       },
+       {
+        "id": "economic",
+        "title": "Economic contribution",
+        "description": "Economists at major universities find that immigrants contribute to economic growth.",
+        "nodeId": "arm_economic"
+       },
+       {
+        "id": "story",
+        "title": "Personal story",
+        "description": "Maria came to the U.S. twelve years ago and now runs a bakery that employs six people.",
+        "nodeId": "arm_story"
+       }
+      ],
+      "blocks": [
+       {
+        "id": "consent",
+        "title": "Consent",
+        "questions": [
+         {
+          "id": "intro",
+          "type": "DB",
+          "text": "This is a short survey about immigration policy. It takes about five minutes. Participation is voluntary.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         },
+         {
+          "id": "consentQ",
+          "type": "MC",
+          "text": "Do you consent to participate in this study?",
+          "tag": "consent",
+          "multiple": false,
+          "required": true,
+          "choices": [
+           {
+            "id": "yes",
+            "text": "Yes, I consent",
+            "recode": "1"
+           },
+           {
+            "id": "no",
+            "text": "No, I do not consent",
+            "recode": "2"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID1"
+         }
+        ]
+       },
+       {
+        "id": "neutralBlock",
+        "title": "Neutral paragraph",
+        "questions": [
+         {
+          "id": "neutralText",
+          "type": "DB",
+          "text": "The U.S. Census Bureau reports how the population changed over the past decade.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "economicBlock",
+        "title": "Economic contribution",
+        "questions": [
+         {
+          "id": "economicText",
+          "type": "DB",
+          "text": "Economists at major universities find that immigrants contribute to economic growth.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "storyBlock",
+        "title": "Personal story",
+        "questions": [
+         {
+          "id": "storyText",
+          "type": "DB",
+          "text": "Maria came to the U.S. twelve years ago and now runs a bakery that employs six people.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "outcome",
+        "title": "Outcome",
+        "questions": [
+         {
+          "id": "policySupport",
+          "type": "MC",
+          "text": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the U.S. each year?",
+          "tag": "policy_support",
+          "multiple": false,
+          "required": false,
+          "choices": [
+           {
+            "id": "s1",
+            "text": "Strongly oppose",
+            "recode": "1"
+           },
+           {
+            "id": "s2",
+            "text": "Oppose",
+            "recode": "2"
+           },
+           {
+            "id": "s3",
+            "text": "Somewhat oppose",
+            "recode": "3"
+           },
+           {
+            "id": "s4",
+            "text": "Neither favor nor oppose",
+            "recode": "4"
+           },
+           {
+            "id": "s5",
+            "text": "Somewhat favor",
+            "recode": "5"
+           },
+           {
+            "id": "s6",
+            "text": "Favor",
+            "recode": "6"
+           },
+           {
+            "id": "s7",
+            "text": "Strongly favor",
+            "recode": "7"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID12"
+         }
+        ]
+       },
+       {
+        "id": "debrief",
+        "title": "Debrief",
+        "questions": [
+         {
+          "id": "debriefText",
+          "type": "DB",
+          "text": "Thank you. The paragraphs you read summarised published research; no deception was involved.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       }
+      ],
+      "flow": [
+       {
+        "id": "consentFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "consent",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "declineBranch",
+        "type": "branch",
+        "label": "",
+        "children": [
+         "declineEnd"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "consentQ",
+        "choiceId": "no",
+        "operator": "selected"
+       },
+       {
+        "id": "declineEnd",
+        "type": "end",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_neutral",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_neutral",
+         "treat_neutral"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_neutral",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "neutral",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_neutral",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "neutralBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_economic",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_economic",
+         "treat_economic"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_economic",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "economic",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_economic",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "economicBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_story",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_story",
+         "treat_story"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_story",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "story",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_story",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "storyBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "rand",
+        "type": "randomizer",
+        "label": "",
+        "children": [
+         "arm_neutral",
+         "arm_economic",
+         "arm_story"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "outcomeFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "outcome",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "debriefFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "debrief",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       }
+      ],
+      "roots": [
+       "consentFlow",
+       "declineBranch",
+       "rand",
+       "outcomeFlow",
+       "debriefFlow"
+      ],
+      "assumptions": [
+       "Target N = 1,200 (about 400 per arm) to detect 0.15 SD."
+      ],
+      "unresolved": [
+       "IRB protocol number for the consent text."
+      ],
+      "evidence": [
+       {
+        "id": "source",
+        "title": "Source study package",
+        "url": "https://github.com/yrvelez/filedrawer",
+        "claim": "the demo framing effect",
+        "excerpt": "",
+        "origin": "supplied"
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

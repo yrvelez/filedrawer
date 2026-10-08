@@ -1,0 +1,3 @@
+{"content": "Writing the exploratory script.", "tool_calls": [
+ {"name": "write_file", "args": {"path": "scripts/04_exploratory.py", "content": {"$file": "scripts/04_exploratory.py"}}},
+ {"name": "run_script", "args": {"path": "scripts/04_exploratory.py"}}]}

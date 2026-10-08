@@ -1,0 +1,35 @@
+{
+ "text": "Prior experimental work reports that messages emphasizing immigrants' economic contributions raise support for immigration (Example & Sample, 2019). Persuasion effects in survey experiments are often moderated by partisanship, with larger effects among co-partisans of the message's implied position (Placeholder, 2021). A fabricated claim [citation removed: not in retrieved set] should be removed.",
+ "works": [
+  {
+   "id": "https://openalex.org/W1",
+   "title": "Framing immigration: economic contribution messages and public attitudes",
+   "authors": [
+    "Ada Example",
+    "Ben Sample"
+   ],
+   "year": 2019,
+   "doi": "10.0000/example.1",
+   "venue": "Journal of Synthetic Studies",
+   "cited_by": 120,
+   "abstract": "Economic framing raises support for immigration."
+  },
+  {
+   "id": "https://openalex.org/W2",
+   "title": "Partisan moderation of persuasion effects in survey experiments",
+   "authors": [
+    "Cara Placeholder"
+   ],
+   "year": 2021,
+   "doi": "10.0000/example.2",
+   "venue": "Synthetic Political Science Review",
+   "cited_by": 45,
+   "abstract": "Effects are larger among co-partisans."
+  }
+ ],
+ "queries": [
+  "immigration framing experiment economic contribution",
+  "partisan moderation persuasion survey experiment"
+ ],
+ "degraded": null
+}

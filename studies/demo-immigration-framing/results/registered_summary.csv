@@ -1,0 +1,4 @@
+analysis_id,outcome,formula,cov_type,estimate,std_error,p_value,n,mean_control,mean_treated,direction,supported,term
+H1,imm_index,imm_index ~ treat,HC2,0.5829776889417102,0.13108553867513476,8.695335358305506e-06,387,4.22543352601156,4.808411214953271,positive,True,
+H2,policy_support,policy_support ~ treat + C(pid3) + C(agecat),HC2,0.9285203421401216,0.13507306314376613,6.233516469478605e-12,387,3.867052023121387,4.775700934579439,positive,True,
+S1,imm_index,imm_index ~ treat * C(pid3),HC2,-0.5467732251315234,0.22827166516354286,0.016607941084309723,290,,,two_sided,True,treat:C(_mod)[T.Republican]

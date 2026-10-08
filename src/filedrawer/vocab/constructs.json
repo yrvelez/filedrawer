@@ -1,0 +1,184 @@
+{
+ "designs": [
+  "survey_experiment",
+  "conjoint",
+  "field_experiment",
+  "lab_experiment",
+  "observational_survey",
+  "methods_comparison",
+  "panel",
+  "audit",
+  "other"
+ ],
+ "populations": [
+  "online_panel",
+  "mturk",
+  "prolific",
+  "yougov",
+  "students",
+  "probability_sample",
+  "voters_file",
+  "other"
+ ],
+ "constructs": {
+  "affective_polarization": [
+   "partisan animus",
+   "feeling thermometer gap",
+   "out-party hostility"
+  ],
+  "partisanship": [
+   "party identification",
+   "partisan identity"
+  ],
+  "ideology": [
+   "liberal-conservative",
+   "ideological self-placement"
+  ],
+  "immigration_attitudes": [
+   "immigration policy preferences",
+   "attitudes toward immigrants"
+  ],
+  "framing_effects": [
+   "issue framing",
+   "equivalence framing",
+   "emphasis framing"
+  ],
+  "misinformation": [
+   "fake news",
+   "false beliefs",
+   "corrections"
+  ],
+  "fact_checking": [
+   "corrections",
+   "debunking"
+  ],
+  "media_trust": [
+   "trust in media",
+   "news credibility"
+  ],
+  "political_trust": [
+   "trust in government",
+   "institutional trust"
+  ],
+  "democratic_norms": [
+   "support for democracy",
+   "norm violations"
+  ],
+  "political_violence": [
+   "support for violence"
+  ],
+  "candidate_evaluation": [
+   "candidate choice",
+   "vote choice",
+   "candidate traits"
+  ],
+  "conjoint_preferences": [
+   "attribute preferences",
+   "AMCE"
+  ],
+  "group_identity": [
+   "linked fate",
+   "racial identity",
+   "ethnic identity"
+  ],
+  "racial_attitudes": [
+   "racial resentment",
+   "prejudice"
+  ],
+  "gender_attitudes": [
+   "sexism",
+   "gender roles"
+  ],
+  "economic_attitudes": [
+   "redistribution",
+   "inequality",
+   "welfare"
+  ],
+  "climate_attitudes": [
+   "climate change beliefs",
+   "environmental policy"
+  ],
+  "health_behavior": [
+   "vaccination",
+   "public health compliance"
+  ],
+  "persuasion": [
+   "attitude change",
+   "messaging"
+  ],
+  "mobilization": [
+   "turnout",
+   "participation",
+   "GOTV"
+  ],
+  "elite_cues": [
+   "party cues",
+   "endorsements"
+  ],
+  "social_norms": [
+   "norm perceptions",
+   "descriptive norms"
+  ],
+  "intergroup_contact": [
+   "contact hypothesis",
+   "perspective taking"
+  ],
+  "emotion": [
+   "anger",
+   "anxiety",
+   "enthusiasm"
+  ],
+  "political_knowledge": [
+   "factual knowledge"
+  ],
+  "civic_engagement": [
+   "volunteering",
+   "local participation"
+  ],
+  "ai_generated_content": [
+   "AI detection",
+   "synthetic media",
+   "LLM-generated text"
+  ],
+  "survey_methodology": [
+   "attention checks",
+   "satisficing",
+   "data quality"
+  ],
+  "silicon_sampling": [
+   "LLM personas",
+   "synthetic respondents"
+  ],
+  "policy_support": [
+   "policy preferences"
+  ],
+  "nationalism": [
+   "national identity",
+   "patriotism"
+  ],
+  "religion": [
+   "religiosity"
+  ],
+  "local_politics": [
+   "local government"
+  ],
+  "foreign_policy": [
+   "international affairs",
+   "war attitudes"
+  ],
+  "authoritarianism": [
+   "authoritarian predispositions"
+  ],
+  "populism": [
+   "populist attitudes"
+  ],
+  "descriptive_representation": [
+   "representation",
+   "identity of representatives"
+  ],
+  "deliberation": [
+   "discussion",
+   "deliberative quality"
+  ]
+ }
+}

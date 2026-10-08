@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The File Drawer</title>
+<meta name="description" content="An online repository of unpublished studies and explorations, each with data and code on GitHub.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=Atkinson+Hyperlegible+Next:wght@400;500;600&family=Atkinson+Hyperlegible+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--hatch:#c3bcae;--paper:#f7f5f0;--red:#9b3b32;--bg:#ffffff;--surface:#ffffff;--ink:#23211d;--ink-2:#57534b;--ink-3:#8a857b;--rule:#e7e4dd;--accent:#2f5d5a;--accent-2:#264b49;--good:#5b6b3f;--warn:#a8613b;--bad:#7d2f2b;--chip:#f0eee9;--panel:#f7f6f2;--tile-bg:#f7f6f2;--badge-label:#3b3833;--sans:"Atkinson Hyperlegible Next",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;--display:"Literata",Georgia,"Times New Roman",serif;--mono:"Atkinson Hyperlegible Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--text:"Literata",Georgia,"Times New Roman",serif;--serif:var(--display)}
+:root[data-theme="dark"]{--hatch:#5d5a53;--paper:#15151a;--red:#e07a70;--bg:#15151a;--surface:#1d1d23;--ink:#ecebe6;--ink-2:#b4b1a9;--ink-3:#807d75;--rule:#34343c;--accent:#a5b4fc;--accent-2:#a5b4fc;--good:#7fc48f;--warn:#e0b357;--bad:#ef8a90;--chip:#272730;--panel:#1d1d23;--tile-bg:#1d1d23}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-0.01em}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.55}
+a{color:var(--accent-2);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+/* masthead: wordmark and an engraved drawer (Fig. 1) */
+.mast{display:grid;grid-template-columns:1fr;gap:4px 28px;align-items:end;padding:22px 0 0}
+@media(min-width:860px){.mast{grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr)}}
+.mast .kicker{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+.mast h1{font-size:clamp(50px,7vw,84px);font-weight:700;line-height:.9;letter-spacing:-.025em;margin:0}
+.mast h1 a{color:var(--ink);display:inline-block}.mast h1 a:hover{text-decoration:none}
+/* wordmark: "The" sits in a folder-tab outline, level with the foot of "File" */
+.mast h1 .wm-line{display:flex;align-items:flex-end;gap:.08em}
+.mast h1 .wm-the{position:relative;font-size:.56em;line-height:1;padding:.5em .26em .17em .27em;margin-bottom:.07em;margin-right:.04em;letter-spacing:-.02em}
+.mast h1 .wm-the svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mast h1 .wm-the path{fill:none;stroke:var(--red);stroke-width:1.8;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.mast .tag{font-family:var(--display);font-size:17px;line-height:1.45;color:var(--ink-2);margin:16px 0 0;max-width:30ch}
+.mast .issue{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin:14px 0 22px;letter-spacing:0}
+.mast .issue b{color:var(--ink);font-weight:500}.mast .issue span{white-space:nowrap}
+.mast figure{margin:0;min-width:0}
+#mhfig{display:block;width:100%;height:auto;overflow:visible}
+#mhfig .ink{fill:none;stroke:var(--ink);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
+#mhfig .fill{fill:var(--paper);stroke:var(--ink);stroke-width:1.15;stroke-linejoin:round}
+#mhfig .thin{fill:none;stroke:var(--ink-3);stroke-width:.7}
+#mhfig .hatchA{fill:url(#mhHatchA);stroke:var(--ink);stroke-width:1.15;stroke-linejoin:round}
+#mhfig .hatchB{fill:url(#mhHatchB);stroke:var(--ink);stroke-width:1.15;stroke-linejoin:round}
+#mhfig .hatchC{fill:url(#mhHatchC);stroke:none}
+#mhfig .card{fill:var(--paper);stroke:var(--ink);stroke-width:1;cursor:pointer}
+#mhfig .tabtxt{font-family:var(--mono);font-size:9px;fill:var(--ink-2);pointer-events:none;letter-spacing:.03em}
+#mhfig .tabrule{stroke:var(--red);stroke-width:.8;opacity:.8}
+#mhfig .note{font-family:var(--mono);font-size:9.5px;fill:var(--ink-3);letter-spacing:.02em}
+#mhfig .lbl1{font-family:var(--sans);font-size:7.5px;letter-spacing:.28em;fill:var(--ink-2)}
+#mhfig .lbl2{font-family:var(--mono);font-size:10px;fill:var(--ink);letter-spacing:.06em}
+#mhfig .dot{fill:var(--ink-3)}
+#mhfig .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:mhdraw 1.4s cubic-bezier(.4,.1,.2,1) forwards}
+@keyframes mhdraw{to{stroke-dashoffset:0}}
+#mhfig .fadein{opacity:0;animation:mhfade .9s ease forwards}
+@keyframes mhfade{to{opacity:1}}
+.mast figcaption{display:flex;justify-content:space-between;gap:14px;align-items:baseline;border-top:1px solid var(--rule);padding:7px 0 10px;font-family:var(--mono);font-size:11px;color:var(--ink-3);height:4.4em;overflow:hidden}
+.mast figcaption b{font-weight:500;color:var(--red);margin-right:6px}
+.mast figcaption #mhcapL{white-space:nowrap}
+.mast figcaption #mhcapR{font-family:var(--display);font-size:13.5px;line-height:1.35;color:var(--ink-2);text-align:right;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:640px){#mhfig .note,#mhfig .notes{display:none}.mast figcaption #mhcapR{font-size:12.5px}}
+@media (prefers-reduced-motion: reduce){#mhfig .draw{animation:none;stroke-dashoffset:0}#mhfig .fadein{animation:none;opacity:1}}
+nav.top{display:flex;gap:4px;align-items:flex-end;padding:14px 0 0 2px;border-bottom:1px solid var(--ink-3);font-family:var(--sans);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+nav.top::-webkit-scrollbar{display:none}
+nav.top a{flex:0 0 auto;color:var(--ink-2);padding:7px 14px 6px;margin-bottom:-1px;background:var(--chip);border:1px solid var(--rule);border-bottom-color:var(--ink-3);border-radius:7px 7px 0 0;transition:background .15s,color .15s}
+nav.top a:hover{text-decoration:none;color:var(--ink);background:var(--panel)}
+nav.top a.on{color:var(--ink);background:var(--bg);border-color:var(--ink-3);border-bottom-color:var(--bg);padding-top:10px;font-weight:600;box-shadow:inset 0 2px 0 var(--accent)}
+/* layout */
+.cols{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding:22px 0 60px}
+@media(min-width:860px){.cols{grid-template-columns:minmax(0,1fr) 280px}}
+.section-label{display:flex;align-items:flex-end;gap:10px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--ink-3);padding:0;margin:0 0 14px;font-family:var(--sans);font-weight:600}
+.section-label .tab{display:inline-block;background:var(--chip);border:1px solid var(--ink-3);border-bottom:0;border-radius:6px 6px 0 0;padding:6px 14px 5px;margin-bottom:-1px;position:relative;top:0}
+.section-label small{padding-bottom:6px}
+.section-label small{color:var(--ink-3);letter-spacing:.05em;text-transform:none;font-size:11px;margin-left:8px;font-weight:400}
+/* badges (inline SVG; geometry mirrors src/filedrawer/badges.py) */
+.badges{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 4px}
+.badges svg{display:block}
+:root[data-theme="dark"] .badges svg .val{filter:brightness(1.25)}
+/* article entries (table of contents) */
+.entry{padding:16px 0;border-bottom:1px solid var(--rule)}
+.entry:last-child{border-bottom:0}
+.topic-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:12px;margin:34px 0 4px}
+.topic-head h2{font-family:var(--serif);font-weight:600;font-size:28px;line-height:1.15;margin:0;text-transform:none;letter-spacing:0}
+.topic-head h2 a{color:var(--ink)}
+.topic-head .n{font-family:var(--sans);font-size:13px;color:var(--ink-3);letter-spacing:.02em}
+.entry .topic,.paper-head .topic{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.entry h3{font-size:22px;font-weight:600;margin:4px 0 4px;line-height:1.25}
+.entry h3 a{color:var(--ink)}
+.entry .by,.paper-head .by{font-size:14px;color:var(--ink-2);font-family:var(--display)}
+.entry .abs{margin:8px 0 4px;font-size:15.5px;color:var(--ink)}
+.entry .lead{font-size:17px}
+.acts{font-size:13px;display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;align-items:center;position:relative}
+.acts a{color:var(--accent)}
+.acts .primary{font-weight:600}
+.menu{position:relative;display:inline-block}
+.menu > button{font:inherit;background:none;border:1px solid var(--rule);border-radius:999px;color:var(--ink-2);cursor:pointer;padding:0 9px;line-height:20px;font-size:14px}
+.menu > button:hover{border-color:var(--ink-3);color:var(--ink)}
+.menu .pop{display:none;position:absolute;left:0;top:26px;z-index:5;background:var(--surface);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:6px;min-width:190px;flex-direction:column;gap:2px}
+.menu.open .pop{display:flex}
+.menu .pop a{display:block;padding:6px 10px;border-radius:6px;color:var(--ink);font-size:13.5px}
+.menu .pop a:hover{background:var(--panel);text-decoration:none}
+/* sidebar */
+aside .box{border-top:3px solid var(--ink);padding:10px 0 18px;margin-bottom:8px}
+aside h4{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 10px;color:var(--ink)}
+aside ul{list-style:none;padding:0;margin:0;font-size:16px}
+aside li{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dotted var(--rule)}
+aside li span{color:var(--ink-3);font-size:13px;margin-left:8px}
+aside p{font-size:14.5px;color:var(--ink-2);margin:6px 0}
+.btn{display:inline-block;font-family:var(--sans);font-size:13px;letter-spacing:.04em;padding:8px 14px;border:1px solid var(--ink);border-radius:2px;color:var(--ink);background:transparent;cursor:pointer}
+.btn:hover{background:var(--ink);color:var(--bg);text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{opacity:.9}
+.btn[disabled]{opacity:.5;cursor:default}
+/* browse */
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px}
+.controls input,.controls select{font:inherit;padding:7px 9px;border:1px solid var(--rule);border-radius:2px;background:var(--surface);color:var(--ink)}
+.controls input[type=search]{flex:1 1 220px}
+.controls label.chk{display:flex;align-items:center;gap:6px;color:var(--ink-2)}
+table.db{width:100%;border-collapse:collapse;font-size:13px}
+table.db th{text-align:left;font-weight:600;border-bottom:2px solid var(--ink);padding:6px 6px;cursor:pointer;white-space:nowrap}
+table.db td{border-bottom:1px solid var(--rule);padding:8px 6px;vertical-align:top}
+table.db td.t{font-family:var(--display);font-size:15.5px}
+table.db td .by{font-family:var(--display);font-size:13px;color:var(--ink-3)}
+table.db td.bd .badges{margin:0}
+.tscroll{overflow-x:auto}
+/* paper page */
+.paper-head{padding:14px 0 6px;max-width:62ch}
+.paper-head h2{font-size:32px;font-weight:400;line-height:1.15;margin:4px 0 8px}
+.paper-head .by{font-size:16px}
+.paper-head .design{font-size:14.5px;color:var(--ink-2);margin:8px 0 0}
+.paper-head .thumb{display:block;margin:12px 0 0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:8px;cursor:zoom-in;width:100%;max-width:62ch}
+.paper-head .thumb img{display:block;width:100%;height:auto;max-height:180px;object-fit:contain}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0 4px;max-width:62ch}
+.tile{background:var(--tile-bg);border:1px solid var(--rule);border-radius:8px;padding:10px 12px}
+.tile b{display:block;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;color:var(--ink)}
+.tile span{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+.tile small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px;letter-spacing:0;text-transform:none}
+dialog.lightbox{border:1px solid var(--rule);border-radius:10px;padding:0;max-width:min(96vw,1100px);background:var(--surface);color:var(--ink)}
+dialog.lightbox::backdrop{background:rgba(0,0,0,.45)}
+dialog.lightbox .lb-body{padding:18px 20px 16px}
+dialog.lightbox img{width:100%;height:auto;display:block}
+dialog.lightbox p{font-size:14.5px;color:var(--ink-2);margin:12px 0 0;max-width:80ch;white-space:pre-line}
+dialog.lightbox .acts{justify-content:flex-end}
+/* table of contents (paper route) */
+.toc{position:sticky;top:14px}
+.toc h4{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 8px;color:var(--ink-3)}
+.toc ol{list-style:none;padding:0;margin:0;font-size:13.5px}
+.toc li{display:block;padding:3px 0 3px 10px;border-left:2px solid var(--rule);text-align:left}
+.toc ol.sub{list-style:none;padding:0;margin:4px 0 2px -12px;font-size:12.5px}
+.toc li.sub{display:flex;align-items:baseline;justify-content:flex-start;gap:6px;padding:2px 0 2px 22px;border-bottom:0}
+.toc li.sub .dot{flex:0 0 7px;margin:0;position:relative;top:-1px}
+.toc .hid{font-family:var(--sans);font-size:11px;letter-spacing:.04em;color:var(--ink-3);margin-right:2px}
+.toc li.on{border-left-color:var(--accent)}
+.toc li a{color:var(--ink-2)}.toc li.on a{color:var(--ink)}
+.toc .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rule)}
+.toc .dot.yes{background:var(--good)}.toc .dot.no{background:var(--rule);border:1px solid var(--ink-3)}
+@media(max-width:859px){.toc{position:static}.toc ol{display:none}.toc.open ol{display:block}.toc h4{cursor:pointer}.toc h4::after{content:' ▾'}}
+.cols.tufte{grid-template-columns:minmax(0,1fr)}
+@media(min-width:860px){.cols.tufte{grid-template-columns:minmax(0,1fr) 240px}}
+/* the article */
+#paper{line-height:1.65;font-size:16.5px;padding:10px 0 40px;max-width:none;position:relative}
+#paper > *,#paper section > *,#paper details.sec > *{max-width:62ch}
+#paper h2{font-size:26px;font-weight:500;margin:44px 0 10px;padding:0;border:0}
+#paper h3{font-size:20px;font-weight:500;margin:30px 0 2px}
+#paper h4{font-size:16px;margin:16px 0 4px}
+#paper p{margin:0 0 12px}
+#paper p.subtitle{position:relative;font-family:var(--display);font-size:17px;color:var(--ink-2);margin:0 0 12px}
+#paper .marginnote{display:block;font-size:12.5px;line-height:1.45;color:var(--ink-3);margin-top:4px}
+#paper figure{margin:18px 0 22px;position:relative;max-width:62ch}
+#paper figure img{max-width:100%;height:auto;display:block;margin:0}
+#paper figure.missing{border:1px dashed var(--rule);border-radius:6px;padding:14px;font-size:13px;color:var(--ink-3)}
+#paper figcaption{font-size:12.5px;line-height:1.45;color:var(--ink-3);margin-top:6px}
+#paper table{border-collapse:collapse;font-size:12.5px;margin:12px 0 18px;display:block;overflow-x:auto;max-width:100%;font-variant-numeric:tabular-nums}
+#paper th,#paper td{border:0;border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;text-align:left;vertical-align:top}
+#paper th{font-weight:500;color:var(--ink-3);border-bottom:1px solid var(--ink-3);background:none;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase}
+#paper td.num,#paper th.num{text-align:right}
+#paper table.findings td:first-child{font-family:var(--display);font-size:22px;color:var(--accent);padding-right:16px;white-space:nowrap}
+#paper table.findings td:first-child b{font-weight:400}
+#paper ul.takeaways{list-style:none;padding:0;margin:14px 0 6px}
+#paper ul.takeaways li{position:relative;padding:10px 0 10px 26px;border-top:1px solid var(--rule);font-family:var(--display);font-size:19px;line-height:1.45}
+#paper ul.takeaways li:last-child{border-bottom:1px solid var(--rule)}
+#paper ul.takeaways li::before{content:'';position:absolute;left:4px;top:19px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+#paper blockquote{border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:none;margin:14px 0 18px;padding:8px 0;color:var(--ink-3);font-size:12.5px;line-height:1.5;border-radius:0}
+#paper blockquote b{color:var(--ink-2);font-weight:600}
+#paper code{font-family:var(--mono);font-size:12.5px;background:none;padding:0;color:var(--ink-2)}
+#paper pre{background:none;border:0;border-left:2px solid var(--rule);padding:4px 0 4px 14px;border-radius:0;overflow-x:auto;font-size:12px;line-height:1.55;margin:10px 0 16px;color:var(--ink-2)}#paper pre code{background:none;padding:0}
+#paper p.abstract{font-family:var(--display);font-size:18.5px;line-height:1.5;color:var(--ink)}
+#paper .fd-mark,#paper p.badges-md{display:none}
+#paper ul,#paper ol{padding-left:22px}.err{color:var(--bad)}
+/* accordions */
+#paper details{margin:10px 0 14px;font-size:14px;border-top:1px solid var(--rule);padding-top:6px}
+#paper details > *:not(summary){max-width:none}
+#paper details[open]{padding-bottom:8px;border-bottom:1px solid var(--rule)}
+#paper details summary{cursor:pointer;color:var(--ink-2);font-size:13px;list-style:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#paper details summary::-webkit-details-marker{display:none}
+#paper details summary .chev{width:14px;height:14px;flex:0 0 14px;transition:transform .15s;color:var(--ink-3)}
+#paper details[open] > summary .chev{transform:rotate(90deg)}
+#paper details.sec{border-top:0;margin:36px 0 10px}
+#paper details.sec > summary{font-family:var(--display);font-size:27px;font-weight:400;color:var(--ink);gap:12px}
+#paper details.sec > summary .count{font-family:var(--sans);font-style:normal;font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+#paper details.hyp,#paper details.group{border:1px solid var(--rule);border-radius:8px;padding:8px 14px;margin:8px 0;max-width:62ch}
+#paper details.hyp[open],#paper details.group[open]{padding-bottom:12px}
+#paper details.hyp > summary,#paper details.group > summary{font-size:15px;color:var(--ink)}
+#paper details.hyp > summary .id{font-family:var(--sans);font-size:11px;letter-spacing:.1em;color:var(--ink-3);min-width:28px}
+#paper details.hyp > summary .ttl,#paper details.group > summary .ttl{font-family:var(--display);font-size:17px}
+#paper details.group > summary .ttl{font-size:19px}
+#paper details.hyp > summary .est,#paper details.group > summary .est{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+#paper details.group details.hyp{border-left:0;border-right:0;border-radius:0;padding-left:0}
+.pill{display:inline-block;font-family:var(--sans);font-size:11px;letter-spacing:.03em;padding:1px 8px;border-radius:999px;background:var(--chip);color:var(--ink-2);border:1px solid var(--rule);white-space:nowrap;font-style:normal}
+.pill.yes{border-color:var(--good);color:var(--good)}.pill.no{color:var(--ink-3)}.pill.tag-registered{border-color:var(--good);color:var(--good)}.pill.tag-deviation{border-color:var(--warn);color:var(--warn)}.pill.tag-exploratory{color:var(--ink-3)}.pill.tag-robustness{border-color:var(--accent);color:var(--accent)}
+.pill.sev-high{border-color:var(--bad);color:var(--bad)}.pill.sev-medium{border-color:var(--warn);color:var(--warn)}
+.pill.dec-accept{border-color:var(--good);color:var(--good)}.pill.dec-minor_revision{border-color:var(--warn);color:var(--warn)}.pill.dec-major_revision{border-color:var(--bad);color:var(--bad)}
+/* review */
+#paper p.outcome{font-size:15.5px}#paper p.outcome .pill{margin-right:8px;vertical-align:1px}
+#paper ul.corrections{list-style:none;padding:0;margin:8px 0 14px;max-width:72ch}
+#paper ul.corrections li{padding:8px 0;border-top:1px solid var(--rule);font-size:15px;line-height:1.5}
+#paper ul.corrections li .pill{margin-right:4px}
+#paper .pill.warn{border-color:var(--warn);color:var(--warn)}
+#paper details.fold{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:10px 0;padding:4px 0}
+#paper details.fold > summary{cursor:pointer;font-family:var(--sans);font-size:13px;letter-spacing:.04em;color:var(--ink-3);padding:6px 0;list-style:none;display:flex;gap:6px;align-items:center}
+#paper details.fold[open] > summary{color:var(--ink-2)}
+#paper details.fold > *:not(summary){font-size:14.5px}
+#paper details.fold table{font-size:13px}
+#paper h4.opts-h{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 4px}
+#paper ul.opts{font-size:13.5px;color:var(--ink-2);margin:0 0 10px;padding-left:18px}
+#paper ul.opts code{font-size:12px}
+/* extensions */
+#paper .ext-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0;max-width:none}
+#paper .ext-card{border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:12px 14px;cursor:pointer}
+#paper .ext-card.open{grid-column:1 / -1;cursor:default}
+#paper .ext-card .fig{border-bottom:1px solid var(--rule);margin:-12px -14px 10px;padding:8px;background:var(--panel);border-radius:10px 10px 0 0}
+#paper .ext-card .fig img{display:block;width:100%;height:auto;max-height:150px;object-fit:contain}
+#paper .ext-card.open .fig img{max-height:360px}
+#paper .ext-card h3{font-size:19px;margin:6px 0 4px;font-style:normal}
+#paper .ext-card .hyp-line{font-size:14.5px;color:var(--ink-2);margin:0 0 6px}
+#paper .ext-card .more{display:none;margin-top:10px;border-top:1px solid var(--rule);padding-top:8px;font-size:15px}
+#paper .ext-card.open .more{display:block}
+#paper .ext-card .more > *{max-width:72ch}
+#paper .ext-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 6px}
+#paper .ext-actions .btn{font-size:13px;padding:6px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none}
+#paper .ext-actions .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+#paper .ext-actions .btn:hover{text-decoration:none;border-color:var(--ink-3)}
+#paper .ext-adv{border:1px solid var(--rule);border-radius:6px;background:var(--panel);padding:10px 12px;margin:0 0 10px;font-size:13px}
+#paper .ext-adv p{margin:0 0 8px;color:var(--ink-2)}#paper .ext-adv pre{margin:0 0 8px}
+#paper .ext-card .close{float:right;font:inherit;background:none;border:0;color:var(--ink-3);cursor:pointer;font-size:18px;line-height:1}
+/* submission audit */
+ol.audit{list-style:none;padding:0;margin:12px 0;max-width:72ch}
+ol.audit li{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-top:1px solid var(--rule);font-size:14.5px}
+ol.audit li b{font-family:var(--sans);font-size:13.5px;font-weight:600}
+ol.audit li.ok b{color:var(--good)}ol.audit li.bad b{color:var(--bad)}
+ol.audit li span{color:var(--ink-2)}
+ol.audit.running li.wait{opacity:.35}ol.audit.running li.doing{opacity:1}
+/* related */
+.related .row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule)}
+.related .row .t{flex:1;min-width:0}
+.related .row .t a{font-family:var(--display);font-size:17px;color:var(--ink)}
+.related .row .by{font-size:13px;color:var(--ink-3);font-family:var(--display)}
+.related .row .why{font-size:12px;color:var(--ink-3);margin-top:2px}
+.related .row .badges{margin:0;flex:0 0 auto}
+@media (max-width:640px){.related .row{flex-direction:column;gap:6px}.related .row .t{width:100%}.related .row .badges{order:2;margin-top:2px}.related .row .t a{font-size:16px;line-height:1.3}}
+.why{font-size:12px;color:var(--ink-3)}
+/* results ledger and follow-ups */
+.lede{font-family:var(--display);font-size:19px;line-height:1.45;margin:4px 0 10px;max-width:62ch}
+.lede b{font-weight:600}
+.split{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--chip);margin:6px 0 6px;max-width:62ch}
+.split i{display:block;height:100%}
+.split .s-yes{background:var(--good)}.split .s-null{background:var(--ink-3);opacity:.45}.split .s-opp{background:var(--warn)}
+.legend{font-family:var(--sans);font-size:12px;color:var(--ink-3);display:flex;gap:14px;flex-wrap:wrap;margin:0 0 18px}
+.legend span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:currentColor}
+.legend .k-yes{color:var(--good)}.legend .k-null{color:var(--ink-3)}.legend .k-opp{color:var(--warn)}
+table.ledger{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;margin:0 0 6px}
+table.ledger th{text-align:left;font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--ink-3);padding:5px 8px 5px 0}
+table.ledger th.num{text-align:right}
+table.ledger td{border-bottom:1px solid var(--rule);padding:6px 8px 6px 0;vertical-align:middle}
+table.ledger td.id{font-family:var(--sans);font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+table.ledger td.what{font-family:var(--display);font-size:14.5px;line-height:1.35}
+table.ledger td.what small{display:block;font-family:var(--sans);font-size:11.5px;color:var(--ink-3)}
+table.ledger td.num{text-align:right;white-space:nowrap}
+table.ledger td.ci svg{display:block}
+table.ledger td.v{white-space:nowrap}
+.ledger-study{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:10px;margin:26px 0 6px}
+.ledger-study a{font-family:var(--display);font-size:19px;color:var(--ink);font-weight:600}
+.ledger-study span{font-family:var(--sans);font-size:12px;color:var(--ink-3)}
+.pill.opp{border-color:var(--warn);color:var(--warn)}
+@media(max-width:640px){table.ledger td.ci,table.ledger th.ci,table.ledger td.v .pill[class*="tag-"]{display:none}}
+.fu .from{font-size:13.5px;color:var(--ink-3);font-family:var(--display);margin:2px 0 6px}
+.fu .from a{color:var(--ink-2)}
+.fu .hyp-line{font-size:15px;margin:6px 0 4px}
+.fu .why-line{font-size:14.5px;color:var(--ink-2);margin:0 0 4px}
+/* record fold in the appendix */
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 18px;font-size:13px;margin:12px 0}
+.kv div b{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+/* submit, about, footer */
+.submit-box{border:1px solid var(--rule);background:var(--surface);padding:18px;margin:6px 0 20px}
+.submit-box form{display:flex;flex-wrap:wrap;gap:8px}
+.submit-box input{flex:1 1 300px;font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--rule);border-radius:2px;background:var(--bg);color:var(--ink)}
+.notice{font-size:13.5px;color:var(--ink-2)}
+.result{border-left:3px solid var(--good);padding:6px 14px;margin:14px 0}
+.result.bad{border-left-color:var(--bad)}
+.empty{color:var(--ink-3);font-style:italic;padding:20px 0}
+.citebox{border:1px solid var(--rule);background:var(--panel);padding:12px 14px;margin:10px 0;font-size:13px;max-width:62ch}.citebox .citelab{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}.citebox .citetext{margin:0 0 8px;font-size:13.5px}.citebox pre{margin:0 0 8px;font-size:11.5px;line-height:1.45;white-space:pre-wrap;color:var(--ink-2)}.citebox .citenote{margin:6px 0 0;font-size:12px;color:var(--ink-3)}
+footer{border-top:3px double var(--rule);padding:16px 0 40px;font-size:12.5px;color:var(--ink-3);text-align:center}
+footer a{color:var(--ink-2)}
+.prose p{font-size:16px}.prose h3{font-weight:400;font-size:22px;margin:22px 0 6px}.prose code{font-family:var(--mono);font-size:13.5px;background:var(--chip);padding:1px 4px;border-radius:3px}
+@media print{
+  nav.top,aside,.toc,.menu,.acts,footer,dialog{display:none!important}
+  .cols,.cols.tufte{display:block}
+  #paper details > *:not(summary){display:block}
+  #paper details summary .chev{display:none}
+  #paper .ext-card .more{display:block}
+  body{font-size:12.5px}#paper{font-size:12.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div>
+    <p class="kicker">Unpublished studies, with data and code</p>
+    <h1><a href="#/" aria-label="The File Drawer, home"><span class="wm-line"><span class="wm-the"><svg viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1 H62 Q64.5 1 66 3 L71 11 H96 Q99 11 99 14 V56 Q99 59 96 59 H4 Q1 59 1 56 V4 Q1 1 4 1 Z"/></svg>The</span><span>File</span></span>Drawer</a></h1>
+    <p class="tag">An online repository for the studies and explorations that would otherwise never see the light of day.</p>
+    <div class="issue" id="issue">Loading…</div>
+  </div>
+  <figure>
+    <svg id="mhfig" role="img" aria-label="A line drawing of an open card-catalog drawer; each card is a filed study"></svg>
+    <figcaption><span id="mhcapL">Fig. 1 · the drawer, open</span><span id="mhcapR">Each card is a filed study. Hover to read, click to open.</span></figcaption>
+  </figure>
+</header>
+<nav class="top" id="nav">
+  <a href="#/" data-route="home">Latest</a>
+  <a href="#/browse" data-route="browse">Browse the database</a>
+  <a href="#/results" data-route="results">Results</a>
+  <a href="#/followups" data-route="followups">Follow-ups</a>
+  <a href="#/topics" data-route="topics">Topics</a>
+  <a href="#/submit" data-route="submit">Submit</a>
+  <a href="#/about" data-route="about">About &amp; API</a>
+</nav>
+<main id="main" aria-live="polite"></main>
+<footer>Everything is files in git. Reports are AI-generated; provenance is shown per paper. <a href="index.json">index.json</a> · <a href="https://github.com/yrvelez/filedrawer">Source</a></footer>
+</div>
+<dialog class="lightbox" id="lightbox"><div class="lb-body"><img alt=""><p></p><div class="acts"><button class="btn" type="button" id="lb-close">Close</button></div></div></dialog>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+function el(tag,cls,text){var e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e}
+function link(href,text,cls){var a=el('a',cls,text); a.href=href; if(/^https?:/.test(href)){a.target='_blank';a.rel='noopener'} return a}
+function human(s){return (s||'unknown').replace(/_/g,' ')}
+function authorsOf(s){return (s.authors&&s.authors.length)?s.authors.join(', '):'Author not recorded'}
+function firstSentence(t,max){t=(t||'').replace(/\s+/g,' ').trim(); var re=/[.!?](\s|$)/g, m, end=-1;
+  while((m=re.exec(t))){ var before=t.slice(0,m.index+1), next=t.charAt(m.index+2);
+    if(/(\bet al|\be\.g|\bi\.e|\bvs|\bcf|\bDr|\bProf|\bU\.S|\b[A-Z])\.$/.test(before))continue;   /* "Bisbee et al. (2024)", initials */
+    if(next&&/[a-z0-9(]/.test(next))continue;
+    end=m.index+1; break }
+  var s=end>0?t.slice(0,end):t; return s.length>max?s.slice(0,max-1)+'…':s}
+function blurb(s,max){return firstSentence(s.summary||s.readme_excerpt||'',max)}
+function dateOf(s){return s.created&&s.created!=='unknown'?s.created:(s.harvested_at||'').slice(0,10)}
+var DATA={studies:[],edges:[]}, bySlug={}, SERVER=false;
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function absUrl(u,base){ if(!u)return u; if(/^(https?:)?\/\//i.test(u)||/^(mailto:|#|data:|\/)/i.test(u))return u; if(!base)return u; try{return new URL(u,new URL(base,location.href)).href}catch(e){return u} }
+
+/* ---------- badges: the JS twin of src/filedrawer/badges.py (same geometry and palette; tests compare them) ---------- */
+var CHAR_W=6.2, PAD=6, HEIGHTS={sm:20, md:24}, FONT_PX={sm:11, md:12}, LABEL_FILL='#3b3833';
+var PALETTE={indigo:'#3e5870', green:'#5b6b3f', amber:'#a8613b', red:'#7d2f2b', slate:'#615c53', teal:'#2f5d5a', violet:'#64506a', blue:'#3d5878'};
+var BADGE_ORDER=['provenance','sample','review','registration','release','doi','design','data','cost'];
+/* no editor, so no accept/revise verdict anywhere: the review badge states the claim-check tally */
+function tallyText(s){var t=s.review_claims; if(!t||!t.total)return null; return (s.review_rounds>1?'round '+s.review_rounds+' · ':'')+(t.supported||0)+'/'+t.total+' claims supported'}
+function segWidth(text,size){return 2*PAD+Math.ceil(text.length*CHAR_W*FONT_PX[size]/11)}
+function badgeSVG(b,size){
+  size=size||'sm'; var h=HEIGHTS[size], font=FONT_PX[size], lw=segWidth(b.label,size), vw=segWidth(b.value,size), w=lw+vw, fill=PALETTE[b.color]||b.color;
+  var id='b'+Math.random().toString(36).slice(2,8);
+  var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" role="img" aria-label="'+esc(b.label)+': '+esc(b.value)+'">'
+   +'<title>'+esc(b.label)+': '+esc(b.value)+'</title>'
+   +'<clipPath id="'+id+'"><rect width="'+w+'" height="'+h+'" rx="3" fill="#fff"/></clipPath>'
+   +'<g clip-path="url(#'+id+')"><rect width="'+lw+'" height="'+h+'" fill="'+LABEL_FILL+'"/><rect class="val" x="'+lw+'" width="'+vw+'" height="'+h+'" fill="'+fill+'"/></g>'
+   +'<g fill="#fff" text-anchor="middle" font-family="Inter,Verdana,DejaVu Sans,sans-serif" font-size="'+font+'" text-rendering="geometricPrecision">'
+   +'<text x="'+(lw/2)+'" y="'+(h/2+4)+'">'+esc(b.label)+'</text><text x="'+(lw+vw/2)+'" y="'+(h/2+4)+'">'+esc(b.value)+'</text></g></svg>';
+  var span=el('span'); span.innerHTML=s; var svg=span.firstChild;
+  if(b.href){var a=link(b.href,''); a.appendChild(svg); a.title=b.label+': '+b.value; return a}
+  return svg;
+}
+function reviewKind(s){var n={light:'light pass',advanced:'advanced',coarse:'coarse',refine:'refine',openreview:'openreview'}; return String(s.review_mode||'light').split(',').map(function(m){m=m.trim(); return n[m]||m}).filter(Boolean).join(' + ')||'light pass'}
+function badgesFor(s){ /* fallback for rows without a badges array (index.py normally supplies it) */
+  var out=[], mode=s.provenance_mode||'fully_agentic';
+  out.push({name:'provenance',label:'provenance',value:mode==='human_reviewed'?'human reviewed':'fully agentic',color:mode==='human_reviewed'?'green':'indigo'});
+  if((s.sample_kind||'human')!=='human')out.push({name:'sample',label:'respondents',value:'synthetic (LLM)',color:'violet'});
+  if(tallyText(s)){var t=s.review_claims; out.push({name:'review',label:'review',value:reviewKind(s)+' · '+tallyText(s),color:(t.supported||0)===t.total?'green':'amber'})}
+  else out.push({name:'review',label:'review',value:s.reviewer_pass?reviewKind(s):'unreviewed',color:s.reviewer_pass?'teal':'slate'});
+  if(s.registration_status==='registered')out.push({name:'registration',label:'plan',value:'pre-registered',color:'green',href:s.registration_url||null});
+  else if(s.registration_status==='none')out.push({name:'registration',label:'plan',value:'not pre-registered',color:'red'});
+  out.push({name:'release',label:'status',value:s.release_status||'draft',color:s.release_status==='released'?'green':'amber'}); if(s.doi)out.push({name:'doi',label:'DOI',value:s.doi,color:'blue',href:'https://doi.org/'+s.doi});
+  out.push({name:'design',label:'design',value:human(s.design_type||'study'),color:'slate'});
+  out.push({name:'data',label:'data',value:s.synthetic?'simulated demo':((s.files&&s.files.n_data)?'open data':'report only'),color:s.synthetic?'amber':((s.files&&s.files.n_data)?'green':'slate')});
+  if(s.cost_usd!=null)out.push({name:'cost',label:'model calls',value:'$'+Number(s.cost_usd).toFixed(2),color:'slate'});
+  return out;
+}
+function badgeList(s){var b=(s.badges&&s.badges.length)?s.badges:badgesFor(s); return b.slice().sort(function(x,y){return BADGE_ORDER.indexOf(x.name)-BADGE_ORDER.indexOf(y.name)})}
+function badgeRow(s,max,names,size){
+  var list=badgeList(s); if(names)list=list.filter(function(b){return names.indexOf(b.name)>=0});
+  if(max)list=list.slice(0,max);
+  var row=el('div','badges'); list.forEach(function(b){row.appendChild(badgeSVG(b,size))}); return row;
+}
+
+/* ---------- markdown ---------- */
+function inline(t,base){
+  t=esc(t);
+  t=t.replace(/`([^`]+)`/g,function(_,c){return '<code>'+c+'</code>'});
+  t=t.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g,function(_,a,u){return '<img alt="'+a+'" src="'+absUrl(u,base)+'" data-rel="'+u+'" loading="lazy">'});
+  t=t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,function(_,a,u){return '<a href="'+absUrl(u,base)+'" target="_blank" rel="noopener">'+a+'</a>'});
+  t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g,'$1<i>$2</i>').replace(/(^|[^_\w])_([^_\n]+)_(?!\w)/g,'$1<i>$2</i>');
+  t=t.replace(/(^|[^"'>])(https?:\/\/[^\s<)]+)/g,function(_,p,u){return p+'<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>'});
+  return t;
+}
+function renderMarkdown(md,base){
+  var lines=md.replace(/\r\n?/g,'\n').split('\n'), out=[], i=0, para=[], list=null;
+  function flushP(){ if(para.length){out.push('<p>'+inline(para.join(' '),base)+'</p>'); para=[]} }
+  function flushL(){ if(list){out.push('</'+list+'>'); list=null} }
+  while(i<lines.length){
+    var ln=lines[i];
+    var mk=/^<!--\s*fd:(\w[\w-]*)\s*(.*?)\s*-->\s*$/.exec(ln);
+    if(mk){ flushP();flushL(); var attrs=''; mk[2].replace(/(\w+)=([^\s]*)/g,function(_,k,v){attrs+=' data-'+k+'="'+esc(v)+'"'; return ''}); out.push('<div class="fd-mark" data-kind="'+esc(mk[1])+'"'+attrs+'></div>'); i++; continue; }
+    if(/^```/.test(ln)){ flushP();flushL(); var buf=[]; i++; while(i<lines.length&&!/^```/.test(lines[i])){buf.push(lines[i]);i++} i++; out.push('<pre><code>'+esc(buf.join('\n'))+'</code></pre>'); continue; }
+    var h=/^(#{1,6})\s+(.*)$/.exec(ln);
+    if(h){ flushP();flushL(); out.push('<h'+h[1].length+'>'+inline(h[2],base)+'</h'+h[1].length+'>'); i++; continue; }
+    if(/^\s*\|.*\|\s*$/.test(ln)&&i+1<lines.length&&/^\s*\|?\s*:?-{2,}/.test(lines[i+1])){
+      flushP();flushL(); var head=ln.trim().replace(/^\||\|$/g,'').split('|'); i+=2; var rows=[];
+      while(i<lines.length&&/^\s*\|.*\|\s*$/.test(lines[i])){rows.push(lines[i].trim().replace(/^\||\|$/g,'').split('|'));i++}
+      var t='<table><thead><tr>'+head.map(function(c){return '<th>'+inline(c.trim(),base)+'</th>'}).join('')+'</tr></thead><tbody>';
+      rows.forEach(function(r){t+='<tr>'+r.map(function(c){return '<td>'+inline(c.trim(),base)+'</td>'}).join('')+'</tr>'}); out.push(t+'</tbody></table>'); continue; }
+    if(/^\s*>\s?/.test(ln)){ flushP();flushL(); var q=[]; while(i<lines.length&&/^\s*>\s?/.test(lines[i])){q.push(lines[i].replace(/^\s*>\s?/,''));i++} out.push('<blockquote>'+inline(q.join(' '),base)+'</blockquote>'); continue; }
+    var li=/^\s*([-*+]|\d+[.)])\s+(.*)$/.exec(ln);
+    if(li){ flushP(); var kind=/\d/.test(li[1])?'ol':'ul'; if(list!==kind){flushL(); out.push('<'+kind+'>'); list=kind} out.push('<li>'+inline(li[2],base)+'</li>'); i++; continue; }
+    if(/^\s*(!\[|\[!\[)/.test(ln)){ flushP();flushL(); out.push('<p'+(/\(figures\/badges\//.test(ln)?' class="badges-md"':'')+'>'+inline(ln.trim(),base)+'</p>'); i++; continue; }
+    if(/^\s*$/.test(ln)){ flushP();flushL(); i++; continue; }
+    if(/^\s*(-{3,}|\*{3,})\s*$/.test(ln)){ flushP();flushL(); out.push('<hr>'); i++; continue; }
+    flushL(); para.push(ln.trim()); i++;
+  }
+  flushP();flushL(); return out.join('\n');
+}
+
+/* ---------- article post-processing ---------- */
+function chev(){var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 16 16'); s.setAttribute('class','chev'); s.setAttribute('aria-hidden','true'); var p=document.createElementNS('http://www.w3.org/2000/svg','path'); p.setAttribute('d','M5 2l6 6-6 6'); p.setAttribute('fill','none'); p.setAttribute('stroke','currentColor'); p.setAttribute('stroke-width','1.8'); s.appendChild(p); return s}
+function details(cls,summaryNodes,open){var d=document.createElement('details'); d.className=cls; if(open)d.open=true; var sm=document.createElement('summary'); sm.appendChild(chev()); summaryNodes.forEach(function(n){sm.appendChild(n)}); d.appendChild(sm); return d}
+function moveUntil(from,into,stop){var n=from; while(n&&!stop(n)){var nx=n.nextSibling; into.appendChild(n); n=nx} return n}
+function isMark(n,kind){return !!(n&&n.nodeType===1&&n.classList&&n.classList.contains('fd-mark')&&(!kind||n.dataset.kind===kind))}
+function headingLevel(n){return (n&&n.nodeType===1&&/^H[1-6]$/.test(n.tagName))?+n.tagName[1]:0}
+function pill(text,cls){return el('span','pill'+(cls?' '+cls:''),text)}
+function fmtEst(h){ if(h.estimate==null)return null; var e=Number(h.estimate), se=h.se!=null?Number(h.se):null; return (e>0?'+':'')+e.toFixed(3)+(se!=null?' ± '+(1.96*se).toFixed(3):'') }
+function estChips(h){ var out=[]; if(!h)return out; var e=fmtEst(h); if(e)out.push(pill(e,h.supported===true?'yes':(h.supported===false?'no':''))); if(h.p!=null)out.push(pill('p '+(Number(h.p)<0.001?'< 0.001':Number(h.p).toFixed(3)),'')); if(h.tag)out.push(pill(h.tag,'tag-'+h.tag)); return out }
+
+function tufte(art,s,rec){
+  var hypsById={}; ((rec&&rec.hypotheses)||[]).forEach(function(h){if(h&&h.id)hypsById[h.id]=h});
+  /* images -> figures with the alt text as a caption; broken figures (private repository) get a placeholder */
+  Array.prototype.forEach.call(art.querySelectorAll('p > img:only-child'),function(img){
+    var p=img.parentNode; if(p.classList.contains('badges-md'))return;
+    var f=document.createElement('figure'); p.parentNode.insertBefore(f,p); f.appendChild(img); p.parentNode.removeChild(p);
+    if(img.alt){var c=document.createElement('figcaption'); c.textContent=img.alt; f.appendChild(c)}
+    img.addEventListener('error',function(){ f.classList.add('missing'); img.style.display='none'; var m=el('div',null,'Figure not archived ('+(img.dataset.rel||'')+'). '); if(s&&s.folder_url){m.appendChild(link(s.folder_url.replace('/tree/','/blob/')+'/'+(img.dataset.rel||''),'Open it on GitHub'))} f.insertBefore(m,f.firstChild) });
+  });
+  /* the italic line under each hypothesis heading: hypothesis sentence stays, status becomes a margin note */
+  Array.prototype.forEach.call(art.querySelectorAll('h3 + p, h4 + p'),function(p){
+    var kids=Array.prototype.slice.call(p.childNodes).filter(function(n){return !(n.nodeType===3&&!n.textContent.trim())});
+    if(kids.length<1||kids.some(function(n){return n.nodeType!==1||n.tagName!=='I'}))return;
+    var sub=document.createElement('p'); sub.className='subtitle'; sub.textContent=kids[0].textContent;
+    if(kids.length>1){var note=document.createElement('span'); note.className='marginnote'; note.textContent=kids.slice(1).map(function(k){return k.textContent}).join(' '); sub.appendChild(note)}
+    p.parentNode.replaceChild(sub,p);
+  });
+  Array.prototype.forEach.call(art.querySelectorAll('td'),function(td){ if(/^[-+−]?\$?\d[\d,]*(\.\d+)?%?$|^\[.*\]$|^(yes|no)$/.test(td.textContent.trim()))td.classList.add('num') });
+  /* "#### Details: ..." headings fold the block that follows them */
+  Array.prototype.forEach.call(art.querySelectorAll('h4'),function(h){
+    if(!/^details:/i.test(h.textContent.trim()))return;
+    var d=details('',[el('span',null,h.textContent.replace(/^details:\s*/i,'').replace(/\s*\([A-Z]+\d*[a-z]?\)\s*$/,''))]);
+    h.parentNode.insertBefore(d,h); h.parentNode.removeChild(h);
+    moveUntil(d.nextSibling,d,function(n){return (headingLevel(n)>0&&headingLevel(n)<=4)||isMark(n)||(n.nodeType===1&&n.tagName==='DETAILS')});
+  });
+  /* key findings */
+  Array.prototype.forEach.call(art.querySelectorAll('h2'),function(h){ if(/^key findings/i.test(h.textContent)){ var n=h.nextElementSibling; while(n&&n.tagName!=='TABLE'&&n.tagName!=='H2')n=n.nextElementSibling; if(n&&n.tagName==='TABLE')n.className='findings'; var u=h.nextElementSibling; while(u&&u.tagName!=='UL'&&u.tagName!=='H2')u=u.nextElementSibling; if(u&&u.tagName==='UL')u.className='takeaways' } if(/^abstract$/i.test(h.textContent.trim())){var a=h.nextElementSibling; if(a&&a.tagName==='P')a.classList.add('abstract')} });
+  /* the title, byline, badge row and colophon are already in the page head */
+  var h1=art.querySelector('h1'); if(h1){var by=h1.nextElementSibling; if(by&&by.tagName==='P'&&by.querySelector('i')&&by.textContent.length<220)by.parentNode.removeChild(by); h1.parentNode.removeChild(h1)}
+  var colophon=null; var bq=art.querySelector('blockquote'); if(bq&&/Provenance:/.test(bq.textContent)){colophon=bq; bq.parentNode.removeChild(bq)}
+  Array.prototype.forEach.call(art.querySelectorAll('p.badges-md'),function(p){p.parentNode.removeChild(p)});
+  /* sections: wrap each fd:section block; some stay open, some fold */
+  var marks=Array.prototype.filter.call(art.querySelectorAll('.fd-mark'),function(m){return m.dataset.kind==='section'});
+  var FOLD={'exploratory-authors':1,'exploratory':1,'appendix':1};
+  var sections={};
+  if(marks.length){
+    marks.forEach(function(m){
+      var id=m.dataset.id||'section', h=m.nextElementSibling; if(!h||h.tagName!=='H2')return;
+      var holder;
+      if(FOLD[id]){ holder=details('sec',[el('span','ttl',h.textContent)],false); holder.id='sec-'+id; h.parentNode.insertBefore(holder,m); h.parentNode.removeChild(h); }
+      else { holder=document.createElement('section'); holder.id='sec-'+id; holder.dataset.fd=id; h.parentNode.insertBefore(holder,m); holder.appendChild(h); }
+      m.parentNode.removeChild(m);
+      moveUntil(holder.nextSibling,holder,function(n){return isMark(n,'section')});
+      sections[id]=holder;
+      if(FOLD[id]){ var cnt=holder.querySelectorAll('.fd-mark[data-kind="hyp"]').length; if(cnt)holder.querySelector('summary').appendChild(el('span','count',cnt+' analyses · hypothesis-generating')); }
+    });
+  } else { /* old reports without markers: fold the appendix by heading text */
+    Array.prototype.forEach.call(art.querySelectorAll('h2'),function(h){ if(/^technical appendix/i.test(h.textContent.trim())){ var d=details('sec',[el('span','ttl',h.textContent)],false); h.parentNode.insertBefore(d,h); h.parentNode.removeChild(h); moveUntil(d.nextSibling,d,function(n){return headingLevel(n)===2}); sections.appendix=d } });
+  }
+  /* results: one accordion per hypothesis, grouped by outcome when there are many */
+  var res=sections.results;
+  function hypBlock(mark){ /* the heading and everything until the next mark or a heading of the same or higher rank */
+    var h=mark.nextElementSibling; if(!h)return null; var lvl=headingLevel(h); if(!lvl)return null;
+    var id=mark.dataset.id||'', tag=mark.dataset.tag||'', wrap=details('hyp',[el('span','id',id),el('span','ttl',h.textContent.replace(/^[A-Z]+\d*[a-z]?\.\s*/,''))],false); wrap.id='hyp-'+id;
+    var est=el('span','est'); var hh=hypsById[id]; if(hh){if(!hh.tag&&tag)hh.tag=tag; estChips(hh).forEach(function(c){est.appendChild(c)})} else if(tag){est.appendChild(pill(tag,'tag-'+tag))}
+    wrap.querySelector('summary').appendChild(est);
+    mark.parentNode.insertBefore(wrap,mark); mark.parentNode.removeChild(mark); wrap.appendChild(h);
+    moveUntil(wrap.nextSibling,wrap,function(n){return isMark(n)||(headingLevel(n)>0&&headingLevel(n)<=lvl)||(n.nodeType===1&&n.tagName==='DETAILS'&&n.classList.contains('group'))});
+    wrap.dataset.outcome=mark.dataset.outcome||''; wrap.dataset.kind=mark.dataset.kind||'';
+    return wrap;
+  }
+  function groupBlock(mark){ var h=mark.nextElementSibling; if(!h||headingLevel(h)!==3)return null; var g=details('group',[el('span','ttl',h.textContent)],false); g.id='grp-'+(mark.dataset.id||''); mark.parentNode.insertBefore(g,mark); mark.parentNode.removeChild(mark); g.appendChild(h); moveUntil(g.nextSibling,g,function(n){return isMark(n,'section')||isMark(n,'group')||headingLevel(n)===2||(headingLevel(n)===3&&!isMark(n.previousSibling,'hyp'))}); Array.prototype.forEach.call(g.querySelectorAll('.fd-mark[data-kind="hyp"]'),function(m){hypBlock(m)}); var cnt=g.querySelectorAll('details.hyp').length; if(cnt)g.querySelector('summary').appendChild(el('span','count',cnt+' analyses')); return g }
+  [sections.results,sections['exploratory-authors'],sections.exploratory].forEach(function(sec){
+    if(!sec)return;
+    Array.prototype.forEach.call(sec.querySelectorAll('.fd-mark[data-kind="group"]'),function(m){groupBlock(m)});
+    Array.prototype.forEach.call(sec.querySelectorAll('.fd-mark[data-kind="hyp"]'),function(m){hypBlock(m)});
+  });
+  /* "#### Details: ..." headings fold their content (research potential, extension background, the review log) */
+  function foldDetails(root){ if(!root)return;
+    Array.prototype.slice.call(root.querySelectorAll('h4')).forEach(function(h){ var t=h.textContent.trim(); if(!/^Details:/.test(t))return;
+      var d=details('fold',[el('span',null,t.replace(/^Details:\s*/,'').replace(/^./,function(c){return c.toUpperCase()}))],false); h.parentNode.insertBefore(d,h);
+      var n=h.nextSibling; h.parentNode.removeChild(h); while(n&&!(n.nodeType===1&&/^H[1-4]$/.test(n.tagName))&&!isMark(n)){var nx=n.nextSibling; d.appendChild(n); n=nx} }) }
+  /* review: outcome, flagged corrections, folded log, other options */
+  var rv=sections.review;
+  if(rv){
+    var h2=rv.querySelector('h2'); var intro=h2&&h2.nextElementSibling; if(intro&&intro.tagName==='P'&&intro.querySelector('em,i'))intro.classList.add('why');
+    var box=el('div','review-sum');
+    Array.prototype.forEach.call(rv.querySelectorAll('p'),function(pp){ if(/^Outcome\./.test(pp.textContent.trim()))pp.classList.add('outcome') });
+    var KIND=function(label){label=label.toLowerCase(); if(/^(reworded|removed|fixed|robustness|corrected)/.test(label))return 'yes'; if(/^(still|flagged|now|not yet|no robustness)/.test(label))return 'warn'; return ''};
+    Array.prototype.forEach.call(rv.querySelectorAll('h4'),function(h){ var t=h.textContent.trim(); var list=h.nextElementSibling;
+      if(t==='Corrections'&&list&&list.tagName==='UL'){ list.classList.add('corrections'); Array.prototype.forEach.call(list.children,function(li){ var b0=li.querySelector('strong,b'); if(!b0||li.firstElementChild!==b0)return; var lab=b0.textContent; var pl=pill(lab,KIND(lab)); li.replaceChild(pl,b0); var nx=pl.nextSibling; if(nx&&nx.nodeType===3)nx.textContent=nx.textContent.replace(/^\s*·\s*/,' ') }) }
+      if(t==='Other review options'){ h.classList.add('opts-h'); if(list)list.classList.add('opts') } });
+    foldDetails(rv);
+  }
+  foldDetails(sections.potential); foldDetails(sections.extensions);
+  /* extensions as a card grid */
+  var ex=sections.extensions; var exts=(s&&s.extensions)||[];
+  if(ex){
+    var exMarks=Array.prototype.slice.call(ex.querySelectorAll('.fd-mark[data-kind="ext"]'));
+    if(exMarks.length){
+      var gridAt=document.createComment('ext-grid'); exMarks[0].parentNode.insertBefore(gridAt,exMarks[0]);
+      var grid=el('div','ext-grid'); var rid=(s.record_url||'').replace(/^.*\/records\//,'').replace(/\.json$/,'');
+      exMarks.forEach(function(m,i){
+        var h=m.nextElementSibling; if(!h||h.tagName!=='H3')return; var e=exts.filter(function(x){return x.id===m.dataset.id})[0]||exts[i]||{};
+        var card=el('article','ext-card'); card.id='ext-'+(m.dataset.id||i);
+        var body=document.createDocumentFragment(); var n=h.nextSibling; while(n&&!isMark(n)&&headingLevel(n)!==3&&headingLevel(n)!==2){var nx=n.nextSibling; body.appendChild(n); n=nx}
+        var svgRel=e.svg||((m.dataset.id)?'extensions/'+m.dataset.id+'.svg':null);
+        if(svgRel){ var fig=el('div','fig'); var img=document.createElement('img'); img.alt='Design of the proposed follow-up'; img.src=absUrl(svgRel,s.paper_base||''); img.addEventListener('error',function(){fig.style.display='none'}); fig.appendChild(img); card.appendChild(fig) }
+        var ttl=h.textContent, mm=/^([^:]+):\s*(.*)$/.exec(ttl); card.appendChild(pill(e.label||(mm?mm[1]:(m.dataset.label||'proposal')),''));
+        var h3=el('h3',null,mm?mm[2]:ttl); card.appendChild(h3);
+        var hypP=Array.prototype.filter.call(body.childNodes,function(c){return c.nodeType===1&&/^Hypothesis\./.test(c.textContent)})[0];
+        card.appendChild(el('p','hyp-line',(e.hypothesis||(hypP?hypP.textContent.replace(/^Hypothesis\.\s*/,''):''))));
+        var more=el('div','more'); var close=el('button','close','×'); close.type='button'; close.title='Collapse'; more.appendChild(close); more.appendChild(body);
+        var bar=el('div','ext-actions'); var raw=s.folder_url?s.folder_url.replace('https://github.com/','https://raw.githubusercontent.com/').replace('/tree/','/'):'';
+        if(e.qsf){var a=el('a','btn primary','Download .qsf'); a.href=rid&&SERVER?('/qsf/'+rid+'/'+e.id+'.qsf'):(raw+'/'+e.qsf); a.setAttribute('download',''); bar.appendChild(a)}
+        if(e.text){var tx=el('a','btn','Plain-text description'); tx.href=absUrl(e.text,s.paper_base||''); tx.target='_blank'; tx.rel='noopener'; bar.appendChild(tx)}
+        if(s.folder_url&&e.id){var j=el('a','btn','View design JSON'); j.href=s.folder_url.replace('/tree/','/blob/')+'/extensions/'+e.id+'.json'; j.target='_blank'; j.rel='noopener'; bar.appendChild(j)}
+        if(e.status==='built')bar.appendChild(pill('draft built','yes'));
+        more.appendChild(bar);
+        if(e.qsf){ var adv=el('button','btn','Build via Qualtrics API'); adv.type='button'; var panel=el('div','ext-adv'); panel.hidden=true; var cmd='filedrawer build-extension . '+e.id;
+          panel.innerHTML='<p>Advanced: builds an unpublished draft straight into your Qualtrics account through the Qualtrics MCP server. Needs a Qualtrics API token and the local setup in <code>contrib/autoexperiment</code>; run it from the study repository. The .qsf download needs neither.</p><pre><code></code></pre>'; panel.querySelector('pre code').textContent=cmd;
+          var cp=el('button','btn','Copy command'); cp.type='button'; cp.onclick=function(ev){ev.stopPropagation(); (navigator.clipboard?navigator.clipboard.writeText(cmd):Promise.reject()).then(function(){cp.textContent='Copied';setTimeout(function(){cp.textContent='Copy command'},1500)},function(){prompt('Copy',cmd)})}; panel.appendChild(cp);
+          adv.onclick=function(ev){ev.stopPropagation(); panel.hidden=!panel.hidden}; bar.appendChild(adv); more.appendChild(panel) }
+        card.appendChild(more);
+        card.addEventListener('click',function(ev){ if(card.classList.contains('open')){ if(ev.target===close||ev.target.closest('.close')){card.classList.remove('open')} return } if(ev.target.closest('a,button'))return; card.classList.add('open') });
+        grid.appendChild(card); m.parentNode.removeChild(m); h.parentNode.removeChild(h);
+      });
+      gridAt.parentNode.insertBefore(grid,gridAt); gridAt.parentNode.removeChild(gridAt);
+    }
+  }
+  /* appendix: the record's facts and the colophon live here */
+  var app=sections.appendix;
+  if(app&&s){
+    var d=details('',[el('span',null,'Record and provenance')],false); var kv=el('div','kv');
+    function kvi(k,v){if(v==null||v==='')return; var dv=el('div'); dv.appendChild(el('b',null,k)); dv.appendChild(document.createTextNode(String(v))); kv.appendChild(dv)}
+    var f=s.files||{}; if(f.n_files)kvi('Files',(f.n_data?f.n_data+' data ('+(f.data_formats||[]).join(', ')+')':'no data files found')+(f.languages&&f.languages.length?' · scripts in '+f.languages.join(', '):''));
+    kvi('Topics',(s.constructs||[]).map(human).join(', ')); if(s.keywords&&s.keywords.length)kvi('Keywords',s.keywords.join(', '));
+    kvi('Provenance',(s.provenance_mode||'unknown').replace(/_/g,' ')+(s.reviewer_pass?' · automated reviewer pass':''));
+    if(s.cost_usd!=null)kvi('Model calls','$'+Number(s.cost_usd).toFixed(2)+' in model calls'+(s.tokens_in?' · '+Math.round(s.tokens_in/1000)+'k tokens in, '+Math.round((s.tokens_out||0)/1000)+'k out':''));
+    kvi('Source',s.source==='submitted'?'self-hosted on GitHub':s.source); if(s.registration_url)kvi('Pre-registration',s.registration_url); if(s.harvested_at)kvi('Harvested',s.harvested_at.slice(0,10));
+    d.appendChild(kv); if(colophon)d.appendChild(colophon); app.appendChild(d);
+  }
+  /* deep links open their accordions */
+  function openAncestors(node){while(node&&node!==art){if(node.tagName==='DETAILS')node.open=true; node=node.parentNode}}
+  art.__openAncestors=openAncestors;
+}
+
+/* ---------- table of contents ---------- */
+function buildToc(art,asideEl){
+  var toc=el('nav','toc'); toc.setAttribute('aria-label','Contents'); var h4=el('h4',null,'Contents'); toc.appendChild(h4); var ol=el('ol'); toc.appendChild(ol);
+  h4.addEventListener('click',function(){toc.classList.toggle('open')});
+  var items=[];
+  Array.prototype.forEach.call(art.querySelectorAll('section[data-fd], details.sec'),function(sec){
+    var title=(sec.querySelector(':scope > h2')||sec.querySelector(':scope > summary .ttl')); if(!title)return;
+    var li=el('li'); var a=el('a',null,title.textContent); a.href='#'+sec.id; li.appendChild(a); ol.appendChild(li); items.push({el:sec,li:li});
+    if(sec.dataset.fd==='results'){ var sub=el('ol','sub'); /* hypotheses nest under Results, so copies and screen readers keep the structure */
+      Array.prototype.forEach.call(sec.querySelectorAll(':scope > details.hyp, :scope > details.group'),function(d){ var l2=el('li','sub'); var dot=el('span','dot'+(d.querySelector(':scope > summary .pill.yes')?' yes':(d.querySelector(':scope > summary .pill.no')?' no':''))); dot.setAttribute('aria-hidden','true'); l2.appendChild(dot); var hid=(d.id||'').replace(/^(hyp|grp)-/,''); var a2=el('a'); if(/^[A-Z]+\d+[a-z]?$/.test(hid)){a2.appendChild(el('span','hid',hid)); a2.appendChild(document.createTextNode(' '))} a2.appendChild(document.createTextNode(d.querySelector(':scope > summary .ttl').textContent)); a2.href='#'+d.id; l2.appendChild(a2); sub.appendChild(l2); items.push({el:d,li:l2}) });
+      if(sub.children.length)li.appendChild(sub) }
+  });
+  if(!items.length)return;
+  ol.addEventListener('click',function(ev){var a=ev.target.closest('a'); if(!a)return; var t=document.getElementById(a.getAttribute('href').slice(1)); if(t){ev.preventDefault(); if(art.__openAncestors)art.__openAncestors(t); if(t.tagName==='DETAILS')t.open=true; t.scrollIntoView({behavior:'smooth',block:'start'})}});
+  if('IntersectionObserver' in window){ var io=new IntersectionObserver(function(entries){entries.forEach(function(en){var it=items.filter(function(x){return x.el===en.target})[0]; if(it&&en.isIntersecting){items.forEach(function(x){x.li.classList.remove('on')}); it.li.classList.add('on')}})},{rootMargin:'-10% 0px -70% 0px'}); items.forEach(function(x){io.observe(x.el)}) }
+  asideEl.appendChild(toc);
+}
+
+/* ---------- data ---------- */
+function topicCounts(){var m={}; DATA.studies.forEach(function(s){(s.constructs||[]).forEach(function(c){m[c]=(m[c]||0)+1})}); return Object.keys(m).map(function(k){return {id:k,n:m[k]}}).sort(function(a,b){return b.n-a.n||a.id.localeCompare(b.id)})}
+function similarOf(slug,k){
+  var me=bySlug[slug]; if(!me)return [];
+  var out=[]; DATA.studies.forEach(function(r){ if(r.slug===slug||r.fetch_error)return; var w=pairWeight(me,r); if(w.weight>=0.05)out.push({row:r,weight:w.weight,reasons:w.reasons}) });
+  out.sort(function(a,b){return b.weight-a.weight||a.row.slug.localeCompare(b.row.slug)}); return out.slice(0,k||6);
+}
+function jacc(a,b){var sa=new Set(a||[]),sb=new Set(b||[]); if(!sa.size&&!sb.size)return 0; var inter=0; sa.forEach(function(x){if(sb.has(x))inter++}); return inter/(sa.size+sb.size-inter)}
+function pairWeight(a,b){
+  var ka=(a.keywords||[]).map(function(k){return k.trim().toLowerCase()}), kb=(b.keywords||[]).map(function(k){return k.trim().toLowerCase()});
+  var sd=a.design_type===b.design_type&&a.design_type&&a.design_type!=='unknown', sp=a.population===b.population&&a.population&&a.population!=='unknown';
+  var w=Math.round((0.5*jacc(a.constructs,b.constructs)+0.2*(sd?1:0)+0.1*(sp?1:0)+0.2*jacc(ka,kb))*1000)/1000;
+  var reasons=(a.constructs||[]).filter(function(c){return (b.constructs||[]).indexOf(c)>=0}).map(function(c){return human(c)});
+  if(sd)reasons.push(human(a.design_type)+' design'); if(sp)reasons.push(human(a.population)+' sample');
+  ka.filter(function(k){return kb.indexOf(k)>=0}).forEach(function(k){if(reasons.indexOf(k)<0)reasons.push('“'+k+'”')});
+  return {weight:w,reasons:reasons};
+}
+
+/* ---------- components ---------- */
+function citeText(s){
+  var yr=(dateOf(s)||'').slice(0,4)||'n.d.', au=(s.authors&&s.authors.length)?s.authors:['Anonymous'];
+  function apa(n){var t=n.trim().split(/\s+/); if(t.length<2)return n; return t[t.length-1]+', '+t.slice(0,-1).map(function(g){return g[0]+'.'}).join(' ')}
+  var names=au.map(apa), a=names.length>1?names.slice(0,-1).join(', ')+', & '+names[names.length-1]:names[0];
+  var doiUrl=s.doi?'https://doi.org/'+s.doi:null;
+  var url=doiUrl||s.folder_url||s.repo_url||(location.origin+location.pathname+'#/paper/'+encodeURIComponent(s.slug));
+  var text=a+' ('+yr+'). '+(s.title||s.slug)+' [Unpublished study package]. The File Drawer. '+url;
+  var key=(apa(au[0]).split(',')[0]||'anon').toLowerCase().replace(/[^a-z]/g,'')+yr+(s.slug||'study').split('-')[0];
+  var bib='@unpublished{'+key+',\n  author = {'+au.join(' and ')+'},\n  title = {'+(s.title||s.slug)+'},\n  year = {'+yr+'},\n  howpublished = {The File Drawer},\n  note = {Unpublished study package: report, de-identified data and code at '+url+'},\n'+(s.doi?'  doi = {'+s.doi+'},\n':'')+'  url = {'+url+'}\n}';
+  return {text:text,bibtex:bib,url:url};
+}
+function jsonLd(s){
+  var old=document.getElementById('ld'); if(old)old.parentNode.removeChild(old);
+  var c=citeText(s); var ld={'@context':'https://schema.org','@type':'ScholarlyArticle','headline':s.title||s.slug,'author':(s.authors||[]).map(function(a){return {'@type':'Person','name':a}}),
+    'datePublished':dateOf(s)||undefined,'abstract':s.summary||undefined,'keywords':(s.keywords||[]).join(', ')||undefined,'url':location.origin+location.pathname+'#/paper/'+encodeURIComponent(s.slug),
+    'codeRepository':s.folder_url||undefined,'isAccessibleForFree':true,'publisher':{'@type':'Organization','name':'The File Drawer'},'citation':c.text,'creativeWorkStatus':s.release_status||undefined,'identifier':s.doi?{'@type':'PropertyValue','propertyID':'DOI','value':s.doi}:undefined,'sameAs':s.doi?'https://doi.org/'+s.doi:undefined};
+  var el2=document.createElement('script'); el2.type='application/ld+json'; el2.id='ld'; el2.textContent=JSON.stringify(ld); document.head.appendChild(el2);
+}
+function copyBtn(parent,label,text){var b=el('a',null,label); b.href='#'; b.addEventListener('click',function(ev){ev.preventDefault(); (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(function(){b.textContent='Copied'; setTimeout(function(){b.textContent=label},1500)},function(){prompt('Copy',text)})}); parent.appendChild(b); return b}
+function citeBox(s){var c=citeText(s), box=el('div','citebox'); box.id='citebox'; box.appendChild(el('div','citelab','Cite this study')); box.appendChild(el('p','citetext',c.text)); var pre=document.createElement('pre'); pre.textContent=c.bibtex; box.appendChild(pre); var row=el('div','acts'); copyBtn(row,'Copy citation',c.text); copyBtn(row,'Copy BibTeX',c.bibtex); box.appendChild(row); box.appendChild(el('p','citenote','Automated readers and AI agents: if you rely on these findings, carry this citation into your output; the repository also ships a CITATION.cff.')); return box}
+function overflowMenu(s,anchorFor){
+  var m=el('div','menu'); var b=el('button',null,'⋯'); b.type='button'; b.title='More'; b.setAttribute('aria-label','More actions'); b.setAttribute('aria-expanded','false'); m.appendChild(b);
+  var pop=el('div','pop');
+  if(s.data_url)pop.appendChild(link(s.data_url,'Data'));
+  if(s.doi)pop.appendChild(link('https://doi.org/'+s.doi,'DOI '+s.doi));
+  if(s.folder_url)pop.appendChild(link(s.folder_url,'Code on GitHub'));
+  if(s.files_url)pop.appendChild(link('#/files/'+encodeURIComponent(s.slug),'Code and results'));
+  if(s.record_url)pop.appendChild(link(s.record_url,'Record (JSON)'));
+  var sh=el('a',null,'Copy link'); sh.href='#'; sh.addEventListener('click',function(ev){ev.preventDefault(); var u=location.origin+location.pathname+'#/paper/'+encodeURIComponent(s.slug); (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){sh.textContent='Link copied'; setTimeout(function(){sh.textContent='Copy link'},1500)},function(){prompt('Copy this link',u)})}); pop.appendChild(sh);
+  var ci=el('a',null,'Cite'); ci.href='#'; ci.addEventListener('click',function(ev){ev.preventDefault(); m.classList.remove('open'); var ex=document.getElementById('citebox'); if(ex){ex.parentNode.removeChild(ex); return} var host=anchorFor||m.parentNode; host.parentNode.insertBefore(citeBox(s),host.nextSibling)}); pop.appendChild(ci);
+  m.appendChild(pop);
+  b.addEventListener('click',function(ev){ev.stopPropagation(); var open=!m.classList.contains('open'); document.querySelectorAll('.menu.open').forEach(function(x){x.classList.remove('open')}); m.classList.toggle('open',open); b.setAttribute('aria-expanded',String(open))});
+  return m;
+}
+document.addEventListener('click',function(){document.querySelectorAll('.menu.open').forEach(function(x){x.classList.remove('open')})});
+function entry(s,opts){
+  opts=opts||{};
+  var e=el('article','entry');
+  var others=(s.constructs||[]).filter(function(c){return c!==opts.topic});
+  var kicker=opts.topic?(others.length?'also: '+others.slice(0,3).map(human).join(' · '):''):((s.constructs||[])[0]?human(s.constructs[0]):(s.kind==='replication_archive'?'replication archive':'study'));
+  if(kicker)e.appendChild(el('div','topic',kicker));
+  var h=el('h3'); h.appendChild(link('#/paper/'+encodeURIComponent(s.slug),s.title||s.slug)); e.appendChild(h);
+  e.appendChild(el('div','by',authorsOf(s)+(dateOf(s)?' · '+dateOf(s):'')+(s.n?' · N = '+Number(s.n).toLocaleString():'')));
+  var b=opts.lead?firstSentence(s.summary||s.readme_excerpt||'',420):blurb(s,160); if(b)e.appendChild(el('p','abs'+(opts.lead?' lead':''),b));
+  e.appendChild(badgeRow(s,6,['provenance','review','registration','doi','design','data']));
+  var a=el('div','acts'); a.appendChild(link('#/paper/'+encodeURIComponent(s.slug),'Read','primary')); a.appendChild(overflowMenu(s,a)); e.appendChild(a);
+  if(opts.why&&opts.why.length)e.appendChild(el('div','why','Shares: '+opts.why.join(', ')+(opts.weight!=null?' · similarity '+opts.weight.toFixed(2):'')));
+  return e;
+}
+function relatedRow(x){
+  var s=x.row, r=el('div','row'); var t=el('div','t'); t.appendChild(link('#/paper/'+encodeURIComponent(s.slug),s.title||s.slug)); t.appendChild(el('div','by',authorsOf(s)+(dateOf(s)?' · '+dateOf(s):'')));
+  if(x.reasons&&x.reasons.length)t.appendChild(el('div','why','Shares: '+x.reasons.join(', ')));
+  r.appendChild(t); r.appendChild(badgeRow(s,2,['provenance','design'])); return r;
+}
+function sidebar(){
+  var a=el('aside');
+  var b1=el('div','box'); b1.appendChild(el('h4',null,'Topics')); var ul=el('ul');
+  topicCounts().slice(0,12).forEach(function(t){var li=el('li'); li.appendChild(link('#/topic/'+encodeURIComponent(t.id),human(t.id))); li.appendChild(el('span',null,String(t.n))); ul.appendChild(li)});
+  if(!ul.children.length)ul.appendChild(el('li',null,'No topics yet')); b1.appendChild(ul); a.appendChild(b1);
+  var lt=allTests('planned'); if(lt.length){var kk=tally(lt), b0=el('div','box'); b0.appendChild(el('h4',null,'From the drawer'));
+    var p0=el('p'); p0.appendChild(document.createTextNode(kk.null+' of '+lt.length+' planned tests here found nothing distinguishable from zero. ')); p0.appendChild(link('#/results','See the ledger'));
+    p0.appendChild(document.createTextNode(', or pick up one of the ')); p0.appendChild(link('#/followups','open follow-ups')); p0.appendChild(document.createTextNode('.')); b0.appendChild(p0); a.appendChild(b0)}
+  var b2=el('div','box'); b2.appendChild(el('h4',null,'Submit a study'));
+  b2.appendChild(el('p',null,'File a study package from your own machine with filedrawer submit: it checks the code and the files before anything is sent, and your data never leave. Archives already on GitHub can be listed by link.'));
+  b2.appendChild(link('#/submit','Submit a paper','btn primary')); a.appendChild(b2);
+  var b3=el('div','box'); b3.appendChild(el('h4',null,'The database')); var p=el('p');
+  p.appendChild(document.createTextNode('Every record is open: ')); p.appendChild(link('#/browse','browse')); p.appendChild(document.createTextNode(', or fetch '));
+  p.appendChild(link('index.json','index.json')); if(SERVER){p.appendChild(document.createTextNode(' and ')); p.appendChild(link('records.json','records.json'))} p.appendChild(document.createTextNode('.'));
+  b3.appendChild(p); a.appendChild(b3);
+  return a;
+}
+function layout(mainNode,asideNode,cls){var c=el('div','cols'+(cls?' '+cls:'')); c.appendChild(mainNode); c.appendChild(asideNode||sidebar()); return c}
+function setNav(route){Array.prototype.forEach.call(document.querySelectorAll('nav.top a'),function(a){a.classList.toggle('on',a.dataset.route===route)})}
+function sorted(list){return list.slice().sort(function(a,b){return (dateOf(b)||'').localeCompare(dateOf(a)||'')||a.slug.localeCompare(b.slug)})}
+
+/* ---------- views ---------- */
+function viewHome(){
+  setNav('home'); var m=el('div');
+  var list=sorted(DATA.studies);
+  m.appendChild(el('h2','section-label','Latest papers'));
+  if(!list.length){m.appendChild(el('div','empty','Nothing has been filed yet. Be the first to submit.'))}
+  list.slice(0,8).forEach(function(s,i){m.appendChild(entry(s,{lead:i===0}))});
+  if(list.length>8){var more=el('p','acts'); more.appendChild(link('#/browse','All '+list.length+' papers →')); m.appendChild(more)}
+  var tc=list.length>8?topicCounts().filter(function(t){return t.n>=3}).slice(0,3):[];
+  tc.forEach(function(t){
+    var sec=el('div'); var lab=el('h2','section-label',human(t.id)); var sm=el('small',null,t.n+' paper'+(t.n>1?'s':'')); lab.appendChild(sm); sec.appendChild(lab);
+    sorted(DATA.studies.filter(function(s){return (s.constructs||[]).indexOf(t.id)>=0})).slice(0,3).forEach(function(s){sec.appendChild(entry(s))});
+    var mr=el('p','acts'); mr.appendChild(link('#/topic/'+encodeURIComponent(t.id),'More in '+human(t.id)+' →')); sec.appendChild(mr);
+    m.appendChild(sec);
+  });
+  return layout(m);
+}
+function topicHead(id,n,linked){var hd=el('div','topic-head'); var h=el('h2'); var nm=human(id); nm=nm.charAt(0).toUpperCase()+nm.slice(1);
+  if(linked)h.appendChild(link('#/topic/'+encodeURIComponent(id),nm)); else h.textContent=nm; hd.appendChild(h); hd.appendChild(el('span','n',n+' paper'+(n!==1?'s':''))); return hd}
+function viewTopics(){
+  setNav('topics'); var m=el('div'); m.appendChild(el('h2','section-label','Topics'));
+  var tc=topicCounts(); if(!tc.length)m.appendChild(el('div','empty','No topics yet.'));
+  tc.forEach(function(t){var sec=el('div'); sec.appendChild(topicHead(t.id,t.n,true));
+    sorted(DATA.studies.filter(function(s){return (s.constructs||[]).indexOf(t.id)>=0})).slice(0,4).forEach(function(s){sec.appendChild(entry(s,{topic:t.id}))});
+    if(t.n>4){var mr=el('p','acts'); mr.appendChild(link('#/topic/'+encodeURIComponent(t.id),'All '+t.n+' →')); sec.appendChild(mr)} m.appendChild(sec)});
+  return layout(m);
+}
+function viewTopic(id){
+  setNav('topics'); var m=el('div'); var list=sorted(DATA.studies.filter(function(s){return (s.constructs||[]).indexOf(id)>=0}));
+  m.appendChild(topicHead(id,list.length,false));
+  if(!list.length)m.appendChild(el('div','empty','No papers under this topic.')); list.forEach(function(s){m.appendChild(entry(s,{topic:id}))});
+  return layout(m);
+}
+var browseState={q:'',kind:'',design:'',mode:'',topic:'',synth:false,sort:'date',dir:-1};
+function viewBrowse(){
+  setNav('browse'); var m=el('div');
+  var lab=el('h2','section-label','The database'); lab.appendChild(el('small',null,DATA.studies.length+' records')); m.appendChild(lab);
+  var c=el('div','controls');
+  var q=el('input'); q.type='search'; q.placeholder='Search titles, abstracts, keywords, authors'; q.value=browseState.q; q.setAttribute('aria-label','Search'); c.appendChild(q);
+  function sel(key,label,opts){var s=el('select'); s.setAttribute('aria-label',label); var o=el('option',null,label); o.value=''; s.appendChild(o); opts.forEach(function(v){var oo=el('option',null,v[1]); oo.value=v[0]; if(browseState[key]===v[0])oo.selected=true; s.appendChild(oo)}); s.addEventListener('change',function(){browseState[key]=s.value; redraw()}); c.appendChild(s)}
+  function uniq(k){var st={}; DATA.studies.forEach(function(s){var v=s[k]||'unknown'; st[v]=1}); return Object.keys(st).sort().map(function(v){return [v,human(v)]})}
+  sel('kind','All kinds',[['filedrawer_package','filedrawer packages'],['replication_archive','replication archives']]);
+  sel('design','All designs',uniq('design_type')); sel('mode','All provenance',uniq('provenance_mode').map(function(v){return [v[0],v[0]==='fully_agentic'?'fully agentic':v[0]==='human_reviewed'?'human reviewed':human(v[0])]}));
+  sel('topic','All topics',topicCounts().map(function(t){return [t.id,human(t.id)]}));
+  var lb=el('label','chk'); var cb=el('input'); cb.type='checkbox'; cb.checked=browseState.synth; cb.addEventListener('change',function(){browseState.synth=cb.checked; redraw()}); lb.appendChild(cb); lb.appendChild(document.createTextNode('hide simulated')); c.appendChild(lb);
+  m.appendChild(c);
+  var wrapT=el('div','tscroll'); m.appendChild(wrapT);
+  var foot=el('p','acts'); foot.appendChild(link('index.json','Download index.json')); if(SERVER)foot.appendChild(link('records.json','records.json')); m.appendChild(foot);
+  function rows(){
+    var ql=browseState.q.trim().toLowerCase();
+    var list=DATA.studies.filter(function(s){
+      if(browseState.kind&&(s.kind||'filedrawer_package')!==browseState.kind)return false;
+      if(browseState.design&&(s.design_type||'unknown')!==browseState.design)return false;
+      if(browseState.mode&&(s.provenance_mode||'unknown')!==browseState.mode)return false;
+      if(browseState.topic&&(s.constructs||[]).indexOf(browseState.topic)<0)return false;
+      if(browseState.synth&&s.synthetic)return false;
+      if(ql){var hay=[s.title,s.summary||'',s.readme_excerpt||''].concat(s.keywords||[],s.constructs||[],s.authors||[],(s.files||{}).languages||[]).join(' ').toLowerCase(); if(hay.indexOf(ql)<0)return false}
+      return true;
+    });
+    var k=browseState.sort, d=browseState.dir;
+    list.sort(function(a,b){var va,vb; if(k==='date'){va=dateOf(a)||'';vb=dateOf(b)||''} else if(k==='n'){va=a.n||0;vb=b.n||0} else if(k==='title'){va=(a.title||'').toLowerCase();vb=(b.title||'').toLowerCase()} else {va=a[k]||'';vb=b[k]||''} return (va<vb?-1:va>vb?1:0)*d||a.slug.localeCompare(b.slug)});
+    return list;
+  }
+  function redraw(){
+    wrapT.textContent=''; var list=rows();
+    if(!list.length){wrapT.appendChild(el('div','empty','No records match.'));return}
+    var t=el('table','db'), th=el('thead'), tr=el('tr');
+    [['title','Title'],['date','Date'],['n','N'],['badges','Status'],['topics','Topics'],['links','']].forEach(function(col){var h=el('th',null,col[1]+(browseState.sort===col[0]?(browseState.dir<0?' ▾':' ▴'):'')); if(['links','topics','badges'].indexOf(col[0])<0)h.addEventListener('click',function(){ if(browseState.sort===col[0])browseState.dir=-browseState.dir; else {browseState.sort=col[0];browseState.dir=col[0]==='title'?1:-1} redraw()}); tr.appendChild(h)});
+    th.appendChild(tr); t.appendChild(th); var tb=el('tbody');
+    list.forEach(function(s){var r=el('tr'); var td=el('td','t'); td.appendChild(link('#/paper/'+encodeURIComponent(s.slug),s.title||s.slug)); td.appendChild(el('div','by',authorsOf(s))); r.appendChild(td);
+      r.appendChild(el('td',null,dateOf(s)||'')); r.appendChild(el('td',null,s.n!=null?Number(s.n).toLocaleString():''));
+      var bd=el('td','bd'); bd.appendChild(badgeRow(s,3,['provenance','review','registration'])); r.appendChild(bd);
+      r.appendChild(el('td',null,(s.constructs||[]).slice(0,3).map(human).join(', ')));
+      var tl=el('td'); var ac=el('div','acts'); ac.style.marginTop='0'; ac.appendChild(overflowMenu(s,ac)); tl.appendChild(ac); r.appendChild(tl); tb.appendChild(r)});
+    t.appendChild(tb); wrapT.appendChild(t);
+  }
+  var tmr=null; q.addEventListener('input',function(){browseState.q=q.value; clearTimeout(tmr); tmr=setTimeout(redraw,120)});
+  redraw(); return layout(m);
+}
+function designSentence(s,rec){
+  var parts=[]; var d=(rec&&rec.design)||{};
+  var t=human(s.design_type||'study'); parts.push(t.charAt(0).toUpperCase()+t.slice(1));
+  if(d.features&&d.features.length)parts.push(d.features.length+' profile features'); else if(d.arms&&d.arms.length)parts.push((d.arms.length)+' arms');
+  if(s.population&&s.population!=='unknown')parts.push(human(s.population)+(s.country&&s.country!=='unknown'?', '+s.country:''));
+  if(s.n!=null)parts.push('N = '+Number(s.n).toLocaleString());
+  if((s.sample_kind||'human')!=='human')parts.push('synthetic respondents');
+  if(s.causal===false)parts.push('observational');
+  return parts.join(' · ');
+}
+function tiles(s,rec){
+  var g=el('div','tiles'); var d=(rec&&rec.design)||{}; var h=s.hypotheses||{};
+  function tile(big,label,small){var t=el('div','tile'); t.appendChild(el('b',null,big)); t.appendChild(el('span',null,label)); if(small)t.appendChild(el('small',null,small)); g.appendChild(t)}
+  if(s.n!=null)tile(Number(s.n).toLocaleString(),'analysed',d.n_raw&&d.n_raw!==s.n?'of '+Number(d.n_raw).toLocaleString()+' collected':null);
+  if(d.features&&d.features.length)tile(String(d.features.length),'features',d.features.filter(function(f){return f.randomized!==false}).length+' randomized'); else if(d.arms&&d.arms.length)tile(String(d.arms.length),'arms',null);
+  if(h.registered)tile(h.supported+' / '+h.registered,'registered tests supported',(h.exploratory?h.exploratory+' exploratory':null));
+  if(s.review_claims&&s.review_claims.total)tile((s.review_claims.supported||0)+' / '+s.review_claims.total,'claims supported',(s.review_claims.on_revised_text?'after the agent\'s corrections':'before corrections')+(s.review_claims.open_analytical?' · '+s.review_claims.open_analytical+' issue'+(s.review_claims.open_analytical>1?'s':'')+' open':'')); else if(s.reviewer_pass)tile('referee','pass, no claim checks',null);
+  if(s.cost_usd!=null)tile('$'+Number(s.cost_usd).toFixed(2),'in model calls',s.tokens_in?Math.round(s.tokens_in/1000)+'k tokens in':null);
+  return g;
+}
+function viewPaper(slug){
+  setNav(''); var s=bySlug[slug]; var m=el('div');
+  if(!s){m.appendChild(el('div','empty','No paper with that identifier.')); return layout(m,el('aside'),'tufte')}
+  var head=el('div','paper-head'); var topic=(s.constructs||[])[0];
+  head.appendChild(el('div','topic',(topic?human(topic):'study')+(s.kind==='replication_archive'?' · replication archive':'')));
+  head.appendChild(el('h2',null,s.title||s.slug)); head.appendChild(el('div','by',authorsOf(s)+(dateOf(s)?' · '+dateOf(s):'')));
+  head.appendChild(badgeRow(s,6,null,'md'));
+  var ds=el('p','design',designSentence(s,null)); head.appendChild(ds);
+  var acts=el('div','acts'); if(s.folder_url)acts.appendChild(link(s.folder_url,'Code and data on GitHub','primary')); else if(s.files_url)acts.appendChild(link('#/files/'+encodeURIComponent(s.slug),'Code and results','primary')); acts.appendChild(overflowMenu(s,acts)); head.appendChild(acts);
+  var tl=tiles(s,null); head.appendChild(tl);
+  if(s.design_diagram){ var th=el('button','thumb'); th.type='button'; th.title='Design at a glance: click to enlarge'; var im=document.createElement('img'); im.alt='Design at a glance'; im.src=absUrl(s.design_diagram,s.paper_base||''); im.addEventListener('error',function(){th.style.display='none'}); th.appendChild(im); th.addEventListener('click',function(){openLightbox(im.src,s.design_diagram_text||s.__designText||'')}); head.appendChild(th) }
+  m.appendChild(head);
+  jsonLd(s); window.__paper=s;
+  var art=el('article'); art.id='paper'; m.appendChild(art);
+  var aside=el('aside');
+  var recP=Promise.resolve(null);
+  var recUrl=s.record_url||s.study_json_url; if(recUrl){recP=fetch(absUrl(recUrl,location.href)).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}
+  if(s.paper_url){
+    art.innerHTML='<p class="empty">Loading the paper…</p>';
+    var url=absUrl(s.paper_url,location.href), base=s.paper_base||(s.paper_url&&s.paper_url.replace(/[^/]*$/,''));
+    Promise.all([fetch(url).then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.text() }),recP])
+      .then(function(res){ var md=res[0], rec=res[1];
+        if(rec){ ds.textContent=designSentence(s,rec); var t2=tiles(s,rec); head.replaceChild(t2,tl); tl=t2; if(rec.hypotheses){rec.hypotheses.forEach(function(h){if(!h.outcome_label&&h.outcome)h.outcome_label=h.outcome})} }
+        art.innerHTML=renderMarkdown(md,base); tufte(art,s,rec);
+        var dt=art.querySelector('#sec-design details'); if(dt){s.__designText=dt.textContent.replace(/^the design in words/i,'').trim()}
+        buildToc(art,aside);
+        if(/^#\/paper\/[^#]+#/.test(location.hash)){var frag=location.hash.slice(location.hash.indexOf('#',1)+1); var tgt=document.getElementById(frag); if(tgt){art.__openAncestors(tgt); if(tgt.tagName==='DETAILS')tgt.open=true; tgt.scrollIntoView()}}
+      })
+      .catch(function(e){ art.innerHTML='<p class="err">Could not load the paper ('+esc(e.message)+'). '+(s.report_url?'<a href="'+esc(s.report_url)+'" target="_blank" rel="noopener">Open it on GitHub.</a>':'')+'</p>' });
+  } else { var b=s.summary||s.readme_excerpt; art.appendChild(el('p','empty',b||'No paper text is stored for this record; see the repository.')) }
+  var rel=el('section','related'); var lab=el('h2','section-label','Related papers'); var sims=similarOf(slug,6); lab.appendChild(el('small',null,sims.length?'by shared topics, design, sample and keywords':'')); rel.appendChild(lab);
+  if(!sims.length)rel.appendChild(el('div','empty','Nothing similar has been filed yet.'));
+  sims.forEach(function(x){rel.appendChild(relatedRow(x))});
+  m.appendChild(rel);
+  return layout(m,aside,'tufte');
+}
+function openLightbox(src,text){var dlg=$('lightbox'); dlg.querySelector('img').src=src; dlg.querySelector('p').textContent=text||''; if(dlg.showModal)dlg.showModal(); else dlg.setAttribute('open','')}
+$('lb-close').addEventListener('click',function(){var dlg=$('lightbox'); if(dlg.close)dlg.close(); else dlg.removeAttribute('open')});
+function viewSubmit(){
+  setNav('submit'); var m=el('div'); m.appendChild(el('h2','section-label','Submit a study'));
+  var box=el('div','submit-box');
+  var here=location.origin+location.pathname.replace(/\/(index\.html)?$/,'');
+  var intro=el('div','prose'); intro.innerHTML='<p>The File Drawer lists studies their authors ran and host themselves: you run the filedrawer pipeline on your own machine with your own model token, push the package to your own public GitHub repository, and submit the link. Only a small metadata record is stored here; your data, code, report and figures stay on GitHub and are read from there.</p>'
+    +'<pre><code>pip install "filedrawer @ git+https://github.com/yrvelez/filedrawer"\nfiledrawer submit path/to/package --server '+esc(here)+'</code></pre>'
+    +'<p class="notice">From the command line, <code>filedrawer submit</code> first runs a self-check and scans the package for identifiers and contact details on your machine, confirms it is pushed to GitHub, then sends only the link. Or paste the link below: an agent reads a few small text files, checks that it is a self-run filedrawer package, and shows you exactly what it read and what it would keep before anything is filed.</p>';
+  box.appendChild(intro);
+  var how=el('p','notice'); how.innerHTML='Preparing a repository? Follow the <a href="https://github.com/yrvelez/filedrawer/blob/main/AGENTS.md" target="_blank" rel="noopener">deposit routine (AGENTS.md)</a>. Everything this server holds is listed at <a href="audit" target="_blank" rel="noopener">/audit</a>.'; box.appendChild(how);
+  if(!SERVER){box.appendChild(el('p','notice','This static copy cannot accept submissions. Use https://filedrawer.org, or open a pull request adding your repository to docs/registry.json.')); m.appendChild(box); return layout(m)}
+  var form=el('form'); var inp=el('input'); inp.type='url'; inp.required=true; inp.placeholder='https://github.com/owner/repo  or  …/tree/main/studies/my-study'; inp.setAttribute('aria-label','GitHub URL');
+  var btn=el('button','btn primary','Check it'); btn.type='submit'; form.appendChild(inp); form.appendChild(btn); box.appendChild(form);
+  var msg=el('div','notice'); msg.setAttribute('aria-live','polite'); box.appendChild(msg); m.appendChild(box);
+  var out=el('div'); m.appendChild(out);
+  var STEPS=['Locating the repository','Reading small text files','Screening for a research project','Extracting metadata','Preparing the record'];
+  function auditList(steps){ var ol=el('ol','audit'); (steps||[]).forEach(function(st){ var li=el('li',st.ok?'ok':'bad'); li.appendChild(el('b',null,(st.ok?'✓ ':'✗ ')+st.step)); li.appendChild(el('span',null,st.detail||'')); ol.appendChild(li) }); return ol }
+  function running(){ out.textContent=''; var ol=el('ol','audit running'); STEPS.forEach(function(t,i){ var li=el('li','wait'); li.appendChild(el('b',null,'… '+t)); ol.appendChild(li); setTimeout(function(){li.className='doing'},i*700) }); out.appendChild(ol) }
+  function post(body){ return fetch('submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){return {ok:r.ok&&j.ok,j:j}})}) }
+  function showFiled(j){
+    out.textContent=''; var r=el('div','result'); r.appendChild(el('p',null,'Filed: '+j.title+' ('+human(j.kind)+').')); r.appendChild(auditList(j.audit));
+    var acts=el('div','acts'); acts.appendChild(link('#/paper/'+encodeURIComponent(j.slug),'Open its page')); if(j.record_url)acts.appendChild(link(j.record_url,'The stored record (all of it)')); acts.appendChild(link('audit','Server audit')); r.appendChild(acts); out.appendChild(r);
+    out.appendChild(el('h2','section-label','Similar studies already in the drawer'));
+    var sims=j.similar||[]; if(!sims.length)out.appendChild(el('div','empty','Nothing similar yet; yours is the first on this topic.'));
+    var relBox=el('section','related'); sims.forEach(function(x){var row=bySlug[x.slug]||x; relBox.appendChild(relatedRow({row:row,reasons:(x.reasons||[]).map(function(rs){return rs.replace(/^construct:|^keyword:/,'').replace(/^design:(.*)$/,'$1 design').replace(/^population:(.*)$/,'$1 sample').replace(/_/g,' ')})}))}); out.appendChild(relBox);
+  }
+  function showChecked(x,url){
+    out.textContent=''; var j=x.j, r=el('div','result'+(x.ok?'':' bad'));
+    if(!x.ok){ r.appendChild(el('p',null,j.error||'Submission failed.')); if(j.audit)r.appendChild(auditList(j.audit));
+      if(j.record_url){var pp=el('p','acts'); pp.appendChild(link(j.record_url,'It is already filed')); r.appendChild(pp)} out.appendChild(r); return }
+    r.appendChild(el('p',null,'Checked: '+j.title+' ('+human(j.kind)+'). Nothing has been stored yet.')); r.appendChild(auditList(j.audit));
+    var go=el('button','btn primary','File it'); go.type='button'; var cancel=el('button','btn','Cancel'); cancel.type='button';
+    var acts=el('div','acts'); acts.appendChild(go); acts.appendChild(cancel); r.appendChild(acts); out.appendChild(r);
+    cancel.onclick=function(){ out.textContent=''; msg.textContent='Cancelled. Nothing was stored.' };
+    go.onclick=function(){ go.disabled=true; cancel.disabled=true; msg.textContent='Filing the metadata record…';
+      post({repo_url:url}).then(function(y){ msg.textContent=''; return loadIndex().then(function(){ if(y.ok){showFiled(y.j); inp.value=''} else showChecked(y,url) }) })
+        .catch(function(e){ msg.textContent='Request failed: '+e.message; go.disabled=false; cancel.disabled=false }) };
+  }
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault(); var url=inp.value.trim(); btn.disabled=true; msg.textContent=''; running();
+    post({repo_url:url,dry_run:true}).then(function(x){ showChecked(x,url) })
+      .catch(function(e){ out.textContent=''; msg.textContent='Request failed: '+e.message })
+      .then(function(){ btn.disabled=false });
+  });
+  return layout(m);
+}
+function viewFiles(slug){
+  setNav(''); var s=bySlug[slug]; var m=el('div');
+  if(!s||!s.files_url){m.appendChild(el('div','empty','No stored files for that paper.')); return layout(m)}
+  m.appendChild(el('h2','section-label','Code and results'));
+  var back=el('p','acts'); back.appendChild(link('#/paper/'+encodeURIComponent(slug),'← '+(s.title||slug))); m.appendChild(back);
+  m.appendChild(el('p','notice','The files the author’s machine sent when filing this study: the report, analysis plan, codebook, aggregate result tables, figures and analysis scripts. Respondent-level data were not sent; the scripts expect a data/ folder that stays with the authors.'));
+  var list=el('div','prose'); list.appendChild(el('p','empty','Loading the file list…')); m.appendChild(list);
+  var base=absUrl(s.files_url,location.href);
+  fetch(base).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status); return r.json()}).then(function(j){
+    list.textContent=''; var groups={};
+    (j.files||[]).forEach(function(f){var top=f.path.indexOf('/')>0?f.path.split('/')[0]:'package'; (groups[top]=groups[top]||[]).push(f)});
+    Object.keys(groups).sort(function(a,b){return a==='package'?-1:b==='package'?1:a.localeCompare(b)}).forEach(function(g){
+      list.appendChild(el('h3',null,g==='package'?'Package':g)); var ul=el('ul');
+      groups[g].forEach(function(f){var li=el('li'); li.appendChild(link(base+f.path,f.path)); li.appendChild(el('span','why',' '+(f.bytes>=1000?Math.round(f.bytes/1000)+' KB':f.bytes+' B'))); ul.appendChild(li)});
+      list.appendChild(ul)});
+  }).catch(function(e){list.textContent=''; list.appendChild(el('p','err','Could not load the file list ('+e.message+').'))});
+  return layout(m);
+}
+/* the results ledger: every estimated test across studies, so the nulls are as visible as the hits */
+var PLANNED={registered:1,unregistered:1,deviation:1};
+function verdictOf(t){ if(t.supported===true)return 'yes'; if(t.p!=null&&Number(t.p)<0.05)return 'opp'; return 'null' }
+var VERDICT={yes:['supported','yes'],null:['null','no'],opp:['not as predicted','opp']};
+function allTests(scope){var out=[]; DATA.studies.forEach(function(s){(s.tests||[]).forEach(function(t){ if(scope==='all'||PLANNED[t.tag])out.push({s:s,t:t}) })}); return out}
+function tally(rows){var c={yes:0,null:0,opp:0}; rows.forEach(function(r){c[verdictOf(r.t)]++}); return c}
+function ciGlyph(t,scale){ /* a 90px interval on a shared zero line; scale = largest |bound| in the hypothesis */
+  var W=90,H=14,mid=W/2, e=Number(t.estimate), se=t.se!=null?Number(t.se):0, k=(W/2-4)/(scale||1);
+  var lo=mid+(e-1.96*se)*k, hi=mid+(e+1.96*se)*k, x=mid+e*k, v=verdictOf(t);
+  var col=v==='yes'?'var(--good)':(v==='opp'?'var(--warn)':'var(--ink-3)');
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" aria-hidden="true"><line x1="'+mid+'" y1="1" x2="'+mid+'" y2="'+(H-1)+'" stroke="var(--rule)" stroke-width="1"/>'
+    +'<line x1="'+Math.max(1,lo).toFixed(1)+'" y1="7" x2="'+Math.min(W-1,hi).toFixed(1)+'" y2="7" stroke="'+col+'" stroke-width="1.3"/>'
+    +'<circle cx="'+x.toFixed(1)+'" cy="7" r="2.6" fill="'+(v==='null'?'var(--bg)':col)+'" stroke="'+col+'" stroke-width="1.2"/></svg>';
+  var td=el('td','ci'); td.innerHTML=svg; return td }
+function fmtNum(x,d){x=Number(x); return (x>0?'+':(x<0?'−':''))+Math.abs(x).toFixed(d==null?3:d)}
+var ledgerState={scope:'planned',verdict:'',q:'',pooled:false,open:{}};
+function viewResults(){
+  setNav('results'); var m=el('div');
+  var lab=el('h2','section-label','Results ledger'); lab.appendChild(el('small',null,'every estimated test, across studies')); m.appendChild(lab);
+  var head=el('div'); m.appendChild(head);
+  var c=el('div','controls');
+  function sel(key,label,opts){var x=el('select'); x.setAttribute('aria-label',label); opts.forEach(function(v){var o=el('option',null,v[1]); o.value=v[0]; if(ledgerState[key]===v[0])o.selected=true; x.appendChild(o)}); x.addEventListener('change',function(){ledgerState[key]=x.value; redraw()}); c.appendChild(x)}
+  var q=el('input'); q.type='search'; q.placeholder='Filter by study, outcome or arm'; q.value=ledgerState.q; q.setAttribute('aria-label','Filter'); c.appendChild(q);
+  sel('scope','Which tests',[['planned','Planned tests'],['all','All tests, including exploratory']]);
+  sel('verdict','Verdict',[['','Any verdict'],['null','Not distinguishable from zero'],['yes','Supported'],['opp','Significant, not as predicted']]);
+  var lb=el('label','chk'); var cb=el('input'); cb.type='checkbox'; cb.checked=ledgerState.pooled; cb.addEventListener('change',function(){ledgerState.pooled=cb.checked; redraw()}); lb.appendChild(cb); lb.appendChild(document.createTextNode('pooled estimates only')); c.appendChild(lb);
+  m.appendChild(c); var body=el('div'); m.appendChild(body);
+  function summary(){
+    head.textContent=''; var rows=allTests(ledgerState.scope), n=rows.length, k=tally(rows), studies={};
+    rows.forEach(function(r){studies[r.s.slug]=1}); var ns=Object.keys(studies).length;
+    if(!n){head.appendChild(el('p','empty','No estimated tests have been filed yet.'));return}
+    var p=el('p','lede'); p.innerHTML='Across '+ns+' stud'+(ns!==1?'ies':'y')+', <b>'+n+'</b> '+(ledgerState.scope==='planned'?'planned ':'')+'tests: <b>'+k.null+'</b> found nothing distinguishable from zero, '+k.yes+' were supported'+(k.opp?', and '+k.opp+' were significant but not as predicted':'')+'.';
+    head.appendChild(p);
+    var bar=el('div','split'); [['yes',k.yes],['null',k.null],['opp',k.opp]].forEach(function(x){if(!x[1])return; var i=el('i','s-'+x[0]); i.style.width=(100*x[1]/n)+'%'; bar.appendChild(i)}); head.appendChild(bar);
+    var lg=el('div','legend'); lg.appendChild(el('span','k-yes','supported '+Math.round(100*k.yes/n)+'%')); lg.appendChild(el('span','k-null','not distinguishable from zero '+Math.round(100*k.null/n)+'%')); if(k.opp)lg.appendChild(el('span','k-opp','not as predicted '+Math.round(100*k.opp/n)+'%')); head.appendChild(lg);
+  }
+  function redraw(){
+    summary(); body.textContent='';
+    var ql=ledgerState.q.trim().toLowerCase(), groups={}, order=[];
+    allTests(ledgerState.scope).forEach(function(r){var t=r.t;
+      if(ledgerState.verdict&&verdictOf(t)!==ledgerState.verdict)return;
+      if(ledgerState.pooled&&t.arm&&t.arm!=='pooled')return;
+      if(ql&&[r.s.title,t.text,t.arm,t.outcome,t.id].join(' ').toLowerCase().indexOf(ql)<0)return;
+      if(!groups[r.s.slug]){groups[r.s.slug]={s:r.s,rows:[]}; order.push(r.s.slug)} groups[r.s.slug].rows.push(t)});
+    if(!order.length){body.appendChild(el('div','empty','No tests match.'));return}
+    order.forEach(function(slug){var g=groups[slug], s=g.s;
+      var hd=el('div','ledger-study'); hd.appendChild(link('#/paper/'+encodeURIComponent(slug)+'#sec-results',s.title||slug));
+      var k=tally(g.rows.map(function(t){return {t:t}})); hd.appendChild(el('span',null,g.rows.length+' test'+(g.rows.length!==1?'s':'')+' · '+k.yes+' supported · '+k.null+' null'+(k.opp?' · '+k.opp+' not as predicted':''))); body.appendChild(hd);
+      var scale={}; g.rows.forEach(function(t){var b=Math.abs(Number(t.estimate))+1.96*Number(t.se||0); scale[t.h]=Math.max(scale[t.h]||0,b)});
+      var wrap=el('div','tscroll'), tb=el('table','ledger'), th=el('thead'), tr=el('tr');
+      [['','Test'],['','Hypothesis and arm'],['num','Estimate'],['ci','95% interval'],['num','p'],['','']].forEach(function(x){tr.appendChild(el('th',x[0],x[1]))}); th.appendChild(tr); tb.appendChild(th);
+      var bd=el('tbody'), cap=ledgerState.open[slug]?Infinity:14;
+      g.rows.slice(0,cap).forEach(function(t,i){var r=el('tr');
+        r.appendChild(el('td','id',t.h));
+        var w=el('td','what'), prev=g.rows[i-1]; w.appendChild(document.createTextNode(t.arm?(t.arm==='pooled'?'Pooled across arms':t.arm):(t.text||t.outcome)));
+        if(t.arm&&(!prev||prev.h!==t.h))w.appendChild(el('small',null,t.text||t.outcome)); r.appendChild(w);
+        r.appendChild(el('td','num',fmtNum(t.estimate)));
+        r.appendChild(ciGlyph(t,scale[t.h]));
+        r.appendChild(el('td','num',t.p==null?'':(Number(t.p)<0.001?'< 0.001':Number(t.p).toFixed(3))));
+        var v=VERDICT[verdictOf(t)], pc=el('td','v'); pc.appendChild(pill(v[0],v[1])); if(t.tag&&t.tag!=='registered'){pc.appendChild(document.createTextNode(' ')); pc.appendChild(pill(t.tag,'tag-'+t.tag))} r.appendChild(pc);
+        bd.appendChild(r)});
+      tb.appendChild(bd); wrap.appendChild(tb); body.appendChild(wrap);
+      if(g.rows.length>cap){var more=el('p','acts'); var a=link('#','Show all '+g.rows.length+' tests'); a.addEventListener('click',function(ev){ev.preventDefault(); ledgerState.open[slug]=1; redraw()}); more.appendChild(a); body.appendChild(more)}
+    });
+    body.appendChild(el('p','notice','Verdicts use each study’s own test: one-sided where the plan predicted a direction, two-sided otherwise, with no correction for multiple tests. Intervals are estimate ± 1.96 SE, drawn on a shared zero line within each hypothesis.'));
+  }
+  var tmr=null; q.addEventListener('input',function(){ledgerState.q=q.value; clearTimeout(tmr); tmr=setTimeout(redraw,120)});
+  redraw(); return layout(m);
+}
+/* open follow-ups: the designs each study proposes, with their Qualtrics files, gathered in one place */
+function allFollowups(){var out=[]; sorted(DATA.studies).forEach(function(s){(s.extensions||[]).forEach(function(e){out.push({s:s,e:e})})}); return out}
+function qsfUrl(s,e){ if(!e.qsf)return null; var raw=(s.repo_url||'').replace('https://github.com/','https://raw.githubusercontent.com/')+'/HEAD'; return (s.id&&SERVER)?('/qsf/'+s.id+'/'+e.id+'.qsf'):(raw+'/'+e.qsf) }
+function viewFollowups(){
+  setNav('followups'); var m=el('div'), list=allFollowups();
+  var lab=el('h2','section-label','Open follow-ups'); lab.appendChild(el('small',null,list.length+' design'+(list.length!==1?'s':'')+' from '+DATA.studies.filter(function(s){return (s.extensions||[]).length}).length+' studies')); m.appendChild(lab);
+  m.appendChild(el('p','lede','Every filed study ends with follow-up designs aimed at what it left open. Each comes with a design diagram and an importable Qualtrics survey. They are free to run; cite the study they came from.'));
+  if(!list.length)m.appendChild(el('div','empty','No follow-up designs yet.'));
+  list.forEach(function(x){var s=x.s, e=x.e, a=el('article','entry fu');
+    a.appendChild(el('div','topic',[e.label,e.kind].filter(Boolean).join(' · ')));
+    var h=el('h3'); h.appendChild(link('#/paper/'+encodeURIComponent(s.slug)+'#sec-extensions',e.title||e.id)); a.appendChild(h);
+    var fr=el('div','from'); fr.appendChild(document.createTextNode('From ')); fr.appendChild(link('#/paper/'+encodeURIComponent(s.slug),s.title||s.slug)); a.appendChild(fr);
+    if(e.hypothesis)a.appendChild(el('p','hyp-line',firstSentence(e.hypothesis,240)));
+    if(e.why)a.appendChild(el('p','why-line',firstSentence(String(e.why).replace(/^(Fixes|Addresses)\s+[a-z_]+:\s*/,''),260)));
+    var ac=el('div','acts'), u=qsfUrl(s,e); if(u){var d=link(u,'Download .qsf','primary'); d.setAttribute('download',''); ac.appendChild(d)}
+    ac.appendChild(link('#/paper/'+encodeURIComponent(s.slug)+'#sec-extensions','Read the design')); a.appendChild(ac); m.appendChild(a)});
+  return layout(m);
+}
+function viewAbout(){
+  setNav('about'); var m=el('div','prose'); m.appendChild(el('h2','section-label','About'));
+  m.innerHTML+='<p>The File Drawer lists unpublished studies and explorations that their authors ran and host themselves: each package is produced by the filedrawer pipeline on the author’s own machine with their own model token, and lives in the author’s own public GitHub repository. Each listing here is a small metadata record that links there; data, code, the report and its figures stay in the author’s repository, where they can be cited and reused.</p>'
+  +'<h3>What a paper contains</h3><p>Each report states the registered tests and what they found, with every analysis tagged <em>registered</em>, <em>deviation</em> or <em>exploratory</em> by comparing the pre-analysis plan with what was run. Every package gets a <em>Light Pass</em>, and it does only two things: it checks every reported estimate against the result tables, and every analysis against the pre-analysis plan (registered analyses run as planned, deviations stated with their reasons, nothing exploratory presented as registered). The agent corrects what it finds and re-checks the corrected text. The Light Pass does not judge design, methods or interpretation. No person is involved; the review section lists each correction with a full log. Outside reviews can be added to a paper: Coarse, Refine, or any referee report, such as one posted on OpenReview. A <em>research potential</em> section says what the study got right, why it may not have landed, and which debates it bears on, and proposes follow-up studies, each with a design diagram, a plain-text description and an importable Qualtrics file.</p>'
+  +'<h3>Cost</h3><p>Generating a full package costs between about ten cents and a few dollars in model calls depending on the models chosen (a Claude Sonnet orchestrator for plan reading, writing, review and the research-potential memo; a Qwen 3.8 27B worker for code and literature). The page for each paper shows what its own run cost. The researcher pays with their own OpenRouter token; the repository pays nothing.</p><h3>Provenance</h3><p>Every paper carries badges. <em>Fully agentic</em> means no human review has been recorded. <em>Human reviewed</em> means a named person attested to review steps. <em>Synthetic respondents</em> marks studies whose respondents were generated by a language model. The review badge shows how many claims the checking agent found supported after its corrections.</p>'
+  +'<h3>What this site keeps</h3><p>Only metadata. When a study is submitted, an agent reads a fixed list of small text files (README, report, plan, result tables), screens the repository for a research project with data or code, and stores one small metadata record that links to GitHub. Data, code, the report text and figures are never stored here: the report is read from GitHub when someone opens it, and figures load straight from GitHub. If a repository goes private or is deleted, its paper stops rendering. Anyone can check this: <a href="audit">/audit</a> lists every file the server holds. Identifier and free-text columns are removed by the pipeline before a package is ever written.</p>'
+  +'<h3>API</h3><p>Everything is open JSON. <code>index.json</code> has every record and the similarity edges; each record’s <code>tests</code> list holds its estimated tests (estimate, SE, p, verdict, tag), which is what the results ledger draws. <code>records.json</code> lists community submissions; <code>records/&lt;id&gt;.json</code> is one record and <code>records/&lt;id&gt;/paper.md</code> its paper. <code>similar/&lt;slug&gt;</code> returns the closest papers. <code>POST submit</code> with <code>{"repo_url": …}</code> files a new one. <code>version</code> reports the running commit.</p>'
+  +'<p>Source and pipeline: <a href="https://github.com/yrvelez/filedrawer" target="_blank" rel="noopener">github.com/yrvelez/filedrawer</a>.</p>';
+  return layout(m);
+}
+
+/* ---------- masthead: an engraved drawer whose cards are the latest filed studies ---------- */
+var MH=(function(){
+  var NS='http://www.w3.org/2000/svg', svg=null, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var KX=-0.36, KY=0.52; function P(x,y,z){return [x+z*KX,-y+z*KY]}
+  function pts(a){return a.map(function(p){return P(p[0],p[1],p[2]).map(function(v){return v.toFixed(2)}).join(',')}).join(' ')}
+  function mk(tag,attrs,parent){var e=document.createElementNS(NS,tag); for(var k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e}
+  function poly(a,cls,parent){return mk('polygon',{points:pts(a),'class':cls},parent)}
+  function line(a,b,cls,parent){var p=P(a[0],a[1],a[2]),q=P(b[0],b[1],b[2]); return mk('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],'class':cls},parent)}
+  function rectZ(x0,x1,y0,y1,z){return [[x0,y0,z],[x1,y0,z],[x1,y1,z],[x0,y1,z]]}
+  var W=300,H=118,D=205,T=9, OX0=-W/2+T,OX1=W/2-T,OY0=-H/2+T,OY1=H/2-T, FX0=-W/2+3,FX1=W/2-3,FY0=-H/2+3,FY1=H/2-3,FT=7;
+  var DX0=OX0+3,DX1=OX1-3,DD=D-26,WH=64,Y0=OY0+3,CH=88,CW=(DX1-DX0)-26,TABW=66,TABH=15,OPEN=175;
+  var cards=[], label={top:'UNPUBLISHED',range:''}, notes={newest:'',count:'',open:''};
+  var HINT='Each card is a filed study. Hover to read, click to open.', defs,gS,gD,gN, o=0, lift=[], hover=-1, t0=0, animating=false, notesShown=false;
+  function hatch(id,gap,angle,w,color){var pt=mk('pattern',{id:id,width:gap,height:gap,patternUnits:'userSpaceOnUse',patternTransform:'rotate('+angle+')'},defs); mk('line',{x1:0,y1:0,x2:0,y2:gap,style:'stroke:'+color+';stroke-width:'+w},pt)}
+  function drawStatic(){
+    gS.textContent=''; var fy=-H/2;
+    line([-W/2-120,fy,D/2+OPEN],[W/2+150,fy,D/2+OPEN],'thin draw',gS);
+    poly([[W/2,fy,-D/2],[W/2+30,fy,-D/2+12],[W/2+30,fy,D/2-6],[W/2,fy,D/2]],'hatchC',gS);
+    poly([[-W/2,H/2,-D/2],[W/2,H/2,-D/2],[W/2,H/2,D/2],[-W/2,H/2,D/2]],'fill draw',gS);
+    poly([[W/2,H/2,-D/2],[W/2,H/2,D/2],[W/2,-H/2,D/2],[W/2,-H/2,-D/2]],'hatchA draw',gS);
+    mk('path',{'class':'fill draw','fill-rule':'evenodd',d:'M'+pts(rectZ(-W/2,W/2,-H/2,H/2,D/2))+'Z M'+pts(rectZ(OX0,OX1,OY0,OY1,D/2))+'Z'},gS);
+    poly(rectZ(OX0,OX1,OY0,OY1,D/2),'hatchB draw',gS);
+    line([-W/2+2,H/2-2,D/2],[W/2-2,H/2-2,D/2],'thin',gS);
+    Array.prototype.forEach.call(gS.querySelectorAll('.draw'),function(n){n.setAttribute('pathLength',1)});
+  }
+  function drawDrawer(){
+    gD.textContent=''; var zf=D/2+o, zb=zf-FT-DD, zi=zf-FT;
+    if(o>4)poly([[DX0+30,-H/2,D/2],[FX1+30,-H/2,D/2],[FX1+30,-H/2,zf+6],[FX0+34,-H/2,zf+6]],'hatchC',gD);
+    var old=defs.querySelector('#mhclip'); if(old)old.parentNode.removeChild(old);
+    var cp=mk('clipPath',{id:'mhclip'},defs);
+    mk('polygon',{points:pts([[OX0,OY1,D/2],[OX1,OY1,D/2],[OX1,OY0,D/2],[OX1,OY0,zf],[OX0,OY0,zf],[OX0,OY1,zf]])},cp);
+    var inner=mk('g',{'clip-path':'url(#mhclip)'},gD);
+    poly(rectZ(DX0,DX1,Y0,Y0+WH,zb),'fill',inner);
+    poly([[DX0,Y0,zb],[DX0,Y0+WH,zb],[DX0,Y0+WH,zi],[DX0,Y0,zi]],'fill',inner);
+    var n=cards.length;
+    cards.forEach(function(c,i){
+      var z=zb+26+(n>1?i*((DD-52)/(n-1)):(DD-52)/2), y0=Y0+2+(lift[i]||0), x0=-CW/2, x1=CW/2;
+      var slot=[0,2,1,0,2,1][i%6], tx=x0+8+slot*((CW-TABW-16)/2);
+      var g=mk('g',{'class':'cardg'},inner);
+      var a=mk('a',{href:'#/paper/'+encodeURIComponent(c.slug)},g); a.setAttribute('aria-label',c.mark+': '+c.title);
+      poly([[x0,y0,z],[x1,y0,z],[x1,y0+CH,z],[tx+TABW,y0+CH,z],[tx+TABW-3,y0+CH+TABH,z],[tx+3,y0+CH+TABH,z],[tx,y0+CH,z],[x0,y0+CH,z]],'card',a);
+      for(var k=1;k<=4;k++)line([x0+8,y0+CH-10-k*13,z],[x1-8,y0+CH-10-k*13,z],'thin',a).style.opacity=.55;
+      line([x0+8,y0+CH-10,z],[x1-8,y0+CH-10,z],'tabrule',a);
+      var cxy=P(tx+TABW/2,y0+CH+TABH/2-3.2,z); mk('text',{x:cxy[0],y:cxy[1],'text-anchor':'middle','class':'tabtxt'},a).textContent=c.mark;
+      g.addEventListener('pointerenter',function(){setHover(i)}); g.addEventListener('pointerleave',function(){setHover(-1)});
+      a.addEventListener('focus',function(){setHover(i)}); a.addEventListener('blur',function(){setHover(-1)});
+    });
+    poly([[DX1,Y0,zb],[DX1,Y0+WH,zb],[DX1,Y0+WH,zi],[DX1,Y0,zi]],'hatchA',inner);
+    line([DX0,Y0+WH,zi],[DX1,Y0+WH,zi],'ink',inner);
+    poly([[FX0,FY1,zf-FT],[FX1,FY1,zf-FT],[FX1,FY1,zf],[FX0,FY1,zf]],'fill',gD);
+    poly([[FX1,FY1,zf-FT],[FX1,FY1,zf],[FX1,FY0,zf],[FX1,FY0,zf-FT]],'hatchA',gD);
+    poly(rectZ(FX0,FX1,FY0,FY1,zf),'fill',gD);
+    poly(rectZ(FX0+6,FX1-6,FY0+6,FY1-6,zf),'thin',gD);
+    var hy=16,hw=118,hh=34;
+    poly(rectZ(-hw/2,hw/2,hy-hh/2,hy+hh/2,zf),'fill',gD); poly(rectZ(-hw/2+4,hw/2-4,hy-hh/2+4,hy+hh/2-4,zf),'ink',gD);
+    [[-hw/2-9,hy],[hw/2+9,hy]].forEach(function(q){var sp=P(q[0],q[1],zf); mk('circle',{cx:sp[0],cy:sp[1],r:2.4,'class':'fill'},gD); line([q[0]-1.4,q[1]-1.4,zf],[q[0]+1.4,q[1]+1.4,zf],'ink',gD)});
+    var l1=P(0,hy+3,zf); mk('text',{x:l1[0],y:l1[1],'text-anchor':'middle','class':'lbl1'},gD).textContent=label.top;
+    var l2=P(0,hy-9,zf); mk('text',{x:l2[0],y:l2[1],'text-anchor':'middle','class':'lbl2'},gD).textContent=label.range;
+    var pp=P(0,-26,zf); mk('path',{d:'M'+(pp[0]-22)+','+pp[1]+' a22,16 0 0 0 44,0','class':'ink'},gD); mk('path',{d:'M'+(pp[0]-16)+','+pp[1]+' a16,10 0 0 0 32,0','class':'thin'},gD);
+    line([-26,-26,zf],[26,-26,zf],'ink',gD);
+  }
+  function drawNotes(){
+    gN.textContent=''; if(o<OPEN*.98||!cards.length)return;
+    var zf=D/2+o, g=mk('g',{'class':'notes'+(notesShown?'':' fadein')},gN); notesShown=true;
+    function leader(from,to,text,anchor){var a=P(from[0],from[1],from[2]); mk('circle',{cx:a[0],cy:a[1],r:1.8,'class':'dot'},g);
+      var dx=anchor==='end'?-14:14; mk('polyline',{points:a[0]+','+a[1]+' '+to[0]+','+to[1]+' '+(to[0]+dx)+','+to[1],'class':'thin'},g);
+      mk('text',{x:to[0]+(anchor==='end'?-18:18),y:to[1]+3.2,'text-anchor':anchor||'start','class':'note'},g).textContent=text}
+    var n=cards.length, zLast=zf-FT-DD+26+(n>1?(DD-52):(DD-52)/2), slot=[0,2,1,0,2,1][(n-1)%6], tx=-CW/2+8+slot*((CW-TABW-16)/2);
+    leader([tx+TABW/2,Y0+CH+TABH+2,zLast],[P(-CW/2,0,zLast)[0]-24,P(0,Y0+CH+32,zLast)[1]],notes.newest,'end');
+    leader([W/2-40,H/2,0],[P(W/2,0,-D/2)[0]+14,P(0,H/2+22,-D/2)[1]],notes.count);
+    var a=P(FX1+12,-H/2-14,D/2), b=P(FX1+12,-H/2-14,zf);
+    mk('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],'class':'thin','marker-start':'url(#mhArr)','marker-end':'url(#mhArr)'},g);
+    [D/2,zf].forEach(function(z){line([FX1+4,-H/2-4,z],[FX1+18,-H/2-20,z],'thin',g)});
+    mk('text',{x:(a[0]+b[0])/2+10,y:(a[1]+b[1])/2+14,'class':'note'},g).textContent=notes.open;
+  }
+  function setHover(i){
+    hover=i; var L=document.getElementById('mhcapL'), R=document.getElementById('mhcapR');
+    if(i<0||!cards[i]){L.textContent='Fig. 1 · the drawer, open'; R.textContent=HINT}
+    else {L.textContent=''; var b=document.createElement('b'); b.textContent=cards[i].mark; L.appendChild(b); L.appendChild(document.createTextNode(cards[i].filed?'filed '+cards[i].filed:'')); R.textContent=cards[i].title}
+    if(!animating&&gD)requestAnimationFrame(tick);
+  }
+  function ease(t){return t<0?0:t>1?1:1-Math.pow(1-t,3)}
+  function tick(now){
+    animating=true; if(!reduce&&t0)o=OPEN*ease((now-t0)/1500);
+    var moving=!reduce&&t0&&o<OPEN-.01;
+    cards.forEach(function(_,i){var want=i===hover?16:0, d=want-(lift[i]||0); lift[i]=(lift[i]||0)+(reduce?d:d*.22); if(Math.abs(want-lift[i])>.05)moving=true; else lift[i]=want});
+    drawDrawer(); drawNotes();
+    if(moving)requestAnimationFrame(tick); else animating=false;
+  }
+  function init(){
+    svg=document.getElementById('mhfig'); if(!svg)return;
+    defs=mk('defs',{}); hatch('mhHatchA',3.2,45,.7,'var(--hatch)'); hatch('mhHatchB',2.1,45,.75,'var(--ink-3)'); hatch('mhHatchC',3.6,-35,.6,'var(--hatch)');
+    var m=mk('marker',{id:'mhArr',viewBox:'0 0 8 8',refX:4,refY:4,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs); mk('path',{d:'M0,1 L7,4 L0,7',style:'stroke:var(--ink-3);fill:none;stroke-width:.9'},m);
+    gS=mk('g',{}); gD=mk('g',{}); gN=mk('g',{});
+    var c=[P(-W/2,H/2,-D/2),P(W/2,H/2,-D/2),P(W/2,-H/2,D/2),P(-W/2,-H/2,D/2+OPEN),P(W/2+30,-H/2,-D/2)], xs=c.map(function(q){return q[0]}), ys=c.map(function(q){return q[1]});
+    function view(){ var narrow=(svg.parentNode.clientWidth||600)<520, ml=narrow?14:112, mr=narrow?14:168, mt=narrow?12:40;
+      var x0=Math.min.apply(null,xs)-ml, x1=Math.max.apply(null,xs)+mr, y0=Math.min.apply(null,ys)-mt, y1=Math.max.apply(null,ys)+(narrow?12:34);
+      svg.setAttribute('viewBox',x0+' '+y0+' '+(x1-x0)+' '+(y1-y0)); HINT=narrow?'Tap a card to open it.':'Each card is a filed study. Hover to read, click to open.'; if(hover<0)setHover(-1) }
+    view(); addEventListener('resize',view);
+    drawStatic(); o=reduce?OPEN:0; drawDrawer();
+  }
+  function fill(studies){ /* the latest six studies, oldest at the back; shelf marks in filing order */
+    if(!svg)return;
+    var order=studies.slice().sort(function(a,b){return (dateOf(a)||'').localeCompare(dateOf(b)||'')||(a.harvested_at||'').localeCompare(b.harvested_at||'')||a.slug.localeCompare(b.slug)});
+    var mark=function(i){return 'FD-'+String(i+1).padStart(4,'0')};
+    cards=order.map(function(s,i){return {slug:s.slug,title:s.title||s.slug,filed:dateOf(s),mark:mark(i)}}).slice(-6); lift=cards.map(function(){return 0});
+    label.range=order.length?(mark(0)+' – '+mark(order.length-1).slice(3)):'';
+    var nt=0,nf=0; studies.forEach(function(s){(s.tests||[]).forEach(function(t){if(PLANNED[t.tag])nt++}); nf+=(s.extensions||[]).length});
+    notes.newest=cards.length?cards[cards.length-1].mark+' · newest':'';
+    notes.count=studies.length+' studies'+(nt?' · '+nt+' tests':'');
+    notes.open=nf?nf+' open follow-ups':'';
+    t0=0; setTimeout(function(){ if(reduce){o=OPEN; tick(0)} else {t0=performance.now(); requestAnimationFrame(tick)} }, reduce?0:1300);
+  }
+  return {init:init, fill:fill};
+})();
+
+/* ---------- router ---------- */
+function route(){
+  var h=location.hash||'#/'; var m;
+  var main=$('main'); main.textContent='';
+  if((m=/^#\/paper\/([^#]+)/.exec(h)))main.appendChild(viewPaper(decodeURIComponent(m[1])));
+  else if((m=/^#\/topic\/(.+)$/.exec(h)))main.appendChild(viewTopic(decodeURIComponent(m[1])));
+  else if(h==='#/browse')main.appendChild(viewBrowse());
+  else if(h==='#/topics')main.appendChild(viewTopics());
+  else if(h==='#/results')main.appendChild(viewResults());
+  else if(h==='#/followups')main.appendChild(viewFollowups());
+  else if(h==='#/submit')main.appendChild(viewSubmit());
+  else if((m=/^#\/files\/([^#]+)/.exec(h)))main.appendChild(viewFiles(decodeURIComponent(m[1])));
+  else if(h==='#/about')main.appendChild(viewAbout());
+  else main.appendChild(viewHome());
+  Array.prototype.forEach.call(main.querySelectorAll('h2.section-label:not(.tabbed)'),function(h){ var t=el('span','tab');
+    Array.prototype.slice.call(h.childNodes).forEach(function(n){ if(!(n.nodeType===1&&n.tagName==='SMALL'))t.appendChild(n) }); h.insertBefore(t,h.firstChild); h.classList.add('tabbed') });
+  window.scrollTo(0,0);
+}
+function loadIndex(){
+  return fetch('index.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(d){
+    DATA.studies=d.studies||[]; DATA.edges=d.edges||[]; bySlug={}; DATA.studies.forEach(function(s){bySlug[s.slug]=s});
+    var yr=new Date().getFullYear(); var nt=allTests('planned').length, nf=allFollowups().length; $('issue').innerHTML=['<b>'+DATA.studies.length+'</b> stud'+(DATA.studies.length!==1?'ies':'y')+' filed', nt?'<b>'+nt+'</b> planned tests':'', nf?'<b>'+nf+'</b> open follow-ups':''].filter(Boolean).map(function(x){return '<span>'+x+'</span>'}).join(' · '); MH.fill(DATA.studies);
+  });
+}
+var lastPaper=null;
+window.addEventListener('hashchange',function(){
+  var m=/^#\/paper\/([^#]+)(#(.+))?$/.exec(location.hash);
+  if(m&&m[3]&&lastPaper===m[1]&&document.getElementById('paper')){var t=document.getElementById(m[3]); var art=document.getElementById('paper'); if(t&&art.__openAncestors){art.__openAncestors(t); if(t.tagName==='DETAILS')t.open=true; t.scrollIntoView(); return}}
+  lastPaper=m?m[1]:null; route();
+});
+MH.init();
+fetch('submit',{method:'OPTIONS'}).then(function(r){SERVER=r.ok||r.status===204}).catch(function(){SERVER=false})
+  .then(loadIndex).catch(function(e){$('issue').textContent='Could not load index.json ('+e.message+')'})
+  .then(function(){var m=/^#\/paper\/([^#]+)/.exec(location.hash); lastPaper=m?m[1]:null; route()});
+})();
+</script>
+</body>
+</html>

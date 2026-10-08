@@ -1,0 +1,947 @@
+{
+  "survey": {
+    "name": "Immigration Framing Experiment (SYNTHETIC DEMO)",
+    "id": "SV_demo",
+    "source": "qsf",
+    "n_blocks": 4,
+    "randomizers": [
+      {
+        "subset": 1,
+        "even": true,
+        "n_children": 2
+      }
+    ],
+    "branches": []
+  },
+  "questions": [
+    {
+      "qid": "QID1",
+      "tag": "consent",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "Do you consent to participate in this study?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "consent"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Yes, I consent",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "No, I do not consent",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID2",
+      "tag": "pid3",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "Generally speaking, do you usually think of yourself as a Democrat, a Republican, an Independent, or something else?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "pid3"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Democrat",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Republican",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Independent",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Something else",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID3",
+      "tag": "ideo5",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "In general, how would you describe your political views?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "ideo5"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Very liberal",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Liberal",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Moderate",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Conservative",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "5",
+          "label": "Very conservative",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID4",
+      "tag": "agecat",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "What is your age?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "agecat"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "18-29",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "30-44",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "45-64",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "65 or older",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID5",
+      "tag": "gender",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "How do you describe yourself?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "gender"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Man",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Woman",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Non-binary or another description",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID6",
+      "tag": "educ",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "What is the highest level of education you have completed?",
+      "block": "Intro",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "educ"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "High school or less",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Some college",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Bachelor's degree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Graduate degree",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID7",
+      "tag": "treat_text",
+      "type": "DB",
+      "selector": "TB",
+      "text": "Please read the following paragraph carefully. Economists at major universities report that immigrants start new businesses at twice the rate of native-born Americans, filling jobs in agriculture, construction, and health care that would otherwise go unfilled, and contributing more in taxes over their lifetimes than they receive in benefits.",
+      "block": "Treatment",
+      "in_randomizer": true,
+      "free_text": false,
+      "columns": [],
+      "choices": [],
+      "rows": [],
+      "sub_selector": null
+    },
+    {
+      "qid": "QID8",
+      "tag": "control_text",
+      "type": "DB",
+      "selector": "TB",
+      "text": "Please read the following paragraph carefully. The U.S. Census Bureau reports that the population of the United States is about 335 million people, spread across 50 states and the District of Columbia. The most populous state is California and the least populous is Wyoming.",
+      "block": "Control",
+      "in_randomizer": true,
+      "free_text": false,
+      "columns": [],
+      "choices": [],
+      "rows": [],
+      "sub_selector": null
+    },
+    {
+      "qid": "QID9",
+      "tag": "imm_att",
+      "type": "Matrix",
+      "selector": "Likert",
+      "text": "How much do you agree or disagree with the following statements?",
+      "block": "Outcomes",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "imm_att_1",
+        "imm_att_2",
+        "imm_att_3"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Strongly disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Somewhat disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Neither agree nor disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "5",
+          "label": "Somewhat agree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "6",
+          "label": "Agree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "7",
+          "label": "Strongly agree",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [
+        {
+          "id": "1",
+          "label": "Immigrants strengthen the U.S. economy.",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Immigration levels should be reduced.",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Undocumented immigrants should have a path to citizenship.",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "sub_selector": "SingleAnswer"
+    },
+    {
+      "qid": "QID12",
+      "tag": "policy_support",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the United States each year?",
+      "block": "Outcomes",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "policy_support"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Strongly oppose",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Oppose",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Somewhat oppose",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Neither favor nor oppose",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "5",
+          "label": "Somewhat favor",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "6",
+          "label": "Favor",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "7",
+          "label": "Strongly favor",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID10",
+      "tag": "attn",
+      "type": "MC",
+      "selector": "SAVR",
+      "text": "To check that you are reading carefully, please select 'Somewhat agree' below.",
+      "block": "Outcomes",
+      "in_randomizer": false,
+      "free_text": false,
+      "columns": [
+        "attn"
+      ],
+      "choices": [
+        {
+          "id": "1",
+          "label": "Strongly disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "2",
+          "label": "Disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "3",
+          "label": "Somewhat disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "4",
+          "label": "Neither agree nor disagree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "5",
+          "label": "Somewhat agree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "6",
+          "label": "Agree",
+          "recode": null,
+          "text_entry": false
+        },
+        {
+          "id": "7",
+          "label": "Strongly agree",
+          "recode": null,
+          "text_entry": false
+        }
+      ],
+      "rows": [],
+      "sub_selector": "TX"
+    },
+    {
+      "qid": "QID11",
+      "tag": "open_comment",
+      "type": "TE",
+      "selector": "ML",
+      "text": "Is there anything else you would like to tell us about your views on immigration? (Optional)",
+      "block": "Outcomes",
+      "in_randomizer": false,
+      "free_text": true,
+      "columns": [
+        "open_comment"
+      ],
+      "choices": [],
+      "rows": [],
+      "sub_selector": null
+    }
+  ],
+  "arms": {
+    "column": "condition",
+    "values": [
+      "control",
+      "treatment"
+    ],
+    "stimuli": {
+      "treatment": "Please read the following paragraph carefully. Economists at major universities report that immigrants start new businesses at twice the rate of native-born Americans, filling jobs in agriculture, construction, and health care that would otherwise go unfilled, and contributing more in taxes over their lifetimes than they receive in benefits.",
+      "control": "Please read the following paragraph carefully. The U.S. Census Bureau reports that the population of the United States is about 335 million people, spread across 50 states and the District of Columbia. The most populous state is California and the least populous is Wyoming."
+    },
+    "source": "flow_embedded",
+    "blocks": {
+      "treatment": [
+        "QID7"
+      ],
+      "control": [
+        "QID8"
+      ]
+    }
+  },
+  "embedded_data": [
+    "condition"
+  ],
+  "columns": [
+    {
+      "name": "StartDate",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "StartDate",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "EndDate",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "EndDate",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "Status",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "Status",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "IPAddress",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "IPAddress",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "Progress",
+      "qid": "",
+      "kind": "system",
+      "dtype": "numeric",
+      "label": "Progress",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "Duration (in seconds)",
+      "qid": "",
+      "kind": "system",
+      "dtype": "numeric",
+      "label": "Duration (in seconds)",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "Finished",
+      "qid": "",
+      "kind": "system",
+      "dtype": "numeric",
+      "label": "Finished",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "RecordedDate",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "RecordedDate",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "ResponseId",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "ResponseId",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "RecipientLastName",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "RecipientLastName",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "RecipientFirstName",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "RecipientFirstName",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "RecipientEmail",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "RecipientEmail",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "ExternalReference",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "ExternalReference",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "LocationLatitude",
+      "qid": "",
+      "kind": "system",
+      "dtype": "numeric",
+      "label": "LocationLatitude",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "LocationLongitude",
+      "qid": "",
+      "kind": "system",
+      "dtype": "numeric",
+      "label": "LocationLongitude",
+      "values": {},
+      "free_text": false,
+      "pii_flag": true,
+      "pii_reason": "known_identifier_column",
+      "dropped": true
+    },
+    {
+      "name": "DistributionChannel",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "DistributionChannel",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "UserLanguage",
+      "qid": "",
+      "kind": "system",
+      "dtype": "text",
+      "label": "UserLanguage",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "consent",
+      "qid": "QID1",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "Do you consent to participate in this study?",
+      "values": {
+        "1": "Yes, I consent",
+        "2": "No, I do not consent"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "pid3",
+      "qid": "QID2",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "Generally speaking, do you usually think of yourself as a Democrat, a Republican, an Independent, or something else?",
+      "values": {
+        "1": "Democrat",
+        "2": "Republican",
+        "3": "Independent",
+        "4": "Something else"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "ideo5",
+      "qid": "QID3",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "In general, how would you describe your political views?",
+      "values": {
+        "1": "Very liberal",
+        "2": "Liberal",
+        "3": "Moderate",
+        "4": "Conservative",
+        "5": "Very conservative"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "agecat",
+      "qid": "QID4",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "What is your age?",
+      "values": {
+        "1": "18-29",
+        "2": "30-44",
+        "3": "45-64",
+        "4": "65 or older"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "gender",
+      "qid": "QID5",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "How do you describe yourself?",
+      "values": {
+        "1": "Man",
+        "2": "Woman",
+        "3": "Non-binary or another description"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "educ",
+      "qid": "QID6",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "What is the highest level of education you have completed?",
+      "values": {
+        "1": "High school or less",
+        "2": "Some college",
+        "3": "Bachelor's degree",
+        "4": "Graduate degree"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "imm_att_1",
+      "qid": "QID9",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "How much do you agree or disagree with the following statements? — Immigrants strengthen the U.S. economy.",
+      "values": {
+        "1": "Strongly disagree",
+        "2": "Disagree",
+        "3": "Somewhat disagree",
+        "4": "Neither agree nor disagree",
+        "5": "Somewhat agree",
+        "6": "Agree",
+        "7": "Strongly agree"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "imm_att_2",
+      "qid": "QID9",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "How much do you agree or disagree with the following statements? — Immigration levels should be reduced.",
+      "values": {
+        "1": "Strongly disagree",
+        "2": "Disagree",
+        "3": "Somewhat disagree",
+        "4": "Neither agree nor disagree",
+        "5": "Somewhat agree",
+        "6": "Agree",
+        "7": "Strongly agree"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "imm_att_3",
+      "qid": "QID9",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "How much do you agree or disagree with the following statements? — Undocumented immigrants should have a path to citizenship.",
+      "values": {
+        "1": "Strongly disagree",
+        "2": "Disagree",
+        "3": "Somewhat disagree",
+        "4": "Neither agree nor disagree",
+        "5": "Somewhat agree",
+        "6": "Agree",
+        "7": "Strongly agree"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "policy_support",
+      "qid": "QID12",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the United States each year?",
+      "values": {
+        "1": "Strongly oppose",
+        "2": "Oppose",
+        "3": "Somewhat oppose",
+        "4": "Neither favor nor oppose",
+        "5": "Somewhat favor",
+        "6": "Favor",
+        "7": "Strongly favor"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "attn",
+      "qid": "QID10",
+      "kind": "question",
+      "dtype": "numeric",
+      "label": "To check that you are reading carefully, please select 'Somewhat agree' below.",
+      "values": {
+        "1": "Strongly disagree",
+        "2": "Disagree",
+        "3": "Somewhat disagree",
+        "4": "Neither agree nor disagree",
+        "5": "Somewhat agree",
+        "6": "Agree",
+        "7": "Strongly agree"
+      },
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    },
+    {
+      "name": "open_comment",
+      "qid": "QID11",
+      "kind": "question",
+      "dtype": "text",
+      "label": "Is there anything else you would like to tell us about your views on immigration? (Optional)",
+      "values": {},
+      "free_text": true,
+      "pii_flag": true,
+      "pii_reason": "free_text_question",
+      "dropped": true
+    },
+    {
+      "name": "condition",
+      "qid": "",
+      "kind": "embedded",
+      "dtype": "text",
+      "label": "condition",
+      "values": {},
+      "free_text": false,
+      "pii_flag": false,
+      "pii_reason": "",
+      "dropped": false
+    }
+  ]
+}

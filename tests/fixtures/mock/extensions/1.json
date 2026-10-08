@@ -1,0 +1,369 @@
+{
+ "content": "",
+ "tool_calls": [
+  {
+   "name": "record_result",
+   "args": {
+    "key": "proposal",
+    "final": true,
+    "value": {
+     "id": "boundary",
+     "kind": "boundary",
+     "title": "Does the framing effect hold for refugees?",
+     "rationale": "The demo study found a positive effect of the economic-contribution paragraph on the immigration index; this boundary extension probes it.",
+     "contribution": "Separates explanations the source design cannot.",
+     "limitations": [
+      "Self-reported attitudes; single exposure."
+     ],
+     "design": {
+      "title": "Does the framing effect hold for refugees?",
+      "overview": "A 2-arm follow-up to the demo framing study.",
+      "hypothesis": "The economic-contribution frame raises support for refugee admissions less than for legal immigration.",
+      "primaryOutcome": "Support for increasing legal immigration (7-point scale, QID12).",
+      "comparison": "Mean support in each arm compared with the neutral arm.",
+      "population": "US adults on an online panel.",
+      "conditions": [
+       {
+        "id": "neutral",
+        "title": "Neutral paragraph",
+        "description": "The U.S. Census Bureau reports how the population changed over the past decade.",
+        "nodeId": "arm_neutral"
+       },
+       {
+        "id": "refugee",
+        "title": "Refugee economic frame",
+        "description": "Studies find that refugees resettled in the U.S. become net taxpayers within about eight years.",
+        "nodeId": "arm_refugee"
+       }
+      ],
+      "blocks": [
+       {
+        "id": "consent",
+        "title": "Consent",
+        "questions": [
+         {
+          "id": "intro",
+          "type": "DB",
+          "text": "This is a short survey about immigration policy. It takes about five minutes. Participation is voluntary.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         },
+         {
+          "id": "consentQ",
+          "type": "MC",
+          "text": "Do you consent to participate in this study?",
+          "tag": "consent",
+          "multiple": false,
+          "required": true,
+          "choices": [
+           {
+            "id": "yes",
+            "text": "Yes, I consent",
+            "recode": "1"
+           },
+           {
+            "id": "no",
+            "text": "No, I do not consent",
+            "recode": "2"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID1"
+         }
+        ]
+       },
+       {
+        "id": "neutralBlock",
+        "title": "Neutral paragraph",
+        "questions": [
+         {
+          "id": "neutralText",
+          "type": "DB",
+          "text": "The U.S. Census Bureau reports how the population changed over the past decade.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "refugeeBlock",
+        "title": "Refugee economic frame",
+        "questions": [
+         {
+          "id": "refugeeText",
+          "type": "DB",
+          "text": "Studies find that refugees resettled in the U.S. become net taxpayers within about eight years.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "outcome",
+        "title": "Outcome",
+        "questions": [
+         {
+          "id": "policySupport",
+          "type": "MC",
+          "text": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the U.S. each year?",
+          "tag": "policy_support",
+          "multiple": false,
+          "required": false,
+          "choices": [
+           {
+            "id": "s1",
+            "text": "Strongly oppose",
+            "recode": "1"
+           },
+           {
+            "id": "s2",
+            "text": "Oppose",
+            "recode": "2"
+           },
+           {
+            "id": "s3",
+            "text": "Somewhat oppose",
+            "recode": "3"
+           },
+           {
+            "id": "s4",
+            "text": "Neither favor nor oppose",
+            "recode": "4"
+           },
+           {
+            "id": "s5",
+            "text": "Somewhat favor",
+            "recode": "5"
+           },
+           {
+            "id": "s6",
+            "text": "Favor",
+            "recode": "6"
+           },
+           {
+            "id": "s7",
+            "text": "Strongly favor",
+            "recode": "7"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID12"
+         }
+        ]
+       },
+       {
+        "id": "debrief",
+        "title": "Debrief",
+        "questions": [
+         {
+          "id": "debriefText",
+          "type": "DB",
+          "text": "Thank you. The paragraphs you read summarised published research; no deception was involved.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       }
+      ],
+      "flow": [
+       {
+        "id": "consentFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "consent",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "declineBranch",
+        "type": "branch",
+        "label": "",
+        "children": [
+         "declineEnd"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "consentQ",
+        "choiceId": "no",
+        "operator": "selected"
+       },
+       {
+        "id": "declineEnd",
+        "type": "end",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_neutral",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_neutral",
+         "treat_neutral"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_neutral",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "neutral",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_neutral",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "neutralBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_refugee",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_refugee",
+         "treat_refugee"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_refugee",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "refugee",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_refugee",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "refugeeBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "rand",
+        "type": "randomizer",
+        "label": "",
+        "children": [
+         "arm_neutral",
+         "arm_refugee"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "outcomeFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "outcome",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "debriefFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "debrief",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       }
+      ],
+      "roots": [
+       "consentFlow",
+       "declineBranch",
+       "rand",
+       "outcomeFlow",
+       "debriefFlow"
+      ],
+      "assumptions": [
+       "Target N = 1,200 (about 400 per arm) to detect 0.15 SD."
+      ],
+      "unresolved": [
+       "IRB protocol number for the consent text."
+      ],
+      "evidence": [
+       {
+        "id": "source",
+        "title": "Source study package",
+        "url": "https://github.com/yrvelez/filedrawer",
+        "claim": "the demo framing effect",
+        "excerpt": "",
+        "origin": "supplied"
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

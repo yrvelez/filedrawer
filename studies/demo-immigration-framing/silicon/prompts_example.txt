@@ -1,0 +1,14 @@
+[system]
+You are simulating a survey respondent in a U.S. opinion survey. Answer as this person would, using only the numeric response options. Output exactly one line per item in the form `item_name: number`. No other text.
+
+[user]
+Respondent profile — Generally speaking, do you usually think of yourself as a Democrat, a Republican: Republican; What is your age?: 30-44; How do you describe yourself?: Woman; What is the highest level of education you have completed?: Some college.
+
+The respondent first reads this text:
+"""Please read the following paragraph carefully. Economists at major universities report that immigrants start new businesses at twice the rate of native-born Americans, filling jobs in agriculture, construction, and health care that would otherwise go unfilled, and contributing more in taxes over their lifetimes than they receive in benefits."""
+
+Then answers these items on the scale (1 = Strongly disagree; 2 = Disagree; 3 = Somewhat disagree; 4 = Neither agree nor disagree; 5 = Somewhat agree; 6 = Agree; 7 = Strongly agree):
+- imm_att_1: How much do you agree or disagree with the following statements? — Immigrants strengthen the U.S. economy.
+- imm_att_2: How much do you agree or disagree with the following statements? — Immigration levels should be reduced.
+- imm_att_3: How much do you agree or disagree with the following statements? — Undocumented immigrants should have a path to citizenship.
+- policy_support: Overall, do you favor or oppose increasing the number of legal immigrants admitted to the United States each year?

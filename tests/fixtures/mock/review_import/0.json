@@ -1,0 +1,3 @@
+{
+ "content": "[{\"section_ref\": \"Results, H2\", \"issue\": \"Education omitted from H2\", \"detail\": \"Education plausibly drives both attention and support.\", \"severity\": \"major\", \"suggestion\": \"Re-fit H2 with educ.\", \"confidence\": 1.0, \"kind\": \"analytical\", \"target\": \"H2\"}, {\"section_ref\": \"Abstract\", \"issue\": \"Abstract overstates generality\", \"detail\": \"Convenience panel.\", \"severity\": \"minor\", \"suggestion\": \"\", \"confidence\": 1.0, \"kind\": \"presentational\", \"target\": null}]"
+}

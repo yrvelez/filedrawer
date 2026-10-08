@@ -1,0 +1,51 @@
+{
+ "built": "2026-10-01T03:52:36Z",
+ "tool_version": "0.1.0",
+ "studies": [
+  {
+   "slug": "demo-immigration-framing",
+   "title": "Economic-contribution framing and immigration attitudes (synthetic demo)",
+   "source": "local",
+   "repo_url": "https://github.com/yrvelez/filedrawer",
+   "folder_url": "https://github.com/yrvelez/filedrawer/tree/main/studies/demo-immigration-framing",
+   "report_url": "https://github.com/yrvelez/filedrawer/blob/main/studies/demo-immigration-framing/report.md",
+   "data_url": "https://github.com/yrvelez/filedrawer/tree/main/studies/demo-immigration-framing/data",
+   "study_json_url": "https://raw.githubusercontent.com/yrvelez/filedrawer/main/studies/demo-immigration-framing/study.json",
+   "release_status": "draft",
+   "provenance_mode": "fully_agentic",
+   "reviewer_pass": true,
+   "design_type": "survey_experiment",
+   "population": "online_panel",
+   "country": "US",
+   "constructs": [
+    "framing_effects",
+    "immigration_attitudes",
+    "partisanship"
+   ],
+   "keywords": [
+    "immigration",
+    "framing",
+    "economic contribution",
+    "survey experiment",
+    "partisanship"
+   ],
+   "n": 387,
+   "created": "2026-10-01",
+   "hypotheses": {
+    "registered": 1,
+    "deviation": 1,
+    "exploratory": 3,
+    "supported": 2
+   },
+   "synthetic": true,
+   "authors": [
+    "filedrawer demo"
+   ],
+   "kind": "filedrawer_package",
+   "summary": "In a two-arm online survey experiment with simulated data (N = 387 in the analysis sample), a paragraph describing immigrants' economic contributions raised the pro-immigration attitude index relative to a neutral paragraph (registered H1; see registered_summary for the estimate). The secondary policy-attitude test (H2) is reported as a deviation because the registered age covariate was not collected as a continuous variable. The registered partisan heterogeneity test (S1) shows a larger effect among Democrats than Republicans. Exploratory analyses suggest the effect is not driven by a single item and is robust to excluding attention-check failures. A silicon sample of LLM personas moves in the same direction with a smaller, imprecise estimate; it is not evidence about human respondents.",
+   "paper_url": "https://raw.githubusercontent.com/yrvelez/filedrawer/main/studies/demo-immigration-framing/report.md",
+   "paper_base": "https://raw.githubusercontent.com/yrvelez/filedrawer/main/studies/demo-immigration-framing/"
+  }
+ ],
+ "edges": []
+}

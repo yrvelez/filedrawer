@@ -1,0 +1,10 @@
+{"results": [
+ {"id": "https://openalex.org/W1", "title": "Framing immigration: economic contribution messages and public attitudes", "display_name": "Framing immigration",
+  "authorships": [{"author": {"display_name": "Ada Example"}}, {"author": {"display_name": "Ben Sample"}}], "publication_year": 2019,
+  "doi": "https://doi.org/10.0000/example.1", "primary_location": {"source": {"display_name": "Journal of Synthetic Studies"}}, "cited_by_count": 120,
+  "abstract_inverted_index": {"Economic": [0], "framing": [1], "raises": [2], "support": [3], "for": [4], "immigration.": [5]}},
+ {"id": "https://openalex.org/W2", "title": "Partisan moderation of persuasion effects in survey experiments", "display_name": "Partisan moderation",
+  "authorships": [{"author": {"display_name": "Cara Placeholder"}}], "publication_year": 2021,
+  "doi": "https://doi.org/10.0000/example.2", "primary_location": {"source": {"display_name": "Synthetic Political Science Review"}}, "cited_by_count": 45,
+  "abstract_inverted_index": {"Effects": [0], "are": [1], "larger": [2], "among": [3], "co-partisans.": [4]}}
+]}

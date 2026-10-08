@@ -1,0 +1,78 @@
+{
+  "source": "pap.md",
+  "title": "Economic-contribution framing and immigration attitudes",
+  "constructs": ["immigration_attitudes", "framing_effects", "partisanship"],
+  "keywords": ["immigration", "framing", "economic contribution", "survey experiment", "partisanship"],
+  "design": {
+    "type": "survey_experiment",
+    "arms": {"column": "condition", "treatment": "treatment", "control": "control"},
+    "population": {"country": "US", "sample": "online_panel"},
+    "outcome_type": "likert7"
+  },
+  "registered": {
+    "outcomes": [
+      {"name": "imm_index", "label": "Pro-immigration attitude index", "kind": "mean_items",
+       "columns": ["imm_att_1", "imm_att_2", "imm_att_3"], "reverse": ["imm_att_2"], "scale": [1, 7],
+       "construction": "mean of three 7-point items, item 2 reverse coded"},
+      {"name": "policy_support", "label": "Policy attitudes toward immigration", "kind": "single_item",
+       "columns": ["policy_support"], "reverse": [], "scale": [1, 7], "construction": "single 7-point favor-oppose item"}
+    ],
+    "hypotheses": [
+      {"id": "H1", "text": "Treatment increases pro-immigration attitudes on the primary index.",
+       "outcome": "imm_index", "treatment": {"column": "condition", "contrast": ["treatment", "control"]},
+       "direction": "positive", "estimator": {"kind": "ols", "robust": "HC2", "cluster": null, "covariates": []},
+       "subgroup": null, "exclusions": ["Finished == 1"]},
+      {"id": "H2", "text": "Treatment increases favorable policy attitudes, adjusting for party identification and age in years.",
+       "outcome": "policy_support", "treatment": {"column": "condition", "contrast": ["treatment", "control"]},
+       "direction": "positive", "estimator": {"kind": "ols", "robust": "HC2", "cluster": null, "covariates": ["pid3", "age_years"]},
+       "subgroup": null, "exclusions": ["Finished == 1"]}
+    ],
+    "subgroups": [
+      {"id": "S1", "hypothesis": "H1", "moderator": "pid3", "levels": {"1": "Democrat", "2": "Republican"},
+       "expected": "treatment effect larger among Democrats than Republicans"}
+    ],
+    "sample_exclusions": ["Finished == 1"],
+    "multiple_testing": "none",
+    "alpha": 0.05
+  },
+  "implemented": {
+    "outcomes": [
+      {"name": "imm_index", "label": "Pro-immigration attitude index", "kind": "mean_items",
+       "columns": ["imm_att_1", "imm_att_2", "imm_att_3"], "reverse": ["imm_att_2"], "scale": [1, 7],
+       "construction": "mean of three 7-point items, item 2 reverse coded"},
+      {"name": "policy_support", "label": "Policy attitudes toward immigration", "kind": "single_item",
+       "columns": ["policy_support"], "reverse": [], "scale": [1, 7], "construction": "single 7-point favor-oppose item"}
+    ],
+    "hypotheses": [
+      {"id": "H1", "text": "Treatment increases pro-immigration attitudes on the primary index.",
+       "outcome": "imm_index", "treatment": {"column": "condition", "contrast": ["treatment", "control"]},
+       "direction": "positive", "estimator": {"kind": "ols", "robust": "HC2", "cluster": null, "covariates": []},
+       "subgroup": null, "exclusions": ["Finished == 1"]},
+      {"id": "H2", "text": "Treatment increases favorable policy attitudes, adjusting for party identification and age.",
+       "outcome": "policy_support", "treatment": {"column": "condition", "contrast": ["treatment", "control"]},
+       "direction": "positive", "estimator": {"kind": "ols", "robust": "HC2", "cluster": null, "covariates": ["pid3", "agecat"]},
+       "subgroup": null, "exclusions": ["Finished == 1"]}
+    ],
+    "subgroups": [
+      {"id": "S1", "hypothesis": "H1", "moderator": "pid3", "levels": {"1": "Democrat", "2": "Republican"},
+       "expected": "treatment effect larger among Democrats than Republicans"}
+    ],
+    "sample_exclusions": ["Finished == 1"],
+    "multiple_testing": "none",
+    "alpha": 0.05
+  },
+  "ambiguities": [
+    {"hypothesis": "H2", "field": "estimator.covariates", "kind": "deviation",
+     "pap_text": "adjusting for party identification and age in years",
+     "interpretation": "age was measured only in four brackets (agecat), so bracket indicators replace age in years",
+     "alternatives": ["omit the age covariate"], "reason": "no continuous age variable exists in the instrument"},
+    {"hypothesis": "H2", "field": "outcome", "kind": "interpretation",
+     "pap_text": "policy attitudes toward immigration (7-point favor-oppose)",
+     "interpretation": "the single favor-oppose item on admitting more legal immigrants (policy_support)",
+     "alternatives": [], "reason": "it is the only favor-oppose policy item in the questionnaire"},
+    {"hypothesis": "H1", "field": "exclusions", "kind": "interpretation",
+     "pap_text": "respondents who do not complete the survey are excluded",
+     "interpretation": "Finished == 1 (Qualtrics completion flag)", "alternatives": ["Progress == 100"],
+     "reason": "Finished is the export's completion indicator"}
+  ]
+}

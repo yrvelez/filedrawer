@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+.DS_Store
+# local run outputs (committed study packages live in studies/)
+runs/
+# never commit secrets
+.env
+config.local.yaml
+demo/demo_raw.csv

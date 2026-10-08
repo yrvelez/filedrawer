@@ -1,0 +1,616 @@
+{
+ "demographics": [
+  "pid3",
+  "agecat",
+  "gender",
+  "educ"
+ ],
+ "min_cell": 3,
+ "n_personas": 60,
+ "seed": 20240,
+ "model": "z-ai/glm-4.5-air",
+ "temperature": 0.7,
+ "items": [
+  {
+   "name": "imm_att_1",
+   "text": "How much do you agree or disagree with the following statements? — Immigrants strengthen the U.S. economy."
+  },
+  {
+   "name": "imm_att_2",
+   "text": "How much do you agree or disagree with the following statements? — Immigration levels should be reduced."
+  },
+  {
+   "name": "imm_att_3",
+   "text": "How much do you agree or disagree with the following statements? — Undocumented immigrants should have a path to citizenship."
+  },
+  {
+   "name": "policy_support",
+   "text": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the United States each year?"
+  }
+ ],
+ "scale": [
+  1,
+  7
+ ],
+ "outcomes": [
+  {
+   "name": "imm_index",
+   "label": "Pro-immigration attitude index",
+   "kind": "mean_items",
+   "columns": [
+    "imm_att_1",
+    "imm_att_2",
+    "imm_att_3"
+   ],
+   "reverse": [
+    "imm_att_2"
+   ],
+   "scale": [
+    1,
+    7
+   ],
+   "construction": "mean of three 7-point items, item 2 reverse coded"
+  },
+  {
+   "name": "policy_support",
+   "label": "Policy attitudes toward immigration",
+   "kind": "single_item",
+   "columns": [
+    "policy_support"
+   ],
+   "reverse": [],
+   "scale": [
+    1,
+    7
+   ],
+   "construction": "single 7-point favor-oppose item"
+  }
+ ],
+ "arms": {
+  "column": "condition",
+  "treatment": "treatment",
+  "control": "control"
+ },
+ "personas": [
+  {
+   "persona_id": 0,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 1,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 2,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 3,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 4,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 5,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 6,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 7,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 8,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "18-29",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 9,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 10,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 11,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 12,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 13,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 14,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 15,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 16,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 17,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 18,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 19,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 20,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "65 or older",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 21,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 22,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 23,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 24,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "30-44",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 25,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "30-44",
+    "gender": "Man",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 26,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 27,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 28,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 29,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 30,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 31,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 32,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 33,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "18-29",
+    "gender": "Man",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 34,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 35,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 36,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 37,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 38,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 39,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 40,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 41,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 42,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 43,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 44,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 45,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "30-44",
+    "gender": "Man",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 46,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 47,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "18-29",
+    "gender": "Man",
+    "educ": "Graduate degree"
+   }
+  },
+  {
+   "persona_id": 48,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 49,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 50,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 51,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "45-64",
+    "gender": "Man",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 52,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 53,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 54,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "30-44",
+    "gender": "Man",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 55,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "45-64",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 56,
+   "persona": {
+    "pid3": "Republican",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Some college"
+   }
+  },
+  {
+   "persona_id": 57,
+   "persona": {
+    "pid3": "Democrat",
+    "agecat": "65 or older",
+    "gender": "Woman",
+    "educ": "Bachelor's degree"
+   }
+  },
+  {
+   "persona_id": 58,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "High school or less"
+   }
+  },
+  {
+   "persona_id": 59,
+   "persona": {
+    "pid3": "Independent",
+    "agecat": "18-29",
+    "gender": "Woman",
+    "educ": "Graduate degree"
+   }
+  }
+ ]
+}

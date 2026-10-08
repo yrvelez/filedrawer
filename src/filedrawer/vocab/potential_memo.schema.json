@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Research-potential memo",
+  "description": "What a filed study got right, why it may not have landed, the debates it can speak to, and typed briefs for follow-up studies. Written by the potential agent from the report, the retrieved literature and the editor's open questions.",
+  "type": "object",
+  "required": ["got_right", "why_it_did_not_land", "debates", "briefs", "verdict"],
+  "properties": {
+    "got_right": {"type": "array", "maxItems": 4, "items": {"type": "string"}},
+    "why_it_did_not_land": {
+      "type": "array",
+      "items": {"type": "object", "required": ["cause", "detail", "evidence"],
+                "properties": {"cause": {"enum": ["power", "measurement", "design", "framing", "missing_moderator", "sample", "analysis"]},
+                               "detail": {"type": "string"}, "evidence": {"type": "string"}}}
+    },
+    "debates": {
+      "type": "array",
+      "items": {"type": "object", "required": ["id", "label", "position_a", "position_b", "what_this_study_says", "works"],
+                "properties": {"id": {"type": "string"}, "label": {"type": "string"}, "position_a": {"type": "string"},
+                               "position_b": {"type": "string"}, "what_this_study_says": {"type": "string"},
+                               "works": {"type": "array", "items": {"type": "object", "required": ["id", "side"],
+                                                                     "properties": {"id": {"type": "string"}, "side": {"enum": ["a", "b", "neutral"]}}}}}}
+    },
+    "briefs": {
+      "type": "array",
+      "items": {"type": "object",
+                "required": ["id", "kind_legacy", "mode", "title", "question", "why_this_fixes_the_failure", "design_sketch", "needs_qsf"],
+                "properties": {
+                  "id": {"enum": ["advance_design", "theoretical_debate", "generalizability_conditional", "data_to_collect", "natural_experiment"]},
+                  "kind_legacy": {"enum": ["mechanism", "boundary", "alternative", null]},
+                  "mode": {"enum": ["survey_experiment", "conjoint", "observational", "natural_experiment", "data_collection"]},
+                  "title": {"type": "string"}, "question": {"type": "string"}, "why_this_fixes_the_failure": {"type": "string"},
+                  "debate": {"type": ["string", "null"]}, "addresses": {"type": "array", "items": {"type": "string"}},
+                  "design_sketch": {"type": "string"}, "moderator_or_condition": {"type": ["string", "null"]},
+                  "power_target": {"type": ["object", "null"], "properties": {"n_per_arm": {"type": "integer"}, "mde": {"type": "number"}, "basis": {"type": "string"}}},
+                  "needs_qsf": {"type": "boolean"}}}
+    },
+    "verdict": {"type": "string"}
+  }
+}

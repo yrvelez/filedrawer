@@ -1,0 +1,1 @@
+{"content": "Structured PAP recorded.", "tool_calls": [{"name": "record_result", "args": {"key": "pap", "value": {"$json": "papreader/pap.json"}, "final": true}}]}

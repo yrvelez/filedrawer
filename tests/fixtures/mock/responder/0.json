@@ -1,0 +1,27 @@
+{
+ "content": "",
+ "tool_calls": [
+  {
+   "name": "record_result",
+   "args": {
+    "key": "addendum",
+    "final": true,
+    "value": {
+     "base": "H2",
+     "label": "add education as a covariate",
+     "rationale": "Education predicts policy support and may correlate with the age covariate; adding it checks that the H2 estimate is not driven by omitted education.",
+     "delta": {
+      "estimator": {
+       "covariates": [
+        "pid3",
+        "agecat",
+        "educ"
+       ]
+      }
+     },
+     "expected": "An estimate close to the registered one would reassure; a sign change would not."
+    }
+   }
+  }
+ ]
+}

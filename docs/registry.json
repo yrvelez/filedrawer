@@ -1,0 +1,4 @@
+{
+  "_doc": "Registry of study packages hosted outside this repo. Each entry needs 'repo_url' (the GitHub repo or folder, e.g. https://github.com/<owner>/<repo>/tree/main/studies/<slug>) and 'study_json_url' (the raw URL of that folder's study.json, e.g. https://raw.githubusercontent.com/<owner>/<repo>/main/studies/<slug>/study.json). Add entries by pull request; the dashboard fetches each study.json when index.json is built.",
+  "studies": []
+}

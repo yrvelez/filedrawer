@@ -1,0 +1,3 @@
+{
+ "content": "{\"claims\": [{\"claim\": \"positive but imprecise, with an interval that includes zero\", \"location\": \"Abstract\", \"verdict\": \"supported\", \"evidence\": \"H1 row: interval crosses zero\", \"fix\": \"\", \"previous\": \"C1\", \"resolved\": true}, {\"claim\": \"N = 387 in the analysis sample\", \"location\": \"Abstract\", \"verdict\": \"supported\", \"evidence\": \"registered_summary n\", \"fix\": \"\", \"previous\": \"C2\", \"resolved\": true}], \"note\": \"The overstated framing claim was reworded to match the interval; no further rewording is needed.\"}"
+}

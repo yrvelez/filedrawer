@@ -1,0 +1,432 @@
+{
+ "content": "",
+ "tool_calls": [
+  {
+   "name": "record_result",
+   "args": {
+    "key": "proposal",
+    "final": true,
+    "value": {
+     "id": "mechanism",
+     "kind": "mechanism",
+     "title": "Does perceived fiscal contribution carry the framing effect?",
+     "rationale": "The demo study found a positive effect of the economic-contribution paragraph on the immigration index; this mechanism extension probes it.",
+     "contribution": "Separates explanations the source design cannot.",
+     "limitations": [
+      "Self-reported attitudes; single exposure."
+     ],
+     "design": {
+      "title": "Does perceived fiscal contribution carry the framing effect?",
+      "overview": "A 3-arm follow-up to the demo framing study.",
+      "hypothesis": "The economic-contribution paragraph raises support because it changes beliefs about immigrants' fiscal contribution.",
+      "primaryOutcome": "Support for increasing legal immigration (7-point scale, QID12).",
+      "comparison": "Mean support in each arm compared with the neutral arm.",
+      "population": "US adults on an online panel.",
+      "conditions": [
+       {
+        "id": "neutral",
+        "title": "Neutral paragraph",
+        "description": "The U.S. Census Bureau reports how the population changed over the past decade.",
+        "nodeId": "arm_neutral"
+       },
+       {
+        "id": "fiscal",
+        "title": "Fiscal contribution",
+        "description": "Economists estimate that immigrants pay more in taxes over their lifetimes than they receive in benefits.",
+        "nodeId": "arm_fiscal"
+       },
+       {
+        "id": "labor",
+        "title": "Labor shortage",
+        "description": "Employers report persistent shortages in sectors where many immigrants work.",
+        "nodeId": "arm_labor"
+       }
+      ],
+      "blocks": [
+       {
+        "id": "consent",
+        "title": "Consent",
+        "questions": [
+         {
+          "id": "intro",
+          "type": "DB",
+          "text": "This is a short survey about immigration policy. It takes about five minutes. Participation is voluntary.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         },
+         {
+          "id": "consentQ",
+          "type": "MC",
+          "text": "Do you consent to participate in this study?",
+          "tag": "consent",
+          "multiple": false,
+          "required": true,
+          "choices": [
+           {
+            "id": "yes",
+            "text": "Yes, I consent",
+            "recode": "1"
+           },
+           {
+            "id": "no",
+            "text": "No, I do not consent",
+            "recode": "2"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID1"
+         }
+        ]
+       },
+       {
+        "id": "neutralBlock",
+        "title": "Neutral paragraph",
+        "questions": [
+         {
+          "id": "neutralText",
+          "type": "DB",
+          "text": "The U.S. Census Bureau reports how the population changed over the past decade.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "fiscalBlock",
+        "title": "Fiscal contribution",
+        "questions": [
+         {
+          "id": "fiscalText",
+          "type": "DB",
+          "text": "Economists estimate that immigrants pay more in taxes over their lifetimes than they receive in benefits.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "laborBlock",
+        "title": "Labor shortage",
+        "questions": [
+         {
+          "id": "laborText",
+          "type": "DB",
+          "text": "Employers report persistent shortages in sectors where many immigrants work.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       },
+       {
+        "id": "outcome",
+        "title": "Outcome",
+        "questions": [
+         {
+          "id": "policySupport",
+          "type": "MC",
+          "text": "Overall, do you favor or oppose increasing the number of legal immigrants admitted to the U.S. each year?",
+          "tag": "policy_support",
+          "multiple": false,
+          "required": false,
+          "choices": [
+           {
+            "id": "s1",
+            "text": "Strongly oppose",
+            "recode": "1"
+           },
+           {
+            "id": "s2",
+            "text": "Oppose",
+            "recode": "2"
+           },
+           {
+            "id": "s3",
+            "text": "Somewhat oppose",
+            "recode": "3"
+           },
+           {
+            "id": "s4",
+            "text": "Neither favor nor oppose",
+            "recode": "4"
+           },
+           {
+            "id": "s5",
+            "text": "Somewhat favor",
+            "recode": "5"
+           },
+           {
+            "id": "s6",
+            "text": "Favor",
+            "recode": "6"
+           },
+           {
+            "id": "s7",
+            "text": "Strongly favor",
+            "recode": "7"
+           }
+          ],
+          "rows": [],
+          "sourceQuestionId": "QID12"
+         }
+        ]
+       },
+       {
+        "id": "debrief",
+        "title": "Debrief",
+        "questions": [
+         {
+          "id": "debriefText",
+          "type": "DB",
+          "text": "Thank you. The paragraphs you read summarised published research; no deception was involved.",
+          "tag": "",
+          "multiple": false,
+          "required": false,
+          "choices": [],
+          "rows": [],
+          "sourceQuestionId": ""
+         }
+        ]
+       }
+      ],
+      "flow": [
+       {
+        "id": "consentFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "consent",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "declineBranch",
+        "type": "branch",
+        "label": "",
+        "children": [
+         "declineEnd"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "consentQ",
+        "choiceId": "no",
+        "operator": "selected"
+       },
+       {
+        "id": "declineEnd",
+        "type": "end",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_neutral",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_neutral",
+         "treat_neutral"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_neutral",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "neutral",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_neutral",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "neutralBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_fiscal",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_fiscal",
+         "treat_fiscal"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_fiscal",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "fiscal",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_fiscal",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "fiscalBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "arm_labor",
+        "type": "group",
+        "label": "",
+        "children": [
+         "set_labor",
+         "treat_labor"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "set_labor",
+        "type": "embedded",
+        "label": "",
+        "children": [],
+        "blockId": "",
+        "field": "condition",
+        "value": "labor",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "treat_labor",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "laborBlock",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "rand",
+        "type": "randomizer",
+        "label": "",
+        "children": [
+         "arm_neutral",
+         "arm_fiscal",
+         "arm_labor"
+        ],
+        "blockId": "",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "outcomeFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "outcome",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       },
+       {
+        "id": "debriefFlow",
+        "type": "block",
+        "label": "",
+        "children": [],
+        "blockId": "debrief",
+        "field": "",
+        "value": "",
+        "questionId": "",
+        "choiceId": "",
+        "operator": "equals"
+       }
+      ],
+      "roots": [
+       "consentFlow",
+       "declineBranch",
+       "rand",
+       "outcomeFlow",
+       "debriefFlow"
+      ],
+      "assumptions": [
+       "Target N = 1,200 (about 400 per arm) to detect 0.15 SD."
+      ],
+      "unresolved": [
+       "IRB protocol number for the consent text."
+      ],
+      "evidence": [
+       {
+        "id": "source",
+        "title": "Source study package",
+        "url": "https://github.com/yrvelez/filedrawer",
+        "claim": "the demo framing effect",
+        "excerpt": "",
+        "origin": "supplied"
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+analysis_id,kind,tag,n_differences,differences,justification
+H1,hypothesis,registered,0,[],
+H2,hypothesis,deviation,1,"[{""field"": ""estimator.covariates"", ""registered"": [""pid3"", ""age_years""], ""implemented"": [""pid3"", ""agecat""]}]","age was measured only in four brackets (agecat), so bracket indicators replace age in years (no continuous age variable exists in the instrument)"
+S1,subgroup,registered,0,[],
+E1,exploratory,exploratory,0,[],proposed by the exploratory agent; not pre-registered
+E2,exploratory,exploratory,0,[],proposed by the exploratory agent; not pre-registered
+E3,exploratory,exploratory,0,[],proposed by the exploratory agent; not pre-registered

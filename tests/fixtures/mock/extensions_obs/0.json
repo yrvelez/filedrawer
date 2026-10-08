@@ -1,0 +1,38 @@
+{
+ "content": "",
+ "tool_calls": [
+  {
+   "name": "record_result",
+   "args": {
+    "key": "proposal",
+    "final": true,
+    "value": {
+     "id": "data_to_collect",
+     "kind": "observational",
+     "title": "Track attitudes after a fiscal-impact report is published",
+     "rationale": "The source study's one-shot paragraph produced a small, imprecise shift; real fiscal information arriving in the news is the exposure that matters.",
+     "contribution": "Moves the question from a framing paragraph to real-world information.",
+     "limitations": [
+      "Timing of the report is not under the researcher's control."
+     ],
+     "design": {
+      "data_sources": [
+       "A rolling online panel (e.g. the Nationscape-style weekly surveys) with immigration attitude items",
+       "The publication dates of CBO immigration fiscal-impact reports"
+      ],
+      "units": "Panel respondents interviewed in the eight weeks around a report release.",
+      "exposure": "Interview after versus before the release, and self-reported news exposure.",
+      "outcome": "The same pro-immigration attitude index as the source study.",
+      "identification": "Interrupted time series around the release date, with the prior year's same weeks as a control series.",
+      "threats": [
+       "Other immigration news in the window",
+       "Differential panel attrition"
+      ],
+      "analysis_plan": "OLS of the index on post-release, week-of-year and their interaction, HC2 standard errors; one pre-specified test of the post-release jump.",
+      "hypothesis": "Attitudes move toward the report's conclusion in the weeks after its release."
+     }
+    }
+   }
+  }
+ ]
+}

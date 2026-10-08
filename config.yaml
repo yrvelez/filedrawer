@@ -1,0 +1,63 @@
+# filedrawer configuration. Copy to config.local.yaml (gitignored) to override.
+provider: openrouter            # openrouter | mock
+openrouter:
+  base_url: https://openrouter.ai/api/v1
+  # API key is read from the OPENROUTER_API_KEY environment variable, never from this file.
+  zero_data_retention: true     # sends provider: {data_collection: "deny"} with every request
+  check_models_on_start: true   # fail fast if a slug below is not in GET /models
+  timeout_s: 120
+  reasoning: {effort: low}      # cap hidden reasoning (Qwen 3.8 / Sonnet 5.5 otherwise spend most of the output budget thinking)
+models:
+  # Two tiers. "standard" does almost everything; "orchestrator" reads the pre-analysis plan into the
+  # analysis spec and runs the reviewer pass. Slugs are checked against GET /models at startup
+  # (openrouter.check_models_on_start), so a wrong slug fails fast with the list of what to fix.
+  strong: anthropic/claude-sonnet-5.5   # orchestrator: papreader, reviewer
+  fast: qwen/qwen3.8-27b                # standard: cleaning/exploratory code, lit review, report writer
+  # Reasoning models spend output tokens on hidden reasoning; an empty reply with finish_reason=length means
+  # the budget below was too small. The agent retries once at double the budget, then stops with a clear error.
+analysis:
+  language: python              # python | r  (r backend is a stub in this version)
+  script_timeout_s: 300
+budgets:                        # max_turns / max output tokens per call
+  papreader:   {turns: 3, max_tokens: 8000, tier: strong}
+  cleaner:     {turns: 6, max_tokens: 16000, tier: fast}
+  registered:  {turns: 4, max_tokens: 16000, tier: fast}
+  exploratory: {turns: 10, max_tokens: 16000, tier: fast}
+  litreview:   {turns: 2, max_tokens: 8000, tier: fast}
+  writer:      {turns: 2, max_tokens: 12000, tier: strong}   # the orchestrator writes the prose (abstract, takeaways, notes); ~2 cents per run
+  reviewer:    {turns: 1, max_tokens: 4000, tier: strong}
+  responder:   {turns: 2, max_tokens: 4000, tier: strong}
+  extensions:  {turns: 1, max_tokens: 16000, tier: strong}
+  review_orchestrator: {turns: 1, max_tokens: 8000, tier: strong}   # the checking agent: tests claims, triages reviewer issues
+  advanced:    {turns: 1, max_tokens: 6000, tier: fast}      # each advanced-pass reviewer (methodology, statistics)
+  review_import: {turns: 1, max_tokens: 8000, tier: fast}
+  writer_revise: {turns: 1, max_tokens: 12000, tier: strong}   # the writing agent applies the correction list
+  review_signoff: {turns: 1, max_tokens: 6000, tier: strong}   # the checking agent re-checks the claims of the corrected text
+  potential:   {turns: 1, max_tokens: 10000, tier: strong}   # the research-potential memo: causes, debates, briefs for extensions
+  extensions_obs: {turns: 1, max_tokens: 6000, tier: fast}   # plan for a non-survey follow-up (no QSF)
+  diagram:     {turns: 1, max_tokens: 6000, tier: fast}      # model-drawn design SVG, only for non-standard designs    # structures a coarse/Refine referee report into review.json issues
+advanced:
+  prompts: null                  # directory with methodology.yaml/statistics.yaml; null = the packaged prompts
+coarse:
+  command: null                  # null = ["uvx", "--python", "3.12", "coarse-ink"]; or e.g. ["coarse-ink"] if installed
+  model: null                    # LiteLLM model string passed as --model; null = coarse's default
+  timeout_s: 3600                # a review on coarse's default model can take over 30 minutes; progress in provenance/coarse.log
+litreview:
+  enabled: true
+  mailto: ""                     # OpenAlex polite pool; defaults to git user.email
+  max_works: 10
+pii:
+  allow_pii: false
+  keep: []
+  model: false                   # true: also run the local PII model (pip install 'filedrawer[pii-model]')
+report:
+  exploratory_suffix: "(EXPLORATORY — not pre-registered)"
+extensions:
+  autoexperiment_dir: ""      # path to autoexperiment (validates and builds designs); default ~/Projects/autoexperiment or $FD_AUTOEXPERIMENT_DIR
+review:
+  orchestrate: true             # the checking agent: claim checks, dispositions, corrections, unresolved questions
+  agent_fix: true               # the agent answers high/medium analytical issues with robustness checks during the run
+  agent_fix_cap: 3              # at most this many agent robustness checks per run
+  revise: true                  # the writing agent applies the correction list (--no-revise skips it and the checks)
+  signoff: true                 # the checking agent re-judges the claims on the corrected text
+  correction_passes: 2          # what the re-check still flags goes back to the writing agent, up to this many passes
