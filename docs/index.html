@@ -331,7 +331,6 @@ footer a{color:var(--ink-2)}
   </div>
   <figure>
     <svg id="mhfig" role="img" aria-label="A line drawing of an open card-catalog drawer; each card is a filed study"></svg>
-    <figcaption><span id="mhcapL">Fig. 1 · the drawer, open</span><span id="mhcapR">Each card is a filed study.</span></figcaption>
   </figure>
 </header>
 <div class="navwrap" id="navwrap"><nav class="top" id="nav">
@@ -1083,7 +1082,8 @@ var MH=(function(){
   }
   function setHover(i){
     hover=i; var L=document.getElementById('mhcapL'), R=document.getElementById('mhcapR');
-    if(i<0||!cards[i]){L.textContent='Fig. 1 · the drawer, open'; R.textContent=HINT}
+    if(!L||!R){}
+    else if(i<0||!cards[i]){L.textContent='Fig. 1 · the drawer, open'; R.textContent=HINT}
     else {L.textContent=''; var b=document.createElement('b'); b.textContent=cards[i].mark; L.appendChild(b); L.appendChild(document.createTextNode(cards[i].filed?'filed '+cards[i].filed:'')); R.textContent=cards[i].title}
     if(!animating&&gD)requestAnimationFrame(tick);
   }
