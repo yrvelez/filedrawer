@@ -25,3 +25,10 @@ def test_reuse_first_then_deposit(tmp_path):
 def test_gitignored_data_is_not_offered(tmp_path):
     text = agents_md.write(package(tmp_path, gitignore="data/\n")).read_text()
     assert "Respondent-level data are not in this repository" in text and "`data/clean.csv`:" not in text
+
+
+def test_acknowledgments_file_is_read_without_its_heading(tmp_path):
+    from filedrawer.package import acknowledgments
+    assert acknowledgments(tmp_path) == ""
+    (tmp_path / "ACKNOWLEDGMENTS.md").write_text("# Acknowledgments\n\nThis study was carried out in collaboration with A. B.\n")
+    assert acknowledgments(tmp_path) == "This study was carried out in collaboration with A. B."

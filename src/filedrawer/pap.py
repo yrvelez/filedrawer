@@ -440,6 +440,8 @@ def _is_empty(v) -> bool:
 
 def _justification(pap: dict, hyp_id: str, field: str, kind: str = "deviation") -> str | None:
     for a in pap.get("ambiguities", []):
+        if not isinstance(a, dict):
+            continue
         if str(a.get("hypothesis")) == hyp_id and a.get("kind") == kind and \
                 (a.get("field") == field or field.startswith(str(a.get("field")))):
             return f"{a.get('interpretation', '')} ({a.get('reason', '')})".strip()

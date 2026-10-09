@@ -72,7 +72,7 @@ def clear_previous_outputs(study: Path, before: float | None = None) -> list[str
                   for p in (study / d).rglob("*") if p.is_file()]
     root = study.resolve()
     for rel in files:
-        if rel in (".gitignore", "README.md", "run.sh", "AGENTS.md", "CITATION.cff", "zenodo.json") or rel.startswith("inputs/"):
+        if rel in (".gitignore", "README.md", "run.sh", "AGENTS.md", "CITATION.cff", "zenodo.json", "ACKNOWLEDGMENTS.md") or rel.startswith("inputs/"):
             continue                                   # author-facing files: never removed, overwritten in place if regenerated
         p = study / rel
         try:
