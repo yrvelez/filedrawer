@@ -847,6 +847,10 @@ def render_report(ctx: dict, sections: dict) -> str:
                     L.append("Open items before fielding:\n")
                     L += items
                     L.append("")
+    ack = acknowledgments(ctx["study_dir"])
+    if ack:
+        L.append("\n<!-- fd:section id=acknowledgments -->\n## Acknowledgments\n")
+        L.append(ack + "\n")
     L.append("\n<!-- fd:section id=appendix -->\n## Technical appendix\n")
     L.append("*Plan fidelity, reviewer pass, reproduction and the file list. Click a heading to expand it on filedrawer.org.*\n")
     cite = citation(meta, prov, _doi(ctx))
@@ -860,7 +864,7 @@ def render_report(ctx: dict, sections: dict) -> str:
     L.append("\n### Plan fidelity\n")
     L.append("Computed by comparing the registered and implemented specifications field by field.\n")
     L.append(registered_vs_implemented_table(pap, tags))
-    amb = [a for a in pap.get("ambiguities", []) if a.get("kind") == "interpretation"]
+    amb = [a for a in pap.get("ambiguities", []) if isinstance(a, dict) and a.get("kind") == "interpretation"]
     if amb:
         L.append("\nChoices made where the plan was silent or vague (interpretations, not deviations):\n")
         for a in amb:
@@ -892,7 +896,20 @@ def render_report(ctx: dict, sections: dict) -> str:
 
 
 PACKAGE_TOP = ("study.json", "report.md", "codebook.json", "codebook.md", "pap.json", "pap.md", "survey.qsf", "review.md",
-               "review.json", "responses.md", "RUN.md", "CITATION.cff")
+               "review.json", "responses.md", "RUN.md", "CITATION.cff", "ACKNOWLEDGMENTS.md")
+ACK_FILE = "ACKNOWLEDGMENTS.md"
+
+
+def acknowledgments(study: Path) -> str:
+    """The author's acknowledgments, from ACKNOWLEDGMENTS.md in the package folder (written by hand, kept across
+    reruns); a leading heading in the file is dropped. Collaborators named here are not listed as authors."""
+    p = Path(study) / ACK_FILE
+    if not p.is_file():
+        return ""
+    lines = p.read_text(encoding="utf-8").strip().splitlines()
+    if lines and lines[0].lstrip().startswith("#"):
+        lines = lines[1:]
+    return "\n".join(lines).strip()
 PACKAGE_DIRS = ("data", "results", "figures", "scripts", "provenance", "extensions", "silicon")
 
 
@@ -982,6 +999,7 @@ def build_study_json(ctx: dict) -> dict:
         "doi": (_doi(ctx) or {}).get("concept_doi"), "doi_version": (_doi(ctx) or {}).get("doi"),
         "links": {"folder": base, "report": f"{meta['repo_url']}/blob/{meta['branch']}{sub}/report.md", "data": base + "/data"},
         "related": [],
+        "acknowledgments": acknowledgments(study) or None,
         "addenda": [{k: a.get(k) for k in ("id", "base", "responds_to", "label", "status", "approved_by")} for a in pap.get("addenda", [])],
         "responses": "responses.md" if (study / "responses.md").exists() else None,
         "extensions": [{k: e.get(k) for k in ("id", "kind", "label", "brief_id", "mode", "debate", "why", "title", "hypothesis", "primary_outcome",

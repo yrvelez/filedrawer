@@ -124,7 +124,7 @@ def test_package_dir_and_init_study(tmp_path):
     from demo.make_demo import generate
     repo = tmp_path / "ai-discernment"
     msg = init_study(repo, "ai-discernment", "AI discernment", "A. Author", "https://github.com/yrvelez/ai-discernment")
-    assert "scaffolded" in msg and (repo / "run.sh").exists() and "inputs/*.csv" in (repo / ".gitignore").read_text()
+    assert "scaffolded" in msg and (repo / "run.sh").exists() and "inputs/**/*.csv" in (repo / ".gitignore").read_text()
     generate(repo / "inputs" / "export.csv")
     (repo / "inputs" / "survey.qsf").write_bytes((ROOT / "demo" / "demo.qsf").read_bytes())
     (repo / "inputs" / "pap.md").write_text((ROOT / "demo" / "pap.md").read_text())
@@ -141,7 +141,7 @@ def test_package_dir_and_init_study(tmp_path):
     assert sj["links"]["folder"] == "https://github.com/yrvelez/ai-discernment/tree/main"
     assert sj["links"]["report"] == "https://github.com/yrvelez/ai-discernment/blob/main/report.md"
     gi = (repo / ".gitignore").read_text()
-    assert "inputs/*.csv" in gi                                                    # scaffold gitignore kept
+    assert "inputs/**/*.csv" in gi                                                    # scaffold gitignore kept
     # a second run clears outputs but keeps inputs
     run_pipeline({"csv": str(repo / "inputs" / "export.csv"), "qsf": str(repo / "inputs" / "survey.qsf"),
                   "pap": str(repo / "inputs" / "pap.md"), "slug": "ai-discernment", "title": "AI discernment",

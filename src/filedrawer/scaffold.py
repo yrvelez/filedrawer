@@ -57,10 +57,11 @@ filedrawer run --csv inputs/export.csv --qsf inputs/survey.qsf --pap inputs/pap.
 """
 
 GITIGNORE = """# raw exports carry identifiers and free text: never commit them
-inputs/*.csv
-inputs/*.sav
-inputs/*.dta
-inputs/*.xlsx
+inputs/**/*.csv
+inputs/**/*.sav
+inputs/**/*.dta
+inputs/**/*.xlsx
+!inputs/replication_data.csv
 raw_export.csv
 .mplconfig/
 __pycache__/
@@ -119,10 +120,11 @@ METHODS_REPORT = """# {title}
 
 METHODS_GITIGNORE = """# licensed or restricted source data: say in README.md where to obtain it, never commit it
 external/
-inputs/*.csv
-inputs/*.sav
-inputs/*.dta
-inputs/*.xlsx
+inputs/**/*.csv
+inputs/**/*.sav
+inputs/**/*.dta
+inputs/**/*.xlsx
+!inputs/replication_data.csv
 .mplconfig/
 __pycache__/
 .Rhistory
