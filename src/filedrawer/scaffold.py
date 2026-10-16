@@ -63,6 +63,7 @@ inputs/**/*.dta
 inputs/**/*.xlsx
 !inputs/replication_data.csv
 raw_export.csv
+run.log
 .mplconfig/
 __pycache__/
 """
@@ -125,6 +126,7 @@ inputs/**/*.sav
 inputs/**/*.dta
 inputs/**/*.xlsx
 !inputs/replication_data.csv
+run.log
 .mplconfig/
 __pycache__/
 .Rhistory

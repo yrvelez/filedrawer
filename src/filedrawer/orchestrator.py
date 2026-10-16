@@ -30,6 +30,8 @@ def _git_email() -> str:
 
 
 def _log(ctx, msg):
+    from .paths import scrub                          # provenance and run logs are committed: no local paths
+    msg = scrub(str(msg), ctx.get("study_dir"))
     print(f"[filedrawer] {msg}", flush=True)
     ctx["log"].append(f"{dt.datetime.utcnow().isoformat(timespec='seconds')}Z {msg}")
 
