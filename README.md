@@ -269,7 +269,8 @@ design type, sample type and keywords; `GET /similar/<slug>` exposes it.
   result tables from GitHub (never the data, never a model call), screens the submission, and stores one
   metadata record (`/records/<id>.json`, a few KB) that links back to GitHub. The report is fetched from
   GitHub when someone opens it (`/records/<id>/paper.md`) and figures load from GitHub; nothing else is
-  kept. `GET /audit` lists every file on disk. A paper whose repository goes private stops rendering.
+  kept. `GET /audit` lists every file on disk. A paper whose repository goes private stops rendering within ten
+  minutes (the GitHub read cache, below).
   Nothing else is copied. Packages made with filedrawer get rich records (tags, estimates,
   provenance); ordinary replication archives get a file inventory, README excerpt and vocabulary-matched
   constructs. If the app has an `OPENROUTER_API_KEY` secret, one short zero-retention call per thin
@@ -282,22 +283,33 @@ design type, sample type and keywords; `GET /similar/<slug>` exposes it.
   fly secrets set ADMIN_TOKEN=$(openssl rand -hex 16)   # plus optionally OPENROUTER_API_KEY, GITHUB_TOKEN
   fly deploy
   filedrawer submit https://github.com/you/your-archive --server https://<app>.fly.dev
-  curl "https://<app>.fly.dev/admin/pending?token=..."            # the review queue
-  curl -X POST "https://<app>.fly.dev/admin/approve?token=...&id=<id>"   # list a submission
-  curl -X POST "https://<app>.fly.dev/admin/remove?token=...&id=<id>"    # reject it (or remove a listing)
-  curl "https://<app>.fly.dev/admin/records?token=..."            # list all records
-  curl -X POST "https://<app>.fly.dev/admin/refresh?token=...&id=<id>"   # re-harvest one
+  export ADMIN_TOKEN=...                                  # the value you set above
+  curl -H "Authorization: Bearer $ADMIN_TOKEN" "https://<app>.fly.dev/admin/pending"                    # the review queue
+  curl -H "Authorization: Bearer $ADMIN_TOKEN" -X POST "https://<app>.fly.dev/admin/approve?id=<id>"   # list a submission
+  curl -H "Authorization: Bearer $ADMIN_TOKEN" -X POST "https://<app>.fly.dev/admin/remove?id=<id>"    # reject it (or remove a listing)
+  curl -H "Authorization: Bearer $ADMIN_TOKEN" "https://<app>.fly.dev/admin/records"                   # list all records
+  curl -H "Authorization: Bearer $ADMIN_TOKEN" -X POST "https://<app>.fly.dev/admin/refresh?id=<id>"  # re-harvest one
   ```
+
+  Send the token in the `Authorization: Bearer` header (an `X-Admin-Token` header works too), as above. The older
+  `?token=...` form in the URL is deprecated but still accepted for existing scripts; the server's request log shows it
+  as `token=REDACTED`. Keep the token out of URLs where you can.
 
   **Review.** A new submission that passes screening is stored as `"status": "pending"` and is not listed anywhere
   public (not in `index.json`, `records.json`, `llms.txt`, `similar/`, the site, nor its record, paper or QSF) until
   the admin approves it with `POST /admin/approve`. The submitter gets HTTP 202 ("Received. It will be listed after
-  a quick review."). `GET /records/<id>.json?token=...` reads a held record before you decide. Records stored before
-  the queue existed have no status and stay listed. A refresh never changes a record's review state.
+  a quick review."). `GET /records/<id>.json` with the admin header reads a held record before you decide. Records
+  stored before the queue existed have no status and stay listed. A refresh never changes a record's review state.
   Two caps apply across all addresses: at most `FD_DAILY_SUBMISSION_CAP` (default 20) new submissions in any rolling
   24 hours, and at most `FD_PENDING_CAP` (default 50) waiting at once; beyond either, the server answers 429.
   `FD_MODERATION=0` turns the queue and the caps off so every submission lists at once. Use it for local development:
   `FD_MODERATION=0 filedrawer serve`.
+
+  **Reads from GitHub.** `/records/<id>/paper.md` and `/qsf/<id>/<extension>.qsf` read their file from GitHub, so the
+  server keeps each text for `FD_GITHUB_CACHE_TTL_S` seconds (default 600) and remembers a failed read for
+  `FD_GITHUB_CACHE_FAIL_TTL_S` (default 60). A refresh or removal clears that repository's cached files at once. Each
+  address may make 120 such requests per 10 minutes (`FD_FETCH_RATE_LIMIT`, `FD_FETCH_RATE_WINDOW_S`); beyond that the
+  server answers 429 with a `Retry-After` header. Admin requests are exempt.
 
   `filedrawer harvest <url>` prints the record the server would build, without submitting.
 

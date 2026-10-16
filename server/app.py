@@ -12,16 +12,19 @@ POST /admin/approve?id=<id>. Records stored before moderation have no status and
 from __future__ import annotations
 
 import calendar
+import hmac
 import json
+import math
 import os
 import re
 import sys
 import threading
 import time
+from collections import OrderedDict
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, unquote, urlsplit
+from urllib.parse import parse_qs, unquote, unquote_plus, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -56,9 +59,20 @@ SETTINGS = {
     "daily_cap": _env_int("FD_DAILY_SUBMISSION_CAP", 20),
     "daily_window_s": 86400,
     "pending_cap": _env_int("FD_PENDING_CAP", 50),
+    # GitHub reads behind GET /records/<id>/paper.md and GET /qsf/<id>/<ext>.qsf: cached in memory (the cache holds at
+    # most gh_cache_max_entries texts and gh_cache_max_bytes bytes), and limited per address (fetch_rate_limit requests
+    # per fetch_rate_window_s; 0 turns the limit off). Admin requests are exempt from the limit.
+    "gh_cache_ttl_s": _env_int("FD_GITHUB_CACHE_TTL_S", 600),
+    "gh_cache_fail_ttl_s": _env_int("FD_GITHUB_CACHE_FAIL_TTL_S", 60),
+    "gh_cache_max_entries": _env_int("FD_GITHUB_CACHE_MAX_ENTRIES", 256),
+    "gh_cache_max_bytes": _env_int("FD_GITHUB_CACHE_MAX_BYTES", 32 * 1024 * 1024),
+    "fetch_rate_limit": _env_int("FD_FETCH_RATE_LIMIT", 120),
+    "fetch_rate_window_s": _env_int("FD_FETCH_RATE_WINDOW_S", 600),
+    "fetch_rate_max_ips": _env_int("FD_FETCH_RATE_MAX_IPS", 4096),   # addresses tracked at once (least recently seen dropped)
 }
 
-_STATE = {"index": None, "index_lock": threading.Lock(), "submissions": {}, "sub_lock": threading.Lock()}
+_STATE = {"index": None, "index_lock": threading.Lock(), "submissions": {}, "sub_lock": threading.Lock(),
+          "fetch_hits": OrderedDict(), "fetch_lock": threading.Lock()}
 
 GITHUB_RE = re.compile(
     r"^https://github\.com/(?P<owner>[A-Za-z0-9_.-]+)/(?P<repo>[A-Za-z0-9_.-]+?)(?:\.git)?/?"
@@ -108,6 +122,9 @@ def configure(studies_dir=None, docs_dir=None, data_dir=None, registry_path=None
     SETTINGS["data_dir"] = _resolve_data_dir(data_dir if data_dir is not None else SETTINGS["data_dir"])
     with _STATE["index_lock"]:
         _STATE["index"] = None
+    GH_CACHE.clear()
+    with _STATE["fetch_lock"]:
+        _STATE["fetch_hits"].clear()
     return dict(SETTINGS)
 
 
@@ -274,6 +291,159 @@ def restore_record(rid: str) -> bool:
     return True
 
 
+RAW_HOST = "https://raw.githubusercontent.com/"
+_RAW_REPO = re.compile(r"https://raw\.githubusercontent\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/")
+
+
+class _FetchCache:
+    """Bounded, thread-safe cache of GitHub text reads: URL -> text, or None for a read that failed. Each entry expires
+    after its own TTL; when the entry or byte cap is exceeded the least recently used entries go first. Every drop()
+    moves the generation on, and a read that began before a drop is not stored after it (so a refresh or removal cannot
+    be undone by a read still in flight)."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._items = OrderedDict()          # url -> (expires_at, text or None, bytes)
+        self._size = 0
+        self._gen = 0
+
+    def generation(self) -> int:
+        with self._lock:
+            return self._gen
+
+    def get(self, url: str, now: float | None = None) -> tuple[bool, str | None]:
+        """(hit, text). A remembered failure is a hit with text None."""
+        now = time.time() if now is None else now
+        with self._lock:
+            item = self._items.get(url)
+            if item is None:
+                return False, None
+            expires, text, _ = item
+            if expires <= now:
+                self._evict(url)
+                return False, None
+            self._items.move_to_end(url)
+            return True, text
+
+    def put(self, url: str, text: str | None, ttl: float, gen: int, now: float | None = None) -> None:
+        size = len(text.encode("utf-8")) if text else 0
+        if size > SETTINGS["gh_cache_max_bytes"]:
+            return
+        now = time.time() if now is None else now
+        with self._lock:
+            if gen != self._gen:
+                return
+            if url in self._items:
+                self._evict(url)
+            self._items[url] = (now + ttl, text, size)
+            self._size += size
+            while self._items and (len(self._items) > SETTINGS["gh_cache_max_entries"]
+                                   or self._size > SETTINGS["gh_cache_max_bytes"]):
+                self._evict(next(iter(self._items)))
+
+    def drop(self, prefixes) -> None:
+        """Forget every entry whose URL starts with one of the prefixes (case-insensitive)."""
+        prefixes = tuple(p.lower() for p in prefixes)
+        with self._lock:
+            self._gen += 1
+            for url in [u for u in self._items if u.lower().startswith(prefixes)]:
+                self._evict(url)
+
+    def clear(self) -> None:
+        with self._lock:
+            self._gen += 1
+            self._items.clear()
+            self._size = 0
+
+    def _evict(self, url: str) -> None:
+        _, _, size = self._items.pop(url)
+        self._size -= size
+
+
+GH_CACHE = _FetchCache()
+
+
+def github_text(url: str, timeout: float = 10, max_bytes: int = fdharvest.MAX_FILE_BYTES) -> str | None:
+    """A file from GitHub as text, through the cache. A cached file costs no request. A read that fails returns None,
+    and that failure is remembered for gh_cache_fail_ttl_s so a dead link is not fetched again on every hit."""
+    hit, text = GH_CACHE.get(url)
+    if hit:
+        return text
+    gen = GH_CACHE.generation()
+    try:
+        text = fdharvest.fetch_text(url, timeout=timeout, max_bytes=max_bytes)
+    except Exception:  # noqa: BLE001 - private, moved or deleted repository, or GitHub unreachable
+        GH_CACHE.put(url, None, SETTINGS["gh_cache_fail_ttl_s"], gen)
+        return None
+    GH_CACHE.put(url, text, SETTINGS["gh_cache_ttl_s"], gen)
+    return text
+
+
+def drop_record_cache(*recs) -> None:
+    """Forget the cached GitHub files of the repositories these records read from, so a refresh or removal shows at once.
+    This drops every cached file of each repository, which can include another record's folder in the same repository;
+    the cost of that is one more fetch."""
+    prefixes = set()
+    for rec in recs:
+        if not isinstance(rec, dict):
+            continue
+        for src in (rec.get("folder_url"), rec.get("submitted_url")):
+            loc = fdharvest.parse_github_url(src or "")
+            if loc:
+                prefixes.add(f"{RAW_HOST}{loc['owner']}/{loc['repo']}/")
+        paper = rec.get("paper") if isinstance(rec.get("paper"), dict) else {}
+        m = _RAW_REPO.match(paper.get("github_base_url") or paper.get("base_url") or "")
+        if m:
+            prefixes.add(f"{RAW_HOST}{m.group('owner')}/{m.group('repo')}/")
+    GH_CACHE.drop(prefixes)
+
+
+def _fetch_wait(ip: str, now: float | None = None) -> int:
+    """0 when this address may make a GitHub-backed request now, else the seconds until its window frees a place. Each
+    address keeps the times of its recent requests (never more than fetch_rate_limit of them, pruned to the window), and
+    at most fetch_rate_max_ips addresses are tracked."""
+    limit, window = SETTINGS["fetch_rate_limit"], SETTINGS["fetch_rate_window_s"]
+    if limit <= 0:
+        return 0
+    now = time.time() if now is None else now
+    hits = _STATE["fetch_hits"]
+    with _STATE["fetch_lock"]:
+        times = [t for t in hits.get(ip, []) if now - t < window]
+        if len(times) >= limit:
+            hits[ip] = times
+            hits.move_to_end(ip)
+            return max(1, math.ceil(times[0] + window - now))
+        times.append(now)
+        hits[ip] = times
+        hits.move_to_end(ip)
+        while len(hits) > max(1, SETTINGS["fetch_rate_max_ips"]):
+            hits.popitem(last=False)
+    return 0
+
+
+def _github_backed(path: str) -> bool:
+    """The two routes that read a file from GitHub on every request: a report and a survey file."""
+    return (path.startswith("/qsf/") and path.endswith(".qsf")) or (path.startswith("/records/") and path.endswith("/paper.md"))
+
+
+def _is_qsf(text: str | None) -> bool:
+    try:
+        body = json.loads(text) if text else None
+    except ValueError:
+        return False
+    return isinstance(body, dict) and set(body) == {"SurveyEntry", "SurveyElements"}
+
+
+_QUERY_PAIR = re.compile(r"""(?P<sep>[?&;])(?P<key>[^=&;?\s"']*)=(?P<val>[^&;\s"']*)""")
+
+
+def redact_token(text: str) -> str:
+    """Hide the admin token wherever a line carries it in a query string: token=... becomes token=REDACTED (the name is
+    compared after unescaping, so %74oken=... is caught too)."""
+    return _QUERY_PAIR.sub(lambda m: m.group(0) if unquote_plus(m.group("key")).lower() != "token"
+                           else f"{m.group('sep')}{m.group('key')}=REDACTED", text)
+
+
 def paper_source_url(rec: dict) -> str | None:
     paper = rec.get("paper") if isinstance(rec.get("paper"), dict) else None
     if not paper or not paper.get("source"):
@@ -283,17 +453,12 @@ def paper_source_url(rec: dict) -> str | None:
 
 
 def load_paper(rid: str, admin: bool = False) -> str | None:
-    """The report text, read from GitHub now (not stored here)."""
+    """The report text, read from GitHub (through the cache; not stored here)."""
     if not re.fullmatch(r"[0-9a-f]{12}", rid or ""):
         return None
     rec = public_record(rid, admin)
     url = paper_source_url(rec or {})
-    if not url:
-        return None
-    try:
-        return fdharvest.fetch_text(url, max_bytes=fdharvest.MAX_FILE_BYTES)
-    except Exception:  # noqa: BLE001 - private, moved or deleted repository
-        return None
+    return github_text(url) if url else None
 
 
 def delete_record(rid: str) -> bool:
@@ -627,6 +792,7 @@ def handle_refresh(rid: str) -> tuple[int, dict]:
     if rec["id"] != rid:
         delete_record(rid)
     save_record(rec)
+    drop_record_cache(old, rec)          # the next read of the report or survey file goes to GitHub, not the cache
     get_index(force=True)
     return 200, {"ok": True, "id": rec["id"], "title": rec["title"], "paper_source": (rec.get("paper") or {}).get("source"),
                  "screening_ok": rec["screening"]["ok"], "warnings": rec["extraction"].get("warnings", [])}
@@ -646,8 +812,8 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "filedrawer/" + fdindex.TOOL_VERSION
     protocol_version = "HTTP/1.1"
 
-    def log_message(self, fmt, *args):  # one line per request to stdout
-        sys.stdout.write("%s %s - %s\n" % (time.strftime("%Y-%m-%dT%H:%M:%S"), self.client_address[0], fmt % args))
+    def log_message(self, fmt, *args):  # one line per request to stdout; the admin token is redacted from it
+        sys.stdout.write(redact_token("%s %s - %s\n" % (time.strftime("%Y-%m-%dT%H:%M:%S"), self.client_address[0], fmt % args)))
         sys.stdout.flush()
 
     # -- helpers
@@ -683,9 +849,18 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, target.read_bytes(), ctype, {"Cache-Control": "max-age=60"}, head_only)
 
     def _admin_ok(self, query: str) -> bool:
-        token = parse_qs(query).get("token", [""])[0]
-        admin = SETTINGS["admin_token"]
-        return bool(admin) and token == admin
+        """True when the request carries the admin token, in any of three places: Authorization: Bearer <token> (the
+        recommended form), X-Admin-Token: <token>, or ?token=<token> (deprecated; existing scripts still use it). An empty
+        configured token disables admin altogether."""
+        want = SETTINGS["admin_token"]
+        if not want:
+            return False
+        scheme, _, bearer = self.headers.get("Authorization", "").partition(" ")
+        presented = [parse_qs(query).get("token", [""])[0], self.headers.get("X-Admin-Token", "")]
+        if scheme.lower() == "bearer":
+            presented.append(bearer.strip())
+        want_b = want.encode("utf-8")
+        return any(p and hmac.compare_digest(p.encode("utf-8"), want_b) for p in presented)
 
     def _qsf(self, rest: str, head_only=False, admin=False):
         """/qsf/<record id>/<extension id>.qsf: stream the extension's survey file from the study's public repo as a download."""
@@ -699,12 +874,8 @@ class Handler(BaseHTTPRequestHandler):
         branch = loc.get("branch") or "main"
         prefix = (loc.get("path") + "/") if loc.get("path") else ""
         url = f"https://raw.githubusercontent.com/{loc['owner']}/{loc['repo']}/{branch}/{prefix}extensions/{parts[1]}.qsf"
-        try:
-            txt = fdharvest.fetch_text(url, timeout=15, max_bytes=4 * 1024 * 1024)
-            body = json.loads(txt)
-            if set(body) != {"SurveyEntry", "SurveyElements"}:
-                raise ValueError("not a QSF")
-        except Exception:
+        txt = github_text(url, timeout=15, max_bytes=4 * 1024 * 1024)
+        if not _is_qsf(txt):
             return self._json(404, {"ok": False, "error": "survey file not found in the repository"}, head_only=head_only)
         slug = re.sub(r"[^A-Za-z0-9_-]+", "-", (rec.get("slug") or parts[0]))[:60]
         return self._send(200, txt.encode("utf-8"), "application/octet-stream",
@@ -736,6 +907,11 @@ class Handler(BaseHTTPRequestHandler):
         parts = urlsplit(self.path)
         path = parts.path
         admin = self._admin_ok(parts.query)     # the admin token also lets the admin see pending records
+        if not admin and _github_backed(path):  # per-address limit on the two routes that read GitHub on each request
+            wait = _fetch_wait(self._client_ip())
+            if wait:
+                return self._json(429, {"ok": False, "error": f"too many requests from this address; try again in {wait} seconds"},
+                                  {"Retry-After": str(wait), "Cache-Control": "no-store"}, head_only)
         if path == "/healthz":
             return self._send(200, b"ok", "text/plain; charset=utf-8", head_only=head_only)
         if path == "/version":
@@ -823,9 +999,11 @@ class Handler(BaseHTTPRequestHandler):
                 status, obj = handle_restore(rid)
                 return self._json(status, obj, {"Cache-Control": "no-store"})
             if parts.path == "/admin/remove":
+                gone = load_record(rid)
                 ok = delete_record(rid)
                 if ok:
                     get_index(force=True)
+                drop_record_cache(gone)
                 return self._json(200 if ok else 404, {"ok": ok, "id": rid}, {"Cache-Control": "no-store"})
             status, obj = handle_refresh(rid)
             return self._json(status, obj, {"Cache-Control": "no-store"})
