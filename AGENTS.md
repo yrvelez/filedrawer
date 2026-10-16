@@ -3,8 +3,9 @@
 Instructions for a coding agent (Claude Code, Codex, Cursor, or similar) or a person preparing a
 survey experiment for the File Drawer. Follow them in order. The goal is a complete, reproducible
 study package with **no restricted data** (no identifiers, no free-text answers, no raw panel export),
-filed from the author's own machine with `filedrawer submit`. A GitHub repository is optional: keep one
-for version control if you like, but the File Drawer does not need it.
+in the author's own public GitHub repository, filed with `filedrawer submit`. The File Drawer lists only
+packages in the author's own public GitHub repository: it stores a metadata record and reads the report,
+results and data from GitHub, so the repository is required.
 
 ## Hard rules
 
