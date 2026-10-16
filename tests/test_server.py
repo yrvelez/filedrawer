@@ -155,28 +155,35 @@ def test_submit_package_then_duplicate(server, monkeypatch):
     gh = _install(monkeypatch, PACKAGE_FILES, branch="dev", prefix="studies/remote-two")
     url = "https://github.com/someone/repo/tree/dev/studies/remote-two"
     status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": url})
-    assert status == 200, body
+    assert status == 202, body                                                # held for review, not listed yet
     resp = json.loads(body)
-    assert resp["ok"] and resp["slug"] == "remote-two" and resp["kind"] == "filedrawer_package"
-    assert resp["record_url"].startswith("/records/") and "tagged analyses" in resp["message"]
+    assert resp["ok"] and resp["pending"] and resp["kind"] == "filedrawer_package"
+    assert resp["message"] == "Received. It will be listed after a quick review." and "record_url" not in resp
     assert not any(u.endswith("data/clean.csv") for u in gh.fetched)          # data never fetched
+    rid = resp["id"]
+    assert _req(server["base"], f"/records/{rid}.json")[0] == 404             # pending: not public
 
-    status, body, headers = _req(server["base"], resp["record_url"])
+    status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": url + "/"})
+    assert status == 409 and json.loads(body)["error"] == "already submitted; pending review" and json.loads(body)["id"] == rid
+
+    assert _req(server["base"], f"/admin/approve?token=s3cret&id={rid}", "POST", {})[0] == 200
+    status, body, headers = _req(server["base"], f"/records/{rid}.json")
     assert status == 200 and headers["Cache-Control"] == "max-age=300"
     rec = json.loads(body)
     assert rec["title"] == "Remote study two" and rec["links"]["report"].endswith("/studies/remote-two/report.md")
     assert rec["files"]["n_data"] == 1 and rec["extraction"]["method"] == "study_json"
+    assert rec["status"] == "approved" and rec["approved_at"]
 
     status, body, _ = _req(server["base"], "/index.json")
     idx = json.loads(body)
     rows = {s["slug"]: s for s in idx["studies"]}
     assert rows["remote-two"]["source"] == "submitted" and rows["remote-two"]["kind"] == "filedrawer_package"
     assert rows["remote-two"]["repo_url"] == "https://github.com/someone/repo"
-    assert rows["remote-two"]["record_url"] == resp["record_url"]
+    assert rows["remote-two"]["record_url"] == f"/records/{rid}.json"
     assert any({e["source"], e["target"]} == {"local-one", "remote-two"} for e in idx["edges"])
 
     status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": url + "/"})
-    assert status == 409 and json.loads(body)["id"] == resp["id"]
+    assert status == 409 and json.loads(body)["error"] == "already listed" and json.loads(body)["id"] == rid
     files = list((server["data_dir"] / "records").glob("*.json"))
     assert len(files) == 1 and json.loads(files[0].read_text())["slug"] == "remote-two"
 
@@ -239,8 +246,10 @@ def test_paper_stored_served_and_removed(server, monkeypatch):
     _install(monkeypatch, dict(PACKAGE_FILES, **{"study.json": json.dumps(dict(STUDY, slug="paper-three", title="Paper three"))}),
              branch="main", prefix="studies/paper-three")
     status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": "https://github.com/someone/repo/tree/main/studies/paper-three"})
-    assert status == 200, body
+    assert status == 202, body
     rid = json.loads(body)["id"]
+    assert _req(server["base"], f"/records/{rid}/paper.md")[0] == 404          # pending: the paper is held too
+    assert _req(server["base"], f"/admin/approve?token=s3cret&id={rid}", "POST", {})[0] == 200
     status, body, headers = _req(server["base"], f"/records/{rid}/paper.md")
     assert status == 200 and headers["Content-Type"].startswith("text/markdown")
     assert body.decode().startswith("# Remote study two")              # read from GitHub on request
@@ -279,10 +288,11 @@ def test_submit_returns_similar_and_similar_route(server, monkeypatch):
                                                                                  constructs=["immigration_attitudes"], keywords=["immigration"]))}),
              branch="main", prefix="studies/sim-four")
     status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": "https://github.com/someone/repo/tree/main/studies/sim-four"})
-    assert status == 200, body
-    resp = json.loads(body)
-    assert resp["paper_url"].endswith("/paper.md")
-    sims = {s["slug"]: s for s in resp["similar"]}
+    assert status == 202, body
+    rid = json.loads(body)["id"]
+    assert "sim-four" not in {s["slug"] for s in json.loads(_req(server["base"], "/similar/local-one")[1])["similar"]}   # pending
+    assert _req(server["base"], f"/admin/approve?token=s3cret&id={rid}", "POST", {})[0] == 200
+    sims = {s["slug"]: s for s in json.loads(_req(server["base"], "/similar/sim-four")[1])["similar"]}
     assert "local-one" in sims and sims["local-one"]["weight"] > 0.5 and "construct:immigration_attitudes" in sims["local-one"]["reasons"]
     status, body, _ = _req(server["base"], "/similar/local-one")
     assert status == 200 and "sim-four" in {s["slug"] for s in json.loads(body)["similar"]}

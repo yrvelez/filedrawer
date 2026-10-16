@@ -104,12 +104,13 @@ def test_nothing_but_metadata_is_stored(server, monkeypatch):
                                    "report.md": "# Figures one\n\n## Abstract\n\nText. ![fig](figures/f1.png)\n", "figures/f1.png": "PNG1"})
     gh = _install(monkeypatch, files, branch="main", prefix="studies/fig-study")
     status, body, _ = _req(server["base"], "/submit", "POST", {"repo_url": "https://github.com/o/r/tree/main/studies/fig-study"})
-    assert status == 200, body
+    assert status == 202, body                    # held for review
     resp = json.loads(body)
     rid = resp["id"]
     steps = {s["step"]: s for s in resp["audit"]}
-    assert "Never stored: data, code, the report text and figures" in steps["Stored"]["detail"]
+    assert "Never stored: data, code, the report text and figures" in steps["Held for review"]["detail"]
     assert "report.md" in steps["Read small text files only"]["detail"]
+    assert _req(server["base"], f"/admin/approve?token=s3cret&id={rid}", "POST", {})[0] == 200
     rec = json.loads(_req(server["base"], f"/records/{rid}.json")[1])
     assert rec["paper"]["base_url"].startswith("https://raw.githubusercontent.com/o/r/main/studies/fig-study/")
     assert "_figures" not in rec and "_paper_text" not in rec and rec["screening"]["ok"] and rec["audit"]

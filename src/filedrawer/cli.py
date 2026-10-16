@@ -292,6 +292,9 @@ def main(argv: list[str] | None = None) -> int:
                 out = json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
             out = json.loads(e.read().decode() or "{}")
+        if out.get("ok") and out.get("pending"):           # held for the admin's review: received, not an error
+            print(f"{out.get('message', 'Received.')} ({out.get('title')}, id {out.get('id')})")
+            return 0
         print(json.dumps(out, indent=1))
         return 0 if out.get("ok") else 1
     if a.cmd == "serve":
