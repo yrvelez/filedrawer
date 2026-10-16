@@ -31,8 +31,8 @@ def package(tmp_path, monkeypatch):
 class Server:
     """Records what the client sends; answers like /submit (a dry run first, then the filing)."""
 
-    def __init__(self, ok=True):
-        self.sent, self.ok = [], ok
+    def __init__(self, ok=True, pending=False):
+        self.sent, self.ok, self.pending = [], ok, pending
 
     def __call__(self, url, body):
         self.sent.append((url, body))
@@ -40,6 +40,9 @@ class Server:
             return 422, {"ok": False, "error": "not a research project", "audit": OK_AUDIT}
         if body.get("dry_run"):
             return 200, {"ok": True, "dry_run": True, "audit": OK_AUDIT}
+        if self.pending:
+            return 202, {"ok": True, "pending": True, "id": "abc123def456", "title": "CLI study one", "audit": OK_AUDIT,
+                         "message": "Received. It will be listed after a quick review."}
         return 200, {"ok": True, "message": "Listed 'CLI study one'", "record_url": "/records/abc123def456.json", "audit": OK_AUDIT}
 
 
@@ -95,6 +98,13 @@ def test_server_refusal_is_reported(package):
     assert code == 1 and "would not list it" in out and "not a research project" in out
 
 
+def test_pending_review_is_success_not_an_error(package):
+    """A 202 means the server received the package and holds it for the admin's review: not a failure."""
+    code, out = _run(package, Server(pending=True))
+    assert code == 0 and "Received. It will be listed after a quick review." in out
+    assert "record:" not in out and "refused" not in out
+
+
 def test_unpushed_package_sends_nothing(package, monkeypatch):
     monkeypatch.setattr(S, "github_url", lambda p: (None, "Branch main is not pushed to origin: push it first."))
     srv = Server()
@@ -114,6 +124,27 @@ def test_selfcheck_passes_and_failure_blocks(package, monkeypatch):
     srv = Server()
     code, out = _run(package, srv, run_selfcheck=True)
     assert code == 1 and "FAIL  canary in model log" in out and not srv.sent
+
+
+def test_link_submission_pending_is_success(monkeypatch, capsys):
+    """`filedrawer submit <url>` reports a held submission as received and exits 0 (a 202 is not an error)."""
+    import io
+    import urllib.request
+    from filedrawer import cli
+
+    class Reply(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    body = {"ok": True, "pending": True, "id": "abc123def456", "title": "CLI study one",
+            "message": "Received. It will be listed after a quick review."}
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=None: Reply(json.dumps(body).encode()))
+    assert cli.main(["submit", URL, "--server", "https://filedrawer.org"]) == 0
+    out = capsys.readouterr().out
+    assert "Received. It will be listed after a quick review." in out and "abc123def456" in out and '"ok"' not in out
 
 
 def test_code_identity_names_the_source():

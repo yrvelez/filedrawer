@@ -121,6 +121,9 @@ filedrawer submit studies/my-study --server https://filedrawer.org
 
 The File Drawer lists only self-run, self-hosted packages: you run the pipeline on your own machine and
 keep the package in your own public GitHub repository. `filedrawer submit <package>` is how it gets listed.
+Submissions are reviewed before they are listed: the server holds a new one as pending, and it appears on the
+site only after the site admin approves it (`POST /admin/approve`). Until then `filedrawer submit` reports it as
+received.
 Before anything is sent it shows the code that is running (version, commit, whether the source has local
 changes, a hash of every source file) and runs an offline self-check: a synthetic study with a planted
 canary sentence and email goes through the real pipeline with a mock model, and the check fails if either
@@ -279,10 +282,22 @@ design type, sample type and keywords; `GET /similar/<slug>` exposes it.
   fly secrets set ADMIN_TOKEN=$(openssl rand -hex 16)   # plus optionally OPENROUTER_API_KEY, GITHUB_TOKEN
   fly deploy
   filedrawer submit https://github.com/you/your-archive --server https://<app>.fly.dev
-  curl "https://<app>.fly.dev/admin/records?token=..."            # list records
+  curl "https://<app>.fly.dev/admin/pending?token=..."            # the review queue
+  curl -X POST "https://<app>.fly.dev/admin/approve?token=...&id=<id>"   # list a submission
+  curl -X POST "https://<app>.fly.dev/admin/remove?token=...&id=<id>"    # reject it (or remove a listing)
+  curl "https://<app>.fly.dev/admin/records?token=..."            # list all records
   curl -X POST "https://<app>.fly.dev/admin/refresh?token=...&id=<id>"   # re-harvest one
-  curl -X POST "https://<app>.fly.dev/admin/remove?token=...&id=<id>"    # moderate
   ```
+
+  **Review.** A new submission that passes screening is stored as `"status": "pending"` and is not listed anywhere
+  public (not in `index.json`, `records.json`, `llms.txt`, `similar/`, the site, nor its record, paper or QSF) until
+  the admin approves it with `POST /admin/approve`. The submitter gets HTTP 202 ("Received. It will be listed after
+  a quick review."). `GET /records/<id>.json?token=...` reads a held record before you decide. Records stored before
+  the queue existed have no status and stay listed. A refresh never changes a record's review state.
+  Two caps apply across all addresses: at most `FD_DAILY_SUBMISSION_CAP` (default 20) new submissions in any rolling
+  24 hours, and at most `FD_PENDING_CAP` (default 50) waiting at once; beyond either, the server answers 429.
+  `FD_MODERATION=0` turns the queue and the caps off so every submission lists at once. Use it for local development:
+  `FD_MODERATION=0 filedrawer serve`.
 
   `filedrawer harvest <url>` prints the record the server would build, without submitting.
 

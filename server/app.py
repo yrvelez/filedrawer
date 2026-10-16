@@ -5,9 +5,13 @@ records, accepts a bare GitHub URL at POST /submit (the server harvests a slim m
 record itself) and hosts each record at /records/<id>.json. The server stores ONE thing per paper: that metadata
 record. Data, code, the report text and figures are never stored; the report is fetched from GitHub when someone asks
 for it, and figures load straight from GitHub. GET /audit lists everything on disk so anyone can check.
+
+Moderation: a new submission is held as "pending" (not listed, not served) until the admin approves it with
+POST /admin/approve?id=<id>. Records stored before moderation have no status and count as approved.
 """
 from __future__ import annotations
 
+import calendar
 import json
 import os
 import re
@@ -27,6 +31,14 @@ from filedrawer import harvest as fdharvest  # noqa: E402
 
 # ------------------------------------------------------------------- settings
 
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, default))
+    except ValueError:
+        return default
+
+
 SETTINGS = {
     "studies_dir": ROOT / "studies",
     "docs_dir": ROOT / "docs",
@@ -38,6 +50,12 @@ SETTINGS = {
     "include_drafts": os.environ.get("FD_INCLUDE_DRAFTS", "1") not in ("0", "false", "no", ""),
     "rate_limit": 5,
     "rate_window_s": 3600,
+    # Moderation: a new submission is held as "pending" until the admin approves it (POST /admin/approve).
+    # The two caps are global, across all addresses. FD_MODERATION=0 turns the queue off (local development).
+    "moderation": os.environ.get("FD_MODERATION", "1").strip().lower() not in ("0", "false", "no", ""),
+    "daily_cap": _env_int("FD_DAILY_SUBMISSION_CAP", 20),
+    "daily_window_s": 86400,
+    "pending_cap": _env_int("FD_PENDING_CAP", 50),
 }
 
 _STATE = {"index": None, "index_lock": threading.Lock(), "submissions": {}, "sub_lock": threading.Lock()}
@@ -71,7 +89,7 @@ def _resolve_data_dir(preferred) -> Path:
 
 
 def configure(studies_dir=None, docs_dir=None, data_dir=None, registry_path=None,
-              admin_token=None, repo_url=None, include_drafts=None) -> dict:
+              admin_token=None, repo_url=None, include_drafts=None, moderation=None) -> dict:
     """Override module-level settings (used by tests and by main())."""
     if studies_dir is not None:
         SETTINGS["studies_dir"] = Path(studies_dir)
@@ -85,6 +103,8 @@ def configure(studies_dir=None, docs_dir=None, data_dir=None, registry_path=None
         SETTINGS["repo_url"] = repo_url
     if include_drafts is not None:
         SETTINGS["include_drafts"] = bool(include_drafts)
+    if moderation is not None:
+        SETTINGS["moderation"] = bool(moderation)
     SETTINGS["data_dir"] = _resolve_data_dir(data_dir if data_dir is not None else SETTINGS["data_dir"])
     with _STATE["index_lock"]:
         _STATE["index"] = None
@@ -126,6 +146,20 @@ def load_record(rid: str) -> dict | None:
         return json.loads(f.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+def is_approved(rec: dict) -> bool:
+    """Only approved records are listed anywhere public. A record with no status was stored before moderation and counts
+    as approved; a pending record (status "pending") is held for the admin."""
+    return (rec.get("status") or "approved") == "approved"
+
+
+def public_record(rid: str, admin: bool = False) -> dict | None:
+    """A record as a visitor may see it: a pending one is held back unless the request carries the admin token."""
+    rec = load_record(rid)
+    if rec is None or admin or is_approved(rec):
+        return rec
+    return None
 
 
 def _atomic_write(f: Path, text: str) -> None:
@@ -248,11 +282,11 @@ def paper_source_url(rec: dict) -> str | None:
     return base + paper["source"] if base.startswith("https://raw.githubusercontent.com/") else None
 
 
-def load_paper(rid: str) -> str | None:
+def load_paper(rid: str, admin: bool = False) -> str | None:
     """The report text, read from GitHub now (not stored here)."""
     if not re.fullmatch(r"[0-9a-f]{12}", rid or ""):
         return None
-    rec = load_record(rid)
+    rec = public_record(rid, admin)
     url = paper_source_url(rec or {})
     if not url:
         return None
@@ -285,6 +319,8 @@ def delete_record(rid: str) -> bool:
 def build_index() -> dict:
     extra = []
     for rec in load_records():
+        if not is_approved(rec):          # held for review: listed nowhere until the admin approves it
+            continue
         rec = dict(rec)
         rec["source"] = "submitted"
         rec["record_url"] = f"/records/{rec['id']}.json"
@@ -405,7 +441,54 @@ def _harvest(url: str) -> dict:
     return fdharvest.harvest(url, fetch_text_fn=fdharvest.fetch_text, fetch_json_fn=fdharvest.fetch_json, use_llm=False)
 
 
-def submission_audit(parsed: dict, rec: dict, stored: bool) -> list[dict]:
+def _queue_limit() -> str | None:
+    """Why the queue cannot take another submission right now (caps are global, across all addresses), or None."""
+    now = time.time()
+    recs = load_records()
+    recent = sum(1 for r in recs if _submitted_within(r, now, SETTINGS["daily_window_s"]))
+    pending = sum(1 for r in recs if not is_approved(r))
+    if recent >= SETTINGS["daily_cap"]:
+        return (f"The File Drawer takes at most {SETTINGS['daily_cap']} new submissions in any 24 hours, and that limit "
+                "has been reached. Try again later.")
+    if pending >= SETTINGS["pending_cap"]:
+        return (f"{pending} submissions are already waiting for review, which is the most the queue holds. "
+                "Try again after some have been reviewed.")
+    return None
+
+
+def _submitted_within(rec: dict, now: float, window: float) -> bool:
+    try:
+        when = calendar.timegm(time.strptime(str(rec.get("submitted_at") or ""), "%Y-%m-%dT%H:%M:%SZ"))
+    except ValueError:
+        return False
+    return now - when < window
+
+
+def pending_summary(rec: dict) -> dict:
+    """One line of the admin's review queue: what it is, where it comes from, and what screening said."""
+    sc = rec.get("screening") or {}
+    return {"id": rec["id"], "title": rec.get("title"), "kind": rec.get("kind"),
+            "repo_url": rec.get("submitted_url") or rec.get("folder_url"), "submitted_at": rec.get("submitted_at"),
+            "screening": {"ok": sc.get("ok"), "reasons": sc.get("reasons") or [],
+                          "checks": [{"name": c.get("name"), "passed": c.get("passed"), "detail": c.get("detail")}
+                                     for c in sc.get("checks") or [] if isinstance(c, dict)]}}
+
+
+def handle_approve(rid: str) -> tuple[int, dict]:
+    with _STATE["sub_lock"]:
+        rec = load_record(rid)
+        if not rec:
+            return 404, {"ok": False, "error": "no such record"}
+        if is_approved(rec):
+            return 200, {"ok": True, "id": rid, "status": "approved", "already": True, "message": "already listed"}
+        rec["status"] = "approved"
+        rec["approved_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        save_record(rec)
+    get_index(force=True)
+    return 200, {"ok": True, "id": rid, "status": "approved", "title": rec.get("title"), "record_url": f"/records/{rid}.json"}
+
+
+def submission_audit(parsed: dict, rec: dict, stored: bool, pending: bool = False) -> list[dict]:
     """What the submission did, step by step, for the Submit page and the record itself."""
     ex = rec.get("extraction") or {}
     read = ex.get("files_read") or []
@@ -414,6 +497,14 @@ def submission_audit(parsed: dict, rec: dict, stored: bool) -> list[dict]:
     size = len(json.dumps(meta, ensure_ascii=False).encode("utf-8"))
     files = rec.get("files") or {}
     sc = rec.get("screening") or {}
+    never = (". Never stored: data, code, the report text and figures. They stay on GitHub and are read from there"
+             " when someone opens the paper.")
+    if stored and pending:
+        store = {"step": "Held for review", "ok": True,
+                 "detail": f"one metadata record, {kb(size)}, not listed until the admin approves it" + never}
+    else:
+        store = {"step": "Stored" if stored else "Would store", "ok": True,
+                 "detail": f"one metadata record, {kb(size)}" + (f", at /records/{rec['id']}.json" if stored else "") + never}
     return [
         {"step": "Located the repository", "ok": True,
          "detail": f"github.com/{parsed.get('owner')}/{parsed.get('repo')}" + (f"/{parsed.get('path')}" if parsed.get("path") else "")
@@ -427,9 +518,7 @@ def submission_audit(parsed: dict, rec: dict, stored: bool) -> list[dict]:
         {"step": "Extracted metadata", "ok": True,
          "detail": f"title, authors, topics, design, sample and links, by {ex.get('method') or 'readme'}"
                    + (" (a zero-retention model filled gaps)" if ex.get("llm_used") else " (no model call)")},
-        {"step": "Stored" if stored else "Would store", "ok": True,
-         "detail": f"one metadata record, {kb(size)}" + (f", at /records/{rec['id']}.json" if stored else "")
-                   + ". Never stored: data, code, the report text and figures. They stay on GitHub and are read from there when someone opens the paper."},
+        store,
     ]
 
 
@@ -441,11 +530,19 @@ def handle_submission(body: dict, ip: str) -> tuple[int, dict]:
     if not parsed:
         return 400, {"ok": False, "error": "repo_url must look like https://github.com/<owner>/<repo>[/tree/<branch>/<folder>]"}
     existing = _find_existing(parsed)
+    if existing and not is_approved(existing):
+        return 409, {"ok": False, "error": "already submitted; pending review", "id": existing["id"], "pending": True,
+                     "title": existing.get("title")}
     if existing:
         return 409, {"ok": False, "error": "already listed", "id": existing["id"], "record_url": f"/records/{existing['id']}.json",
                      "title": existing.get("title")}
     if _in_local_index(parsed):
         return 409, {"ok": False, "error": "already in the index (bundled study)"}
+    dry = bool(body.get("dry_run"))
+    if not dry and SETTINGS["moderation"]:
+        full = _queue_limit()             # cheap refusal before any harvest; re-checked under the lock below
+        if full:
+            return 429, {"ok": False, "error": full}
     if _rate_limited(ip):
         return 429, {"ok": False, "error": "too many submissions from this address; try again later"}
     try:
@@ -458,7 +555,7 @@ def handle_submission(body: dict, ip: str) -> tuple[int, dict]:
         return 502, {"ok": False, "error": f"could not read the repository: {type(exc).__name__}: {exc}"[:400]}
     from filedrawer.screen import screen
     rec["screening"] = screen(rec)
-    dry = bool(body.get("dry_run"))
+    pending = bool(SETTINGS["moderation"])
     audit = submission_audit(parsed, rec, stored=False)
     if not rec["screening"]["ok"]:
         return 422, {"ok": False, "error": "This does not look like a research project, so nothing was stored. "
@@ -468,11 +565,25 @@ def handle_submission(body: dict, ip: str) -> tuple[int, dict]:
                      "audit": audit, "message": "Checked. Nothing has been stored yet."}
     rec["submitted_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     rec["submitted_url"] = repo_url.strip()
-    rec["audit"] = submission_audit(parsed, rec, stored=True)
+    if pending:
+        rec["status"] = "pending"
+    rec["audit"] = submission_audit(parsed, rec, stored=True, pending=pending)
     with _STATE["sub_lock"]:
-        if load_record(rec["id"]):
+        dup = load_record(rec["id"])
+        if dup and not is_approved(dup):
+            return 409, {"ok": False, "error": "already submitted; pending review", "id": rec["id"], "pending": True,
+                         "title": dup.get("title")}
+        if dup:
             return 409, {"ok": False, "error": "already listed", "id": rec["id"], "record_url": f"/records/{rec['id']}.json"}
+        if pending:
+            full = _queue_limit()         # authoritative: concurrent submissions cannot overshoot the caps
+            if full:
+                return 429, {"ok": False, "error": full}
         save_record(rec)
+    if pending:
+        return 202, {"ok": True, "pending": True, "id": rec["id"], "title": rec["title"], "kind": rec["kind"],
+                     "screening": rec["screening"], "audit": rec["audit"],
+                     "message": "Received. It will be listed after a quick review."}
     get_index(force=True)
     found = []
     if rec["kind"] == "filedrawer_package":
@@ -503,11 +614,15 @@ def handle_refresh(rid: str) -> tuple[int, dict]:
         return 502, {"ok": False, "error": f"re-harvest failed: {type(exc).__name__}: {exc}"[:400]}
     rec["submitted_at"] = old.get("submitted_at")
     rec["submitted_url"] = old.get("submitted_url")
+    if old.get("status"):                 # a refresh never changes moderation: pending stays pending, approved stays approved
+        rec["status"] = old["status"]
+    if old.get("approved_at"):
+        rec["approved_at"] = old["approved_at"]
     rec["refreshed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     from filedrawer.screen import screen
     rec["screening"] = screen(rec)
     parsed = parse_repo_url(rec["submitted_url"] or old["folder_url"]) or {}
-    rec["audit"] = submission_audit(parsed, rec, stored=True)
+    rec["audit"] = submission_audit(parsed, rec, stored=True, pending=not is_approved(old))
     backup_record(rid)
     if rec["id"] != rid:
         delete_record(rid)
@@ -572,12 +687,12 @@ class Handler(BaseHTTPRequestHandler):
         admin = SETTINGS["admin_token"]
         return bool(admin) and token == admin
 
-    def _qsf(self, rest: str, head_only=False):
+    def _qsf(self, rest: str, head_only=False, admin=False):
         """/qsf/<record id>/<extension id>.qsf: stream the extension's survey file from the study's public repo as a download."""
         parts = rest.split("/")
         if len(parts) != 2 or not re.fullmatch(r"[0-9a-f]{12}", parts[0]) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,40}", parts[1]):
             return self._json(404, {"ok": False, "error": "not found"}, head_only=head_only)
-        rec = load_record(parts[0])
+        rec = public_record(parts[0], admin)
         loc = fdharvest.parse_github_url((rec or {}).get("folder_url") or "")
         if not rec or not loc:
             return self._json(404, {"ok": False, "error": "no such record"}, head_only=head_only)
@@ -620,6 +735,7 @@ class Handler(BaseHTTPRequestHandler):
     def _route_get(self, head_only=False):
         parts = urlsplit(self.path)
         path = parts.path
+        admin = self._admin_ok(parts.query)     # the admin token also lets the admin see pending records
         if path == "/healthz":
             return self._send(200, b"ok", "text/plain; charset=utf-8", head_only=head_only)
         if path == "/version":
@@ -634,26 +750,34 @@ class Handler(BaseHTTPRequestHandler):
                               {"Cache-Control": "max-age=60", "Access-Control-Allow-Origin": "*"}, head_only)
         if path == "/records.json":
             recs = [{"id": r["id"], "title": r.get("title"), "kind": r.get("kind"), "folder_url": r.get("folder_url"),
-                     "record_url": f"/records/{r['id']}.json", "submitted_at": r.get("submitted_at")} for r in load_records()]
+                     "record_url": f"/records/{r['id']}.json", "submitted_at": r.get("submitted_at")}
+                    for r in load_records() if is_approved(r)]
             return self._json(200, {"records": recs}, {"Cache-Control": "max-age=60"}, head_only)
         if path.startswith("/similar/"):
             slug = unquote(path[len("/similar/"):]).strip("/")
             return self._json(200, {"slug": slug, "similar": fdindex.similar_to(slug, get_index().get("studies", []), k=8)},
                               {"Cache-Control": "max-age=60"}, head_only)
         if path.startswith("/qsf/") and path.endswith(".qsf"):
-            return self._qsf(path[len("/qsf/"):-len(".qsf")], head_only)
+            return self._qsf(path[len("/qsf/"):-len(".qsf")], head_only, admin)
         if path == "/audit":
             return self._json(200, storage_audit(), {"Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*"}, head_only)
+        if path == "/admin/pending":
+            if not admin:
+                return self._json(403, {"ok": False, "error": "forbidden"}, head_only=head_only)
+            pend = sorted((r for r in load_records() if not is_approved(r)), key=lambda r: r.get("submitted_at") or "")
+            return self._json(200, [pending_summary(r) for r in pend], {"Cache-Control": "no-store"}, head_only)
         if path.startswith("/records/") and path.endswith("/paper.md"):
-            txt = load_paper(path[len("/records/"):-len("/paper.md")])
+            rid = path[len("/records/"):-len("/paper.md")]
+            txt = load_paper(rid, admin)
             if txt is None:
                 return self._json(404, {"ok": False, "error": "the report could not be read from GitHub (private, moved or deleted)"},
                                   head_only=head_only)
-            return self._send(200, txt.encode("utf-8"), "text/markdown; charset=utf-8",
-                              {"Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*"}, head_only)
+            held = not is_approved(load_record(rid) or {})
+            extra = {"Cache-Control": "no-store"} if held else {"Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*"}
+            return self._send(200, txt.encode("utf-8"), "text/markdown; charset=utf-8", extra, head_only)
         if path.startswith("/records/") and ("/figures/" in path or "/extensions/" in path):
             rid, _, rel = path[len("/records/"):].partition("/")          # old links: figures now live on GitHub only
-            rec = load_record(rid) if re.fullmatch(r"[0-9a-f]{12}", rid or "") else None
+            rec = public_record(rid, admin) if re.fullmatch(r"[0-9a-f]{12}", rid or "") else None
             base = ((rec or {}).get("paper") or {}).get("base_url") or ""
             if not base.startswith("https://raw.githubusercontent.com/") or not _REL_OK.match(unquote(rel)):
                 return self._json(404, {"ok": False, "error": "not found"}, head_only=head_only)
@@ -661,9 +785,11 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/studies/"):
             return self._study_file(path[len("/studies/"):], head_only)
         if path.startswith("/records/") and path.endswith(".json"):
-            rec = load_record(path[len("/records/"):-len(".json")])
+            rec = public_record(path[len("/records/"):-len(".json")], admin)
             if not rec:
                 return self._json(404, {"ok": False, "error": "no such record"}, head_only=head_only)
+            if not is_approved(rec):          # the admin's view of a held record: never cached or shared cross-origin
+                return self._json(200, rec, {"Cache-Control": "no-store"}, head_only)
             return self._json(200, rec, {"Cache-Control": "max-age=300", "Access-Control-Allow-Origin": "*"}, head_only)
         if path == "/admin/records":
             if not self._admin_ok(parts.query):
@@ -686,10 +812,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parts = urlsplit(self.path)
-        if parts.path in ("/admin/refresh", "/admin/remove", "/admin/restore"):
+        if parts.path in ("/admin/refresh", "/admin/remove", "/admin/restore", "/admin/approve"):
             if not self._admin_ok(parts.query):
                 return self._json(403, {"ok": False, "error": "forbidden"})
             rid = parse_qs(parts.query).get("id", [""])[0]
+            if parts.path == "/admin/approve":
+                status, obj = handle_approve(rid)
+                return self._json(status, obj, {"Cache-Control": "no-store"})
             if parts.path == "/admin/restore":
                 status, obj = handle_restore(rid)
                 return self._json(status, obj, {"Cache-Control": "no-store"})

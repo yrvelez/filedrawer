@@ -132,6 +132,9 @@ def submit_package(package: str | Path, server: str, *, yes: bool = False, dry_r
         say(f"The server refused it (HTTP {status}): {out.get('error')}")
         return 1
     say(out.get("message", "Filed."))
+    if out.get("pending"):                 # held for the admin's review: received, listed once approved
+        say(f"  id {out.get('id')}: it appears on the File Drawer after the review")
+        return 0
     say(f"  record: {server}{out['record_url']}")
     return 0
 
