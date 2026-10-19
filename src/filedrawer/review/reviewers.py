@@ -19,9 +19,12 @@ REVIEWERS: dict[str, dict] = {
         "label": "Refine", "prefix": "RF", "home": "https://www.refine.ink",
         "how": "upload report.md (or a PDF of it) at refine.ink, wait for the review, and save it (PDF, Markdown or text)",
     },
-    "openreview": {
-        "label": "OpenReview", "prefix": "OR", "home": "https://openreview.net",
-        "how": "save a review posted on an OpenReview submission (PDF, Markdown or text)",
+    "openaireview": {
+        "label": "OpenAIReview", "prefix": "OAR", "home": "https://github.com/ChicagoHAI/OpenAIReview",
+        "cmd": "uvx openaireview review report.md",
+        "how": ("run ChicagoHAI's open-source reviewer on your machine with your own model key (OpenRouter, OpenAI, "
+                "Anthropic or Gemini; the cost depends on the model you pick): uvx openaireview review report.md, which "
+                "writes its comments to review_results/"),
     },
     "edyth": {
         "label": "Edyth", "prefix": "ED", "home": "https://edyth.org",

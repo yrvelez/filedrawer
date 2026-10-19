@@ -17,7 +17,7 @@ def test_questions_are_data_and_defaults_are_valid(capsys):
     ids = [x["id"] for x in q["questions"]]
     assert ids == ["where", "models", "local_model", "outside_review", "extensions", "pii", "literature"]
     assert CF.validate(dict(CF.DEFAULTS)) == []
-    assert "advanced" not in json.dumps(q).lower()               # the outside reviews offered are coarse, refine, openreview
+    assert "advanced" not in json.dumps(q).lower()               # the outside reviews offered come from review/reviewers.py
 
 
 def test_yes_writes_recommended_setup(tmp_path, capsys):

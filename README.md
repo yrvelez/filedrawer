@@ -197,7 +197,7 @@ the headline findings. Approvals are recorded as human review steps in the prove
 | `coarse` | the open-source [coarse](https://github.com/Davidvandijcke/coarse) reviewer via `uvx --python 3.12 coarse-ink review report.md` (set `coarse.command`/`coarse.model` in the config); its report is kept at `provenance/coarse_review.md` and structured into issues | C1, ... | ~$1-2, several minutes |
 | `refine` | [Refine](https://www.refine.ink) has no API: upload `report.md`, save the review, then `filedrawer review-import <study> refine <file>` (PDF, Markdown or text) | RF1, ... | Refine's pricing |
 | `edyth` | [Edyth](https://edyth.org): the **Check with Edyth** button on a study page opens the report and figures in Edyth (link format `https://edyth.org/import?url=<report URL>&code=FILEDRAWER`); with the FILEDRAWER code the reference check and reading suggestions are free, and an optional deep review is paid from the author's own Edyth balance; import the Markdown letter with `filedrawer review-import <study> edyth <file>` | ED1, ... | free / the author's Edyth balance |
-| `openreview` | a review posted on OpenReview: `filedrawer review-import <study> openreview <file>` | OR1, ... | free |
+| `openaireview` | [OpenAIReview](https://github.com/ChicagoHAI/OpenAIReview) (ChicagoHAI, open source): `uvx openaireview review report.md` with your own model key, then `filedrawer review-import <study> openaireview review_results/<file>` | OAR1, ... | your model costs |
 | `other` | any other referee report, from a person or a model: `filedrawer review-import <study> other <file>` | X1, ... | - |
 
 The File Drawer is reviewer-agnostic: outside reviewers are listed in one place, `src/filedrawer/review/reviewers.py`
@@ -238,7 +238,7 @@ reproduce, verify nothing restricted is staged, and hand over with the repositor
 copy-paste prompt. `filedrawer init-study` writes a copy into every new study repository.
 
 Before the first run the author chooses the setup, in a terminal or through their agent: where the models run
-(hosted or local), which models, an outside review to import later (Coarse, Refine, OpenReview or any referee
+(hosted or local), which models, an outside review to import later (Coarse, Refine, OpenAIReview, Edyth or any referee
 report; the Light Pass always runs), follow-up designs, the local PII model and the literature search.
 `filedrawer configure .` asks and writes `filedrawer.setup.yaml`, which `filedrawer run` reads and `run.sh`
 requires; `filedrawer configure --questions` gives an agent the same questions as JSON.

@@ -32,7 +32,7 @@ filedrawer configure .   # choose where models run, which models, outside review
 export OPENROUTER_API_KEY=sk-or-...   # hosted models only
 ./run.sh            # or: filedrawer run --csv inputs/export.csv --qsf inputs/survey.qsf --pap inputs/pap.md \\
                     #        --slug {slug} --title "{title}" --authors "{authors}" --package-dir . --review
-# outside reviews (edyth, refine, coarse, openreview, other) are added afterwards: filedrawer review-import . SOURCE FILE
+# outside reviews (coarse, refine, openaireview, edyth, other) are added afterwards: filedrawer review-import . SOURCE FILE
 filedrawer reproduce .
 git add -A && git commit -m "Study package" && git push
 ```

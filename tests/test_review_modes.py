@@ -146,7 +146,7 @@ def test_reviewer_registry_drives_cli_setup_and_site():
     from filedrawer.review.reviewers import REVIEWERS, SOURCES
     from filedrawer.configure import QUESTIONS
     from filedrawer.package import REVIEW_OPTIONS
-    assert SOURCES[:3] == ("coarse", "refine", "openreview")            # mode order of existing packages is kept
+    assert SOURCES[:2] == ("coarse", "refine") and "openaireview" in SOURCES and "openreview" not in SOURCES            # mode order of existing packages is kept
     opts = [o["value"] for q in QUESTIONS if q["id"] == "outside_review" for o in q["options"]]
     assert opts == ["none", *SOURCES]
     assert [k for k, *_ in REVIEW_OPTIONS] == ["light", *SOURCES]
@@ -154,3 +154,8 @@ def test_reviewer_registry_drives_cli_setup_and_site():
     html = (ROOT / "docs" / "index.html").read_text()
     block = html[html.index("var REVIEWERS={"):html.index("function reviewKind")]
     assert set(re.findall(r"^\s*([a-z]+):\{label:", block, re.M)) == set(SOURCES)   # site and pipeline list the same reviewers
+
+
+def test_old_openreview_mode_still_loads():
+    from filedrawer.review import parse_modes
+    assert parse_modes("light,openreview") == ["light", "other"]

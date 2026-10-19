@@ -2,7 +2,7 @@
 
   light     the single-pass reviewer (issues R1, R2, ...)
   advanced  methodology + statistics reviewers, one call each (A1, ...)
-  outside reviewers, listed in reviewers.py (Edyth ED1, Refine RF1, Coarse C1, OpenReview OR1, any other referee X1):
+  outside reviewers, listed in reviewers.py (Coarse C1, Refine RF1, OpenAIReview OAR1, Edyth ED1, any other referee X1):
             the author runs them and brings the review back with `filedrawer review-import <study> <source> <file>`;
             coarse can also run inside the pipeline through its CLI
 
@@ -22,7 +22,8 @@ from pathlib import Path
 from .reviewers import IMPORTED_ONLY, REVIEWERS
 
 MODES = ("light", "advanced") + tuple(REVIEWERS)
-ALIASES = {"native": ["light"], "both": ["light", "advanced"], "all": list(MODES)}
+ALIASES = {"native": ["light"], "both": ["light", "advanced"], "all": list(MODES),
+           "openreview": ["other"]}      # review.json files written before OpenReview was dropped: any referee report
 PREFIX = {"advanced": "A", **{k: v["prefix"] for k, v in REVIEWERS.items()}}
 TITLES = {"light": "Light Pass", "advanced": "Advanced Pass (methodology + statistics)",
           **{k: v["label"] for k, v in REVIEWERS.items()}}
