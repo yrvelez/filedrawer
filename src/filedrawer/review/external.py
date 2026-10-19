@@ -1,7 +1,7 @@
-"""External reviewers: coarse (run locally through its CLI) and refine (no API: the author uploads the report
-on refine.ink and imports the returned review).
+"""External reviewers (listed in reviewers.py): coarse can run locally through its CLI; Edyth, Refine, OpenReview and
+any other referee are run by the author and their review imported with `filedrawer review-import`.
 
-Both return a free-form referee report. `structure()` turns it into review.json issues with one call to the
+Each returns a free-form referee report. `structure()` turns it into review.json issues with one call to the
 `review_import` agent, so `filedrawer address` can answer them like the in-platform reviews.
 """
 from __future__ import annotations
@@ -15,7 +15,9 @@ from ..config import budget
 from ..llm.agent import Agent
 from .common import parse_comments, plan_facts, rank, study_note, to_issue
 
-EXTERNAL = {"coarse": "C", "refine": "RF", "openreview": "OR"}          # source -> issue id prefix
+from .reviewers import REVIEWERS, steps
+
+EXTERNAL = {k: v["prefix"] for k, v in REVIEWERS.items()}              # source -> issue id prefix (reviewers.py)
 MAX_IMPORTED = 12
 
 IMPORT_SYSTEM = """You convert an external referee report on a research report into a JSON array of comments.
@@ -96,11 +98,11 @@ def run_coarse(ctx: dict) -> dict:
     return {"model": ccfg.get("model") or "coarse default", "issues": st["issues"], "raw": raw, "notes": []}
 
 
-REFINE_STEPS = """Refine has no API. To add its review:
-1. Upload `report.md` (or a PDF of it) at https://www.refine.ink and wait for the review.
-2. Save the review (PDF, Markdown or text) and run:
-   filedrawer review-import {study} refine <file>"""
+def pending_steps(source: str, study: str = ".") -> str:
+    """The 'Pending: <reviewer>' note in review.md: how to get this reviewer's review and import it."""
+    return f"{REVIEWERS[source]['label']} is run by the author. To add its review:\n" + steps(source, study)
 
-OPENREVIEW_STEPS = """OpenReview (or any referee report) has no API here. To add one:
-1. Save the referee report (PDF, Markdown or text), e.g. a review posted on an OpenReview submission.
-2. Run: filedrawer review-import {study} openreview <file>"""
+
+# kept for callers of the old names
+REFINE_STEPS = pending_steps("refine", "{study}")
+OPENREVIEW_STEPS = pending_steps("openreview", "{study}")

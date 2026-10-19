@@ -57,7 +57,8 @@ JSON, so you can show them in your own question interface.
    literature (recommended), Sonnet 5.5 for everything, or other OpenRouter models. For local runs: the model name
    and server URL (tested: `qwen/qwen3.8-27b` in LM Studio).
 3. **Outside review?** The Light Pass always runs. Optionally plan an outside review to import after the run:
-   Coarse, Refine, or a review from OpenReview or any other referee.
+   Edyth, Refine, Coarse, a review from OpenReview, or any other referee (the study page on filedrawer.org has a
+   button for each).
 4. **Follow-up studies?** Yes (recommended; two or three designs with Qualtrics files) or no.
 5. **Identifier detection?** Rules (recommended, always on) or rules plus a small local model (`pip install
    'filedrawer[pii-model]'`, about 2 GB, CPU only).
@@ -139,9 +140,10 @@ by hand.
 ### 4b. Answer the reviewer (optional)
 
 `review.md` and `review.json` list the Light Pass's corrections. Outside reviews are added afterwards with
-`filedrawer review-import`: Coarse (`uvx coarse-ink review report.md`, then `review-import . coarse <file>`), Refine
-(upload `report.md` at refine.ink, then `review-import . refine <file>`), or a review from OpenReview or any other
-referee (`review-import . openreview <file>`). For the analytical ones (other covariates,
+`filedrawer review-import`: Edyth (the study page's Check with Edyth button, then `review-import . edyth <letter>`),
+Coarse (`uvx coarse-ink review report.md`, then `review-import . coarse <file>`), Refine (upload `report.md` at
+refine.ink, then `review-import . refine <file>`), a review from OpenReview (`review-import . openreview <file>`)
+or any other referee, person or model (`review-import . other <file>`). For the analytical ones (other covariates,
 estimator, sample), run `filedrawer address . --by "A. Author"`: it proposes one robustness addendum per issue,
 waits for approval, re-estimates, re-writes, re-reviews and writes `responses.md`. Never edit the registered
 specification to satisfy a reviewer; addenda sit beside it.

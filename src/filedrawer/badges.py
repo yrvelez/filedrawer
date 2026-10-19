@@ -40,7 +40,9 @@ def badge(name: str, label: str, value: str, color: str, href: str | None = None
             f'<text x="{lw / 2:g}" y="{h / 2 + 4:g}">{lab}</text><text x="{lw + vw / 2:g}" y="{h / 2 + 4:g}">{val}</text></g></svg>')
 
 
-PASS_NAMES = {"light": "light pass", "advanced": "advanced", "coarse": "coarse", "refine": "refine", "openreview": "openreview"}
+# outside reviewers (review/reviewers.py) show under their own source name: review_kind falls back to it. Not imported
+# here because the server image ships badges.py without the review package.
+PASS_NAMES = {"light": "light pass", "advanced": "advanced"}
 
 
 def review_kind(mode) -> str:

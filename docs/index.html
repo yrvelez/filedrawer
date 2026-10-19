@@ -259,6 +259,18 @@ ol.audit li b{font-family:var(--sans);font-size:13.5px;font-weight:600}
 ol.audit li.ok b{color:var(--good)}ol.audit li.bad b{color:var(--bad)}
 ol.audit li span{color:var(--ink-2)}
 ol.audit.running li.wait{opacity:.35}ol.audit.running li.doing{opacity:1}
+/* outside review: one card per reviewer, each with a way in and the command that brings the review back */
+.outside-review{margin:28px 0 8px}
+.outside-review .lede{font-size:14px;color:var(--ink-2);margin:10px 0 12px;max-width:66ch}
+.outside-review .rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.outside-review .rev{border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.outside-review .rev h3{font-family:var(--display);font-size:17px;margin:0}
+.outside-review .rev p{font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;flex:1}
+.outside-review .rev .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
+.outside-review .rev .btn{font-size:12.5px;padding:6px 11px}
+.outside-review .rev .back{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);border-top:1px dashed var(--rule);padding-top:7px;display:flex;gap:8px;align-items:baseline;justify-content:space-between}
+.outside-review .rev .back code{white-space:normal;word-break:break-word}
+.outside-review .rev .back a{font-family:var(--sans);font-size:11.5px;white-space:nowrap}
 /* related */
 .related .row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule)}
 .related .row .t{flex:1;min-width:0}
@@ -386,7 +398,35 @@ function badgeSVG(b,size){
   if(b.href){var a=link(b.href,''); a.appendChild(svg); a.title=b.label+': '+b.value; return a}
   return svg;
 }
-function reviewKind(s){var n={light:'light pass',advanced:'advanced',coarse:'coarse',refine:'refine',openreview:'openreview'}; return String(s.review_mode||'light').split(',').map(function(m){m=m.trim(); return n[m]||m}).filter(Boolean).join(' + ')||'light pass'}
+/* Outside reviewers: keep the keys and order in step with src/filedrawer/review/reviewers.py (a test checks). Any review
+   comes back the same way: filedrawer review-import <study> <key> FILE. */
+var REVIEWERS={
+  edyth:{label:'Edyth',cta:'Check with Edyth',home:'https://edyth.org',link:'https://edyth.org/import?url={report_url}&code=FILEDRAWER',
+    blurb:'Pulls this report and its figures into Edyth. With the FILEDRAWER code the reference check and reading suggestions are free; an optional deep review is paid from your own Edyth balance. Save the Markdown letter it returns.'},
+  refine:{label:'Refine',cta:'Open Refine',home:'https://www.refine.ink',download:true,
+    blurb:'Upload the report at refine.ink, wait for the review, and save it as PDF, Markdown or text.'},
+  coarse:{label:'Coarse',cta:'Coarse on GitHub',home:'https://github.com/Davidvandijcke/coarse',cmd:'uvx --python 3.12 coarse-ink review report.md',
+    blurb:'Open-source reviewer you run on your own machine with your OpenRouter key (about $1-2). Run it in a clone of the repository; it writes report_review.md.'},
+  openreview:{label:'OpenReview',cta:'Open OpenReview',home:'https://openreview.net',
+    blurb:'A review posted on an OpenReview submission, saved as PDF, Markdown or text.'},
+  other:{label:'Any other referee',
+    blurb:'Any referee report, from a person or a model, as PDF, Markdown or text.'}
+};
+function reviewKind(s){var n={light:'light pass',advanced:'advanced'}; return String(s.review_mode||'light').split(',').map(function(m){m=m.trim(); return n[m]||m}).filter(Boolean).join(' + ')||'light pass'}
+function outsideReview(s){ /* the study page's reviewer buttons; nothing runs or is billed on this site */
+  var sec=el('section','outside-review'); var lab=el('h2','section-label','Outside review'); lab.appendChild(el('small',null,'any reviewer, one way back in')); sec.appendChild(lab);
+  var lede=el('p','lede'); lede.innerHTML='Ask any reviewer, a person or a model, for comments on this report. The review goes to you; <code>filedrawer review-import</code> then adds it to the study\'s review beside the Light Pass, and <code>filedrawer address</code> can answer it.'; sec.appendChild(lede);
+  var raw=s.paper_base?s.paper_base+'report.md':null, grid=el('div','rev-grid');
+  Object.keys(REVIEWERS).forEach(function(k){var r=REVIEWERS[k], c=el('div','rev'); c.appendChild(el('h3',null,r.label)); c.appendChild(el('p',null,r.blurb));
+    var acts=el('div','acts');
+    if(r.link&&s.report_url){acts.appendChild(link(r.link.replace('{report_url}',encodeURIComponent(s.report_url)),r.cta,'btn primary'))}
+    else if(r.home&&r.cta){acts.appendChild(link(r.home,r.cta,'btn'))}
+    if(r.download&&raw){var d=link(raw,'Download report.md','btn'); d.setAttribute('download','report.md'); acts.appendChild(d)}
+    if(r.cmd){copyBtn(acts,'Copy command',r.cmd).className='btn'}
+    if(acts.childNodes.length)c.appendChild(acts);
+    var cmd='filedrawer review-import . '+k+' FILE', back=el('div','back'); back.appendChild(el('code',null,cmd)); copyBtn(back,'Copy',cmd); c.appendChild(back);
+    grid.appendChild(c)});
+  sec.appendChild(grid); return sec}
 function badgesFor(s){ /* fallback for rows without a badges array (index.py normally supplies it) */
   var out=[], mode=s.provenance_mode||'fully_agentic';
   out.push({name:'provenance',label:'provenance',value:mode==='human_reviewed'?'human reviewed':'fully agentic',color:mode==='human_reviewed'?'green':'indigo'});
@@ -836,6 +876,7 @@ function viewPaper(slug){
       })
       .catch(function(e){ art.innerHTML='<p class="err">Could not load the paper ('+esc(e.message)+'). '+(s.report_url?'<a href="'+esc(s.report_url)+'" target="_blank" rel="noopener">Open it on GitHub.</a>':'')+'</p>' });
   } else { var b=s.summary||s.readme_excerpt; art.appendChild(el('p','empty',b||'No paper text is stored for this record; see the repository.')) }
+  if(s.report_url)m.appendChild(outsideReview(s));
   var rel=el('section','related'); var lab=el('h2','section-label','Related papers'); var sims=similarOf(slug,6); lab.appendChild(el('small',null,sims.length?'by shared topics, design, sample and keywords':'')); rel.appendChild(lab);
   if(!sims.length)rel.appendChild(el('div','empty','Nothing similar has been filed yet.'));
   sims.forEach(function(x){rel.appendChild(relatedRow(x))});
