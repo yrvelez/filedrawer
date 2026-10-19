@@ -182,7 +182,8 @@ def test_review_section_is_a_correction_list(reviewed_study):
     assert "Light Pass + Advanced Pass review" in box and "no person reviewed or revised this report" in box
     assert "**Outcome.**" in box and "#### Corrections" in box and "#### Details: full review log" in box
     assert "(approved by A. Tester)" in box                              # a named person approving is credited by name
-    assert "#### Other review options" in box and "**OpenReview or any referee report**" in box and "**Coarse**" in box
+    assert "#### Other review options" in box and "**OpenReview**" in box and "**Coarse**" in box
+    assert "**Edyth**" in box and "**Any other referee report**" in box and "review-import . edyth FILE" in box
     assert "author" not in box.lower() and "editor" not in box.lower()
 
 

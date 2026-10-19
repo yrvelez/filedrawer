@@ -14,6 +14,8 @@ from pathlib import Path
 
 import yaml
 
+from .review.reviewers import REVIEWERS
+
 SETUP_FILE = "filedrawer.setup.yaml"
 HOSTED_PAIRS = {
     "sonnet+haiku": ("anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"),
@@ -43,11 +45,8 @@ QUESTIONS = [
                                          "against the tables, every analysis against your plan) always runs.",
      "default": "none", "options": [
         {"value": "none", "label": "Not now", "detail": "You can add one at any time later."},
-        {"value": "coarse", "label": "Coarse", "detail": "Open-source reviewer you run on your machine (about $1-2): "
-                                                         "uvx coarse-ink review report.md, then filedrawer review-import . coarse FILE."},
-        {"value": "refine", "label": "Refine", "detail": "Upload report.md at refine.ink, then filedrawer review-import . refine FILE."},
-        {"value": "openreview", "label": "OpenReview or any referee report",
-         "detail": "Import a review posted on OpenReview, or any other referee report: filedrawer review-import . openreview FILE."}]},
+        *({"value": k, "label": v["label"], "detail": v["how"][0].upper() + v["how"][1:] + f"; then filedrawer review-import . {k} FILE."}
+          for k, v in REVIEWERS.items())]},
     {"id": "extensions", "question": "Propose follow-up studies?", "default": "yes", "options": [
         {"value": "yes", "label": "Yes", "detail": "Two or three designs aimed at what the study left open, each with a "
                                                    "diagram and an importable Qualtrics file. A few cents."},
@@ -165,7 +164,7 @@ def questions_json() -> str:
     return json.dumps({"file": SETUP_FILE, "questions": QUESTIONS,
                        "answer_flags": "filedrawer configure . --yes --where hosted|local --models sonnet+haiku|sonnet|custom "
                                        "[--strong-model S --fast-model F] [--local-model M --local-url U] "
-                                       "--outside-review none|coarse|refine|openreview --extensions yes|no "
+                                       "--outside-review none|" + "|".join(REVIEWERS) + " --extensions yes|no "
                                        "--pii rules|rules+model --literature on|off"}, indent=1)
 
 

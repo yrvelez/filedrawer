@@ -122,3 +122,35 @@ def test_address_answers_external_issue_and_carries_external_reviews(reviewed):
     ids = [i["id"] for i in rv2["issues"]]
     assert {"C1", "C2", "RF1", "RF2"} <= set(ids) and any(i.startswith("A") for i in ids)
     assert "RF1" in (reviewed / "responses.md").read_text()
+
+
+def test_edyth_and_any_referee_import_like_the_others(reviewed, tmp_path):
+    from filedrawer.cli import main
+    letter = tmp_path / "edyth_letter.md"
+    letter.write_text("# Letter from Edyth\n\n1. Two references are missing DOIs (minor).\n2. H2 omits education (major).")
+    assert main(["review-import", str(reviewed), "edyth", str(letter), "--provider", "mock"]) == 0
+    other = tmp_path / "colleague.txt"
+    other.write_text("Referee report. 1. The control mean is not reported (minor).")
+    assert main(["review-import", str(reviewed), "other", str(other), "--provider", "mock"]) == 0
+    rv = json.loads((reviewed / "review.json").read_text())
+    ids = {i["source"]: [] for i in rv["issues"]}
+    for i in rv["issues"]:
+        ids[i["source"]].append(i["id"])
+    assert ids["edyth"] and all(x.startswith("ED") for x in ids["edyth"])
+    assert ids["other"] and all(x.startswith("X") for x in ids["other"])
+    assert {"edyth", "other"} <= set(rv["modes"]) and "Edyth" in (reviewed / "review.md").read_text()
+
+
+def test_reviewer_registry_drives_cli_setup_and_site():
+    import re
+    from filedrawer.review.reviewers import REVIEWERS, SOURCES
+    from filedrawer.configure import QUESTIONS
+    from filedrawer.package import REVIEW_OPTIONS
+    assert SOURCES[:3] == ("coarse", "refine", "openreview")            # mode order of existing packages is kept
+    opts = [o["value"] for q in QUESTIONS if q["id"] == "outside_review" for o in q["options"]]
+    assert opts == ["none", *SOURCES]
+    assert [k for k, *_ in REVIEW_OPTIONS] == ["light", *SOURCES]
+    assert "{report_url}" in REVIEWERS["edyth"]["link"] and "code=FILEDRAWER" in REVIEWERS["edyth"]["link"]
+    html = (ROOT / "docs" / "index.html").read_text()
+    block = html[html.index("var REVIEWERS={"):html.index("function reviewKind")]
+    assert set(re.findall(r"^\s*([a-z]+):\{label:", block, re.M)) == set(SOURCES)   # site and pipeline list the same reviewers

@@ -196,8 +196,15 @@ the headline findings. Approvals are recorded as human review steps in the prove
 | `advanced` | methodology and statistics reviewers, one call each on the fast model; prompts in `src/filedrawer/review/prompts/` (override with `--advanced-prompts DIR`) | A1, ... | ~1 cent |
 | `coarse` | the open-source [coarse](https://github.com/Davidvandijcke/coarse) reviewer via `uvx --python 3.12 coarse-ink review report.md` (set `coarse.command`/`coarse.model` in the config); its report is kept at `provenance/coarse_review.md` and structured into issues | C1, ... | ~$1-2, several minutes |
 | `refine` | [Refine](https://www.refine.ink) has no API: upload `report.md`, save the review, then `filedrawer review-import <study> refine <file>` (PDF, Markdown or text) | RF1, ... | Refine's pricing |
+| `edyth` | [Edyth](https://edyth.org): the **Check with Edyth** button on a study page opens the report and figures in Edyth (link format `https://edyth.org/import?url=<report URL>&code=FILEDRAWER`); with the FILEDRAWER code the reference check and reading suggestions are free, and an optional deep review is paid from the author's own Edyth balance; import the Markdown letter with `filedrawer review-import <study> edyth <file>` | ED1, ... | free / the author's Edyth balance |
+| `openreview` | a review posted on OpenReview: `filedrawer review-import <study> openreview <file>` | OR1, ... | free |
+| `other` | any other referee report, from a person or a model: `filedrawer review-import <study> other <file>` | X1, ... | - |
 
-Advanced, coarse and Refine comments are mapped onto the same shape as the light pass (critical/major → high,
+The File Drawer is reviewer-agnostic: outside reviewers are listed in one place, `src/filedrawer/review/reviewers.py`
+(plus `REVIEWERS` in `docs/index.html` for the study page's buttons), and adding one is one entry in each. Nothing
+runs or is billed on filedrawer.org: the study page only links out.
+
+Advanced and outside reviewers' comments are mapped onto the same shape as the light pass (critical/major → high,
 minor → medium, suggestion → low; confidence below 0.3 dropped), so `filedrawer address` answers any of them.
 Comments asking for multiple-testing corrections stay presentational: the plan's policy is the authors' choice.
 On the second review after `address`, light and advanced re-run; coarse and Refine issues are carried over.

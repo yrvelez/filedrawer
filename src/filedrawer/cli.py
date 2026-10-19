@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import load_config, REPO_ROOT
+from .review.reviewers import SOURCES as REVIEW_SOURCES
 
 
 def _overrides(a) -> dict:
@@ -41,8 +42,8 @@ def _common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--out", default=str(REPO_ROOT / "studies"), help="studies directory (default: ./studies)")
     p.add_argument("--review", nargs="?", const="light", default="light", metavar="MODES",
                    help="review (default: light). light = the Light Pass: reported estimates against the "
-                        "result tables and analyses against the pre-analysis plan. Outside reviews (coarse, refine, openreview "
-                        "or any referee report) are added afterwards with filedrawer review-import.")
+                        "result tables and analyses against the pre-analysis plan. Outside reviews (" + ", ".join(REVIEW_SOURCES) + ") "
+                        "are added afterwards with filedrawer review-import.")
     p.add_argument("--no-review", dest="review", action="store_const", const=None, help="skip the review (the badge then says unreviewed)")
     p.add_argument("--advanced-prompts", help=argparse.SUPPRESS)   # retired advanced pass; kept so older packages still re-render
     p.add_argument("--review-revise", action="store_true", help="legacy: one revision turn on the raw issue list (the decision-letter revision is now the default)")
@@ -89,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
     cf.add_argument("--models", choices=["sonnet+haiku", "sonnet", "custom"])
     cf.add_argument("--strong-model"); cf.add_argument("--fast-model")
     cf.add_argument("--local-model"); cf.add_argument("--local-url")
-    cf.add_argument("--outside-review", choices=["none", "coarse", "refine", "openreview"])
+    cf.add_argument("--outside-review", choices=["none", *REVIEW_SOURCES])
     cf.add_argument("--extensions", choices=["yes", "no"])
     cf.add_argument("--pii", choices=["rules", "rules+model"])
     cf.add_argument("--literature", choices=["on", "off"])
@@ -179,8 +180,8 @@ def main(argv: list[str] | None = None) -> int:
     ro.add_argument("study")
     ro.add_argument("--signoff", action="store_true", help="only re-check the corrected report's claims (the sign-off), not the full checking pass")
     ro.add_argument("--provider", choices=["openrouter", "local", "mock"]); ro.add_argument("--config"); ro.add_argument("--fixtures")
-    ri = sub.add_parser("review-import", help="add an external referee report (refine, or a coarse run done separately) to review.json")
-    ri.add_argument("study"); ri.add_argument("source", choices=["refine", "coarse", "openreview"])
+    ri = sub.add_parser("review-import", help="add an outside referee report (" + ", ".join(REVIEW_SOURCES) + ") to review.json")
+    ri.add_argument("study"); ri.add_argument("source", choices=list(REVIEW_SOURCES))
     ri.add_argument("file", help="the review as PDF, Markdown or text")
     ri.add_argument("--provider", choices=["openrouter", "local", "mock"]); ri.add_argument("--config"); ri.add_argument("--fixtures")
 

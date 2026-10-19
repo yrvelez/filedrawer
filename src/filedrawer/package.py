@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 from . import __version__
+from .review.reviewers import REVIEWERS
 from . import pap as P
 from .agents.base import csv_to_markdown
 from .badges import badges_for, write_badges, markdown_row
@@ -271,12 +272,7 @@ DISPOSITION_LABEL = {"address": "Robustness check proposed", "answered": "Answer
 REVIEW_OPTIONS = [
     ("light", "Light Pass", "checks every reported estimate against the result tables and each analysis against the "
      "pre-analysis plan; the default (a few cents)", "--review light"),
-    ("coarse", "Coarse", "the open-source coarse-ink reviewer, run on your machine (about $1-2), then imported",
-     "uvx coarse-ink review report.md, then filedrawer review-import . coarse FILE"),
-    ("refine", "Refine", "upload the report to refine.ink, then import its review", "filedrawer review-import . refine FILE"),
-    ("openreview", "OpenReview or any referee report", "import a review posted on OpenReview, or any other referee report",
-     "filedrawer review-import . openreview FILE"),
-]
+] + [(k, v["label"], v["how"], f"filedrawer review-import . {k} FILE") for k, v in REVIEWERS.items()]
 
 
 def _short(text, n: int = 220) -> str:

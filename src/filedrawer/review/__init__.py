@@ -1,10 +1,10 @@
-"""Review stage. Four reviewers, any combination, merged into one review.json:
+"""Review stage. Any combination of reviewers, merged into one review.json:
 
   light     the single-pass reviewer (issues R1, R2, ...)
   advanced  methodology + statistics reviewers, one call each (A1, ...)
-  coarse    the open-source coarse reviewer, run locally through its CLI (C1, ...)
-  refine    refine.ink; no API, so the review is uploaded by hand: `filedrawer review-import <study> refine <file>` (RF1, ...)
-  openreview  any referee report, e.g. one posted on OpenReview, imported the same way (OR1, ...)
+  outside reviewers, listed in reviewers.py (Edyth ED1, Refine RF1, Coarse C1, OpenReview OR1, any other referee X1):
+            the author runs them and brings the review back with `filedrawer review-import <study> <source> <file>`;
+            coarse can also run inside the pipeline through its CLI
 
 The default is the Light Pass: the light reviewer plus the checking agent, which tests each claim against the tables,
 triages every issue, and hands the writing agent a correction list; serious analytical issues get agent-run robustness
@@ -19,11 +19,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-MODES = ("light", "advanced", "coarse", "refine", "openreview")
+from .reviewers import IMPORTED_ONLY, REVIEWERS
+
+MODES = ("light", "advanced") + tuple(REVIEWERS)
 ALIASES = {"native": ["light"], "both": ["light", "advanced"], "all": list(MODES)}
-PREFIX = {"advanced": "A", "coarse": "C", "refine": "RF", "openreview": "OR"}
-TITLES = {"light": "Light Pass", "advanced": "Advanced Pass (methodology + statistics)", "coarse": "Coarse", "refine": "Refine",
-          "openreview": "OpenReview (imported referee report)"}
+PREFIX = {"advanced": "A", **{k: v["prefix"] for k, v in REVIEWERS.items()}}
+TITLES = {"light": "Light Pass", "advanced": "Advanced Pass (methodology + statistics)",
+          **{k: v["label"] for k, v in REVIEWERS.items()}}
 
 
 def parse_modes(value) -> list[str]:
@@ -203,7 +205,7 @@ def run_review(ctx: dict, modes, prompts_dir: str | None = None, previous: dict 
     from ..agents import reviewer
     from . import advanced, external
     issues, models, notes, pending, overall = [], {}, [], [], ""
-    carried = [i for i in (previous or {}).get("issues", []) if i.get("source") in ("coarse", "refine", "openreview")]
+    carried = [i for i in (previous or {}).get("issues", []) if i.get("source") in REVIEWERS]
     if "light" in modes:
         rv = reviewer.run(ctx, write=False)
         for i in rv["issues"]:
@@ -229,7 +231,7 @@ def run_review(ctx: dict, modes, prompts_dir: str | None = None, previous: dict 
             issues += _number(co["issues"], "coarse")
             if co["model"]:
                 models["coarse"] = co["model"]
-    for ext in ("refine", "openreview"):            # imported by hand: carried over, or pending until imported
+    for ext in IMPORTED_ONLY:                      # imported by hand: carried over, or pending until imported
         if ext not in modes:
             continue
         got = [i for i in carried if i["source"] == ext]
@@ -297,8 +299,8 @@ def synthesize(ctx: dict, out: dict) -> dict:
 
 
 def import_review(ctx: dict, source: str, text: str) -> dict:
-    """Add an external referee report (refine or coarse) to the study's review.json, replacing earlier issues from
-    the same source. Returns the updated review."""
+    """Add an outside referee report (any source in reviewers.py) to the study's review.json, replacing earlier issues
+    from the same source. Returns the updated review."""
     from . import external
     if source not in external.EXTERNAL:
         raise ValueError(f"import source must be one of {', '.join(external.EXTERNAL)}")
@@ -358,11 +360,9 @@ def write_review(study: Path, rv: dict) -> None:
         md += [f"- {u['id']}: {u['question']} ({u.get('why', '')})" for u in syn["unresolved"]]
     if any(i["kind"] == "analytical" for i in issues):
         md.append("\nAnalytical issues can be answered with robustness addenda: `filedrawer address <study>` proposes one per issue for approval.")
-    if "refine" in (rv.get("pending") or []):
-        from .external import REFINE_STEPS
-        md.append("\n## Pending: Refine\n\n" + REFINE_STEPS.format(study="."))
-    if "openreview" in (rv.get("pending") or []):
-        from .external import OPENREVIEW_STEPS
-        md.append("\n## Pending: OpenReview\n\n" + OPENREVIEW_STEPS.format(study="."))
+    from .external import pending_steps
+    for ext in (rv.get("pending") or []):
+        if ext in REVIEWERS:
+            md.append(f"\n## Pending: {REVIEWERS[ext]['label']}\n\n" + pending_steps(ext, "."))
     (study / "review.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     (study / "review.json").write_text(json.dumps(rv, indent=1, ensure_ascii=False), encoding="utf-8")
