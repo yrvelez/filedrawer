@@ -1,4 +1,4 @@
-"""External reviewers (listed in reviewers.py): coarse can run locally through its CLI; Edyth, Refine, OpenReview and
+"""External reviewers (listed in reviewers.py): coarse can run locally through its CLI; Edyth, Refine, OpenAIReview and
 any other referee are run by the author and their review imported with `filedrawer review-import`.
 
 Each returns a free-form referee report. `structure()` turns it into review.json issues with one call to the
@@ -105,4 +105,4 @@ def pending_steps(source: str, study: str = ".") -> str:
 
 # kept for callers of the old names
 REFINE_STEPS = pending_steps("refine", "{study}")
-OPENREVIEW_STEPS = pending_steps("openreview", "{study}")
+OPENREVIEW_STEPS = pending_steps("other", "{study}")      # OpenReview was dropped; any referee report is "other"
